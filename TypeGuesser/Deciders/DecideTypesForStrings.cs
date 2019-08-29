@@ -16,7 +16,7 @@ namespace TypeGuesser.Deciders
         /// Matches any number which looks like a proper decimal but has leading zeroes e.g. 012837 including.  Also matches if there is a
         /// decimal point (optionally followed by other digits).  It must match at least 2 digits at the start e.g. 01.01 would be matched
         /// but 0.01 wouldn't be matched (that's a legit float).  This is used to preserve leading zeroes in input (desired because it could
-        /// be a serial number or otherwise important leading 0).  In this case the DataTypeComputer will use varchar(x) to represent the 
+        /// be a serial number or otherwise important leading 0).  In this case the <see cref="Guesser"/> will use varchar(x) to represent the 
         /// column instead of decimal(x,y).
         /// 
         /// <para>Also allows for starting with a negative sign e.g. -01.01 would be matched as a string</para>

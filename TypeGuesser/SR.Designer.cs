@@ -71,25 +71,6 @@ namespace TypeGuesser {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DataTypeComputer does not support being passed hard typed objects (e.g. int) mixed with untyped objects (e.g. string).  We were adjusting to compensate for object &apos;{0}&apos; which is of Type &apos;{1}&apos;, we were previously passed a &apos;{2}&apos; type.
-        /// </summary>
-        internal static string DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues {
-            get {
-                return ResourceManager.GetString("DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues" +
-                        "", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No Type Decider exists for Type:{0}.
-        /// </summary>
-        internal static string DataTypeComputer_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_ {
-            get {
-                return ResourceManager.GetString("DataTypeComputer_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Could not parse &apos;{0}&apos; to a valid DateTime.
         /// </summary>
         internal static string DateTimeTypeDecider_ParseImpl_Could_not_parse___0___to_a_valid_DateTime {
@@ -115,6 +96,24 @@ namespace TypeGuesser {
             get {
                 return ResourceManager.GetString("DecideTypesForStrings_Parse_Could_not_parse_string_value___0___with_Decider_Type_" +
                         "_1_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Guesser does not support being passed hard typed objects (e.g. int) mixed with untyped objects (e.g. string).  We were adjusting to compensate for object &apos;{0}&apos; which is of Type &apos;{1}&apos;, we were previously passed a &apos;{2}&apos; type.
+        /// </summary>
+        internal static string Guesser_AdjustToCompensateForValue_GuesserPassedMixedTypeValues {
+            get {
+                return ResourceManager.GetString("Guesser_AdjustToCompensateForValue_GuesserPassedMixedTypeValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Type Decider exists for Type:{0}.
+        /// </summary>
+        internal static string Guesser_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_ {
+            get {
+                return ResourceManager.GetString("Guesser_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_", resourceCulture);
             }
         }
         

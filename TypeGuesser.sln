@@ -3,9 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.757
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeGuesser", "TypeGuesser\TypeGuesser.csproj", "{80890B33-64BF-44BA-938D-F6389969C141}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeGuesser", "TypeGuesser\TypeGuesser.csproj", "{80890B33-64BF-44BA-938D-F6389969C141}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{D98EEF18-2AAC-4F39-8EA1-13C6D9960877}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{D98EEF18-2AAC-4F39-8EA1-13C6D9960877}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{EAE289E1-E8AF-4627-91A6-12E6D5F9F027}"
+	ProjectSection(SolutionItems) = preProject
+		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

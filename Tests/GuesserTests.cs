@@ -12,7 +12,7 @@ namespace Tests
     /// the final estimate should be decimal(4,1) to allow for both 100.0f and 1.1f.
     /// </para> 
     /// </summary>
-    public class DatatypeComputerTests
+    public class GuesserTests
     {
 
         [TestCase("5",typeof(int),"en-us")]
@@ -43,9 +43,9 @@ namespace Tests
         public void Test_OneString_IsType(string guessFor, Type expectedGuess, string culture)
         {
             var cultureInfo = new CultureInfo(culture);
-            var computer = new Guesser(){Culture = cultureInfo};
-            computer.AdjustToCompensateForValue(guessFor);
-            Assert.AreEqual(expectedGuess,computer.Guess.CSharpType);
+            var guesser = new Guesser(){Culture = cultureInfo};
+            guesser.AdjustToCompensateForValue(guessFor);
+            Assert.AreEqual(expectedGuess,guesser.Guess.CSharpType);
         }
 
         [TestCase(new []{"5","10"},typeof(int),"en-us")]
@@ -53,14 +53,37 @@ namespace Tests
         public void Test_ManyString_IsType(string[] guessFor, Type expectedGuess, string culture)
         {
             var cultureInfo = new CultureInfo(culture);
-            var computer = new Guesser(){Culture = cultureInfo};
-            computer.AdjustToCompensateForValues(guessFor);
-            Assert.AreEqual(expectedGuess,computer.Guess.CSharpType);
+            var guesser = new Guesser(){Culture = cultureInfo};
+            guesser.AdjustToCompensateForValues(guessFor);
+            Assert.AreEqual(expectedGuess,guesser.Guess.CSharpType);
         }
 
+        [Test]
+        public void ExampleUsage()
+        {
+            var guesser = new Guesser();
+            guesser.AdjustToCompensateForValue("-12.211");
+            var guess = guesser.Guess;
+            
+            Assert.AreEqual(typeof(decimal),guess.CSharpType);
+            Assert.AreEqual(2, guess.Size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(3,guess.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(7,guess.Width);
+
+                
+            guesser = new Guesser();
+            guesser.AdjustToCompensateForValue("1,000");
+            guesser.AdjustToCompensateForValue("0.001");
+            guess = guesser.Guess;
+                
+            Assert.AreEqual(typeof(decimal),guess.CSharpType);
+            Assert.AreEqual(4,guess.Size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(3,guess.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(8,guess.Width);//?
+        }
 
         [Test]
-        public void TestDatatypeComputer_IntToFloat()
+        public void TestGuesser_IntToFloat()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("12");
@@ -78,13 +101,13 @@ namespace Tests
 
 
         [Test]
-        public void TestDatatypeComputer_IntToDate()
+        public void TestGuesser_IntToDate()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("12");
 
             Assert.AreEqual(typeof(int), t.Guess.CSharpType);
-            Assert.AreEqual(null, t.Guess.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
             Assert.AreEqual(2, t.Guess.Size.NumbersBeforeDecimalPlace);
             Assert.AreEqual(2, t.Guess.Width);
 
@@ -96,7 +119,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_decimal()
+        public void TestGuesser_decimal()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("1.5");
@@ -108,7 +131,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_Int()
+        public void TestGuesser_Int()
         {
             Guesser t = new Guesser();
             
@@ -131,7 +154,7 @@ namespace Tests
 
 
         [Test]
-        public void TestDatatypeComputer_IntAnddecimal_MustUsedecimal()
+        public void TestGuesser_IntAnddecimal_MustUsedecimal()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("15");
@@ -143,7 +166,7 @@ namespace Tests
             Assert.AreEqual(typeof(decimal),t.Guess.CSharpType);
         }
         [Test]
-        public void TestDatatypeComputer_IntAnddecimal_MustUsedecimalThenString()
+        public void TestGuesser_IntAnddecimal_MustUsedecimalThenString()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("15");
@@ -162,7 +185,7 @@ namespace Tests
         }
         
         [Test]
-        public void TestDatatypeComputer_DateTimeFromInt()
+        public void TestGuesser_DateTimeFromInt()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("01/01/2001");
@@ -176,7 +199,7 @@ namespace Tests
         [TestCase("true", typeof(bool), "11", typeof(int))]
         [TestCase("1", typeof(bool), "1.1",typeof(decimal))]
         [TestCase("true", typeof(bool), "1.1", typeof(decimal))]
-        public void TestDataTypeComputer_FallbackCompatible(string input1, Type expectedTypeAfterFirstInput, string input2, Type expectedTypeAfterSecondInput)
+        public void TestGuesser_FallbackCompatible(string input1, Type expectedTypeAfterFirstInput, string input2, Type expectedTypeAfterSecondInput)
         {
             var t = new Guesser();
             t.AdjustToCompensateForValue(input1);
@@ -194,7 +217,7 @@ namespace Tests
         [TestCase("1.1", typeof(decimal), "2001-01-01")]
         [TestCase("1.1", typeof(decimal), "10:00am")]
         [TestCase("2001-1-1", typeof(DateTime), "10:00am")]
-        public void TestDataTypeComputer_FallbackIncompatible(string input1, Type expectedTypeAfterFirstInput, string input2)
+        public void TestGuesser_FallbackIncompatible(string input1, Type expectedTypeAfterFirstInput, string input2)
         {
             var t = new Guesser();
             t.AdjustToCompensateForValue(input1);
@@ -212,7 +235,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_IntToDateTime()
+        public void TestGuesser_IntToDateTime()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("2013");
@@ -226,7 +249,7 @@ namespace Tests
         [TestCase(2001, "2001-01-01")]
         [TestCase("2001", 2001)]
         [TestCase(2001, "2001")]
-        public void TestDatatypeComputer_MixingTypes_ThrowsException(object o1, object o2)
+        public void TestGuesser_MixingTypes_ThrowsException(object o1, object o2)
         {
             //if we pass an hard type...
             //...then we don't accept strings anymore
@@ -234,12 +257,12 @@ namespace Tests
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(o1); 
 
-            var ex = Assert.Throws<DataTypeComputerException>(() => t.AdjustToCompensateForValue(o2)); 
+            var ex = Assert.Throws<MixedTypingException>(() => t.AdjustToCompensateForValue(o2)); 
             StringAssert.Contains("mixed with untyped objects",ex.Message);
         }
 
         [Test]
-        public void TestDatatypeComputer_DateTime()
+        public void TestGuesser_DateTime()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("01/01/2001");
@@ -250,7 +273,7 @@ namespace Tests
 
         [TestCase("1. 01 ", typeof(DateTime))]
         [TestCase("1. 1 ", typeof(DateTime))]
-        public void TestDatatypeComputer_DateTime_DodgyFormats(string input, Type expectedOutput)
+        public void TestGuesser_DateTime_DodgyFormats(string input, Type expectedOutput)
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(input);
@@ -258,7 +281,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_DateTime_English()
+        public void TestGuesser_DateTime_English()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(GetCultureSpecificDate());
@@ -268,7 +291,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_DateTime_EnglishWithTime()
+        public void TestGuesser_DateTime_EnglishWithTime()
         {
             Guesser t = new Guesser();
             
@@ -294,7 +317,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_DateTime_EnglishWithTimeAndAM()
+        public void TestGuesser_DateTime_EnglishWithTimeAndAM()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(GetCultureSpecificDate()+" 11:10AM");
@@ -315,7 +338,7 @@ namespace Tests
         [TestCase(" -01.01 ", 8)]
         [TestCase("-01.01 ", 7)]
         [TestCase("--01", 4)]
-        public void TestDatatypeComputer_PreeceedingZeroes(string input, int expectedLength)
+        public void TestGuesser_PreeceedingZeroes(string input, int expectedLength)
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(input);
@@ -324,7 +347,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_PreeceedingZeroesAfterFloat()
+        public void TestGuesser_PreeceedingZeroesAfterFloat()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("1.5");
@@ -335,7 +358,7 @@ namespace Tests
             Assert.AreEqual(typeof(string), t.Guess.CSharpType);
         }
         [Test]
-        public void TestDatatypeComputer_Negatives()
+        public void TestGuesser_Negatives()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("-1");
@@ -348,7 +371,7 @@ namespace Tests
 
 
         [Test]
-        public void TestDatatypeComputer_Doubles()
+        public void TestGuesser_Doubles()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(299.99);
@@ -363,7 +386,7 @@ namespace Tests
         [TestCase(" 1.01 ", typeof(decimal))]
         [TestCase(" 1", typeof(int))]
         [TestCase(" true ",typeof(bool))]
-        public void TestDatatypeComputer_Whitespace(string input, Type expectedType)
+        public void TestGuesser_Whitespace(string input, Type expectedType)
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(input);
@@ -375,7 +398,7 @@ namespace Tests
         [Test]
         [TestCase(true)]
         [TestCase(false)]
-        public void TestDatatypeComputer_Bool(bool sendStringEquiv)
+        public void TestGuesser_Bool(bool sendStringEquiv)
         {
             Guesser t = new Guesser();
 
@@ -400,16 +423,16 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_MixedIntTypes()
+        public void TestGuesser_MixedIntTypes()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue((Int16)5);
-            var ex = Assert.Throws<DataTypeComputerException>(()=>t.AdjustToCompensateForValue((Int32)1000));
+            var ex = Assert.Throws<MixedTypingException>(()=>t.AdjustToCompensateForValue((Int32)1000));
 
             StringAssert.Contains("We were adjusting to compensate for object '1000' which is of Type 'System.Int32', we were previously passed a 'System.Int16' type",ex.Message);
         }
         [Test]
-        public void TestDatatypeComputer_Int16s()
+        public void TestGuesser_Int16s()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue((Int16)5);
@@ -421,12 +444,12 @@ namespace Tests
             Assert.AreEqual(typeof(Int16), t.Guess.CSharpType);
 
             Assert.AreEqual(3, t.Guess.Size.NumbersBeforeDecimalPlace);
-            Assert.AreEqual(null, t.Guess.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
             
 
         }
         [Test]
-        public void TestDatatypeComputer_Byte()
+        public void TestGuesser_Byte()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(new byte[5]);
@@ -440,7 +463,7 @@ namespace Tests
 
 
         [Test]
-        public void TestDatatypeComputer_NumberOfDecimalPlaces()
+        public void TestGuesser_NumberOfDecimalPlaces()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("111111111.11111111111115");
@@ -452,7 +475,7 @@ namespace Tests
         
 
         [Test]
-        public void TestDatatypeComputer_TrailingZeroesFallbackToString()
+        public void TestGuesser_TrailingZeroesFallbackToString()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("-111.000");
@@ -470,7 +493,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDataTypeComputer_IntFloatString()
+        public void TestGuesser_IntFloatString()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("-1000");
@@ -487,7 +510,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_FallbackOntoVarcharFromFloat()
+        public void TestGuesser_FallbackOntoVarcharFromFloat()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("15.5");
@@ -497,7 +520,7 @@ namespace Tests
             Assert.AreEqual(4, t.Guess.Width);
         }
         [Test]
-        public void TestDatatypeComputer_Time()
+        public void TestGuesser_Time()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("12:30:00");
@@ -507,7 +530,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_TimeNoSeconds()
+        public void TestGuesser_TimeNoSeconds()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("12:01");
@@ -517,7 +540,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_TimeWithPM()
+        public void TestGuesser_TimeWithPM()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("1:01PM");
@@ -526,7 +549,7 @@ namespace Tests
             
         }
         [Test]
-        public void TestDatatypeComputer_24Hour()
+        public void TestGuesser_24Hour()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("23:01");
@@ -535,7 +558,7 @@ namespace Tests
             
         }
         [Test]
-        public void TestDatatypeComputer_Midnight()
+        public void TestGuesser_Midnight()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("00:00");
@@ -544,7 +567,7 @@ namespace Tests
             
         }
         [Test]
-        public void TestDatatypeComputer_TimeObject()
+        public void TestGuesser_TimeObject()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(new TimeSpan(10,1,1));
@@ -553,7 +576,7 @@ namespace Tests
             
         }
         [Test]
-        public void TestDatatypeComputer_MixedDateAndTime_FallbackToString()
+        public void TestGuesser_MixedDateAndTime_FallbackToString()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("09:01");
@@ -565,7 +588,7 @@ namespace Tests
         }
 
         [TestCase("1-1000")]
-        public void TestDatatypeComputer_ValidDateStrings(string wierdDateString)
+        public void TestGuesser_ValidDateStrings(string wierdDateString)
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(wierdDateString);
@@ -573,7 +596,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_HardTypeFloats()
+        public void TestGuesser_HardTypeFloats()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(1.1f);
@@ -586,7 +609,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestDatatypeComputer_HardTypeInts()
+        public void TestGuesser_HardTypeInts()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(1);
@@ -596,13 +619,13 @@ namespace Tests
             t.AdjustToCompensateForValue(DBNull.Value);
 
             Assert.AreEqual(typeof(int), t.Guess.CSharpType);
-            Assert.AreEqual(null, t.Guess.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
             Assert.AreEqual(5, t.Guess.Size.NumbersBeforeDecimalPlace);
         }
 
 
         [Test]
-        public void TestDatatypeComputer_HardTypeDoubles()
+        public void TestGuesser_HardTypeDoubles()
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(1.1);
@@ -623,7 +646,7 @@ namespace Tests
         [TestCase("false",typeof(bool), "M", 5)]
         [TestCase("2001-01-01",typeof(DateTime), "F", 27)]
         [TestCase("2001-01-01",typeof(DateTime), "FingersMcNultyFishBonesdlsiea", 29)]
-        public void TestDatatypeComputer_FallbackOntoStringLength(string legitType, Type expectedLegitType, string str, int expectedLength)
+        public void TestGuesser_FallbackOntoStringLength(string legitType, Type expectedLegitType, string str, int expectedLength)
         {
             Guesser t = new Guesser();
             
@@ -646,7 +669,7 @@ namespace Tests
         [TestCase(".")]
         [TestCase("/")]
         [TestCase("-")]
-        public void TestDatatypeComputer_RandomCrud(string randomCrud)
+        public void TestGuesser_RandomCrud(string randomCrud)
         {
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue(randomCrud);
@@ -654,7 +677,7 @@ namespace Tests
         }
         
         [Test]
-        public void TestDataTypeComputer_ScientificNotation()
+        public void TestGuesser_ScientificNotation()
         {
             string val = "-4.10235746055587E-05"; //-0.0000410235746055587
             Guesser t = new Guesser();
@@ -674,7 +697,7 @@ namespace Tests
             var t = new Guesser();
             t.AdjustToCompensateForValue(word);
             
-            //computer should have picked up that it needs unicode
+            //guesser should have picked up that it needs unicode
             Assert.IsTrue(t.UseUnicode);
 
             //in most DBMS

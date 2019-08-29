@@ -9,7 +9,7 @@
   <Comment CommentText="All strings are represented with one of the following (or left as System.String).">
     <Position X="9.229" Y="7.26" Height="0.75" Width="1.7" />
   </Comment>
-  <Comment CommentText="Fallback compatibility between types e.g. when DataTypeComputer sees &quot;1&quot; followed by &quot;1.1&quot;.">
+  <Comment CommentText="Fallback compatibility between types e.g. when Guesser sees &quot;1&quot; followed by &quot;1.1&quot;.">
     <Position X="14.584" Y="3.804" Height="0.918" Width="1.7" />
   </Comment>
   <Class Name="TypeGuesser.Guesser">
@@ -94,11 +94,11 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="TypeGuesser.DataTypeComputerException" Collapsed="true">
+  <Class Name="TypeGuesser.MixedTypingException" Collapsed="true">
     <Position X="11.5" Y="7.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>DataTypeComputerException.cs</FileName>
+      <FileName>MixedTypingException.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TypeGuesser.TypeNotSupportedException" Collapsed="true">

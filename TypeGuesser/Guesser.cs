@@ -8,13 +8,13 @@ using System.Linq;
 namespace TypeGuesser
 {
     /// <summary>
-    /// Calculates a DatabaseTypeRequest based on a collection of objects seen so far.  This allows you to take a DataTable column (which might be only string
+    /// Calculates a <see cref="DatabaseTypeRequest"/> based on a collection of objects seen so far.  This allows you to take a DataTable column (which might be only string
     /// formatted) and identify an appropriate database type to hold the data.  For example if you see "2001-01-01" in the first row of column then the database
     /// type can be 'datetime' but if you subsequently see 'n\a' then it must become 'varchar(10)' (since 2001-01-01 is 10 characters long).
     /// 
     /// <para>Includes support for DateTime, Timespan, String (including calculating max length), Int, Decimal (including calculating scale/precision). </para>
     /// 
-    /// <para>DataTypeComputer will always use the most restrictive data type possible first and then fall back on weaker types as new values are seen that do not fit
+    /// <para><see cref="Guesser"/> will always use the most restrictive data type possible first and then fall back on weaker types as new values are seen that do not fit
     /// the guessed Type, ultimately falling back to varchar(x).</para>
     /// </summary>
     public class Guesser 
@@ -54,7 +54,7 @@ namespace TypeGuesser
         /// <summary>
         /// Previous data types we have seen and used to adjust our CurrentEstimate.  It is important to record these, because if we see
         /// an int and change our CurrentEstimate to int then we can't change our CurrentEstimate to datetime later on because that's not
-        /// compatible with int. See test TestDatatypeComputer_IntToDateTime
+        /// compatible with int. See test TestGuesser_IntToDateTime
         /// </summary>
         TypeCompatibilityGroup _validTypesSeen = TypeCompatibilityGroup.None;
 
@@ -68,7 +68,7 @@ namespace TypeGuesser
 
 
         /// <summary>
-        /// Creates a new computer primed with the size of the given <paramref name="request"/>.
+        /// Creates a new <see cref="Guesser"/> primed with the size of the given <paramref name="request"/>.
         /// </summary>
         /// <param name="request"></param>
         public Guesser(DatabaseTypeRequest request)
@@ -102,8 +102,8 @@ namespace TypeGuesser
             //if we have previously seen a hard typed value then we can't just change datatypes to something else!
             if (IsPrimedWithBonafideType)
                 if (Guess.CSharpType != o.GetType())
-                    throw new DataTypeComputerException(string.Format(
-                        SR.DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues,
+                    throw new MixedTypingException(string.Format(
+                        SR.Guesser_AdjustToCompensateForValue_GuesserPassedMixedTypeValues,
                         o, o.GetType(), Guess.CSharpType));
 
             var oToString = o.ToString();
@@ -147,7 +147,7 @@ namespace TypeGuesser
             {
                 //if we ever made a decision about a string inputs then we won't accept hard typed objects now
                 if(_validTypesSeen != TypeCompatibilityGroup.None || Guess.CSharpType == typeof(string))
-                    throw new DataTypeComputerException(string.Format(SR.DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues,o,o.GetType(),Guess));
+                    throw new MixedTypingException(string.Format(SR.Guesser_AdjustToCompensateForValue_GuesserPassedMixedTypeValues,o,o.GetType(),Guess));
 
                 //if we have yet to see a proper type
                 if (!IsPrimedWithBonafideType)
@@ -210,9 +210,9 @@ namespace TypeGuesser
         
 
         /// <summary>
-        /// Returns true if the DataTypeComputer CurrentEstimate is considered to be an improvement on the DataColumn provided. Use only when you actually want to
+        /// Returns true if the <see cref="Guess"/>  is considered to be an improvement on the DataColumn provided. Use only when you actually want to
         /// consider changing the value.  For example if you have read a CSV file into a DataTable and all current columns string/object then you can call this method
-        /// to determine whether the DataTypeComputer found a more appropriate Type or not.  
+        /// to determine whether the <see cref="Guesser"/> found a more appropriate Type or not.  
         /// 
         /// <para>Note that if you want to change the Type you need to clone the DataTable, see: https://stackoverflow.com/questions/9028029/how-to-change-datatype-of-a-datacolumn-in-a-datatable</para>
         /// </summary>
@@ -239,7 +239,7 @@ namespace TypeGuesser
                 return;
 
             if (!_typeDeciders.IsSupported(Guess.CSharpType))
-                throw new NotSupportedException(string.Format(SR.DataTypeComputer_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_, Guess.CSharpType));
+                throw new NotSupportedException(string.Format(SR.Guesser_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_, Guess.CSharpType));
         }
 
     }
