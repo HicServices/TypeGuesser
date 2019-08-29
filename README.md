@@ -2,6 +2,9 @@
 
 Guess the C# Types for untyped strings e.g. `"12.123"`.
 
+- [Nuget Package](https://www.nuget.org/packages/HIC.TypeGuesser/)
+- [License MIT](./LICENSE)
+
 Usage
 
 ```csharp
