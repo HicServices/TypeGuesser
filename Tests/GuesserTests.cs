@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using NUnit.Framework;
 using TypeGuesser;
 
@@ -80,6 +81,16 @@ namespace Tests
             Assert.AreEqual(4,guess.Size.NumbersBeforeDecimalPlace);
             Assert.AreEqual(3,guess.Size.NumbersAfterDecimalPlace);
             Assert.AreEqual(8,guess.Width);//?
+
+
+            var someStrings = new []{"13:11:59", "9AM"};
+            guesser = new Guesser();
+            guesser.AdjustToCompensateForValues(someStrings);
+
+            var parsed = someStrings.Select(guesser.Parse).ToArray();
+
+            Assert.AreEqual(new TimeSpan(13, 11, 59), parsed[0]);
+            Assert.AreEqual(new TimeSpan(9, 0, 0), parsed[1]);
         }
 
         [Test]

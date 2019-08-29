@@ -1,6 +1,6 @@
 # Type Guesser
 
-Guess the C# Type for a string e.g. `"12.123"`
+Guess the C# Types for untyped strings e.g. `"12.123"`
 
 Usage
 
@@ -37,7 +37,20 @@ var guess = guesser.Guess;
 |   `guess.Size.NumbersAfterDecimalPlace`| 3 |
 |   `guess.Width` | 8 |
 
-# Guess order
+Once you have guessed a Type for all your strings you can convert all your values to the hard type:
+
+```csharp
+var someStrings = new []{"13:11:59", "9AM"};
+var guesser = new Guesser();
+guesser.AdjustToCompensateForValues(someStrings);
+
+var parsed = someStrings.Select(guesser.Parse).ToArray();
+
+Assert.AreEqual(new TimeSpan(13, 11, 59), parsed[0]);
+Assert.AreEqual(new TimeSpan(9, 0, 0), parsed[1]);
+```
+
+# Guess Order
 The order in which Types are tried is (`DatabaseTypeRequest.PreferenceOrder`):
 
 - Bool

@@ -242,5 +242,14 @@ namespace TypeGuesser
                 throw new NotSupportedException(string.Format(SR.Guesser_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_, Guess.CSharpType));
         }
 
+        public object Parse(string val)
+        {
+            if (Guess.CSharpType == typeof(string))
+                return val;
+
+            ThrowIfNotSupported(Guess.CSharpType);
+
+            return _typeDeciders.Dictionary[Guess.CSharpType].Parse(val);
+        }
     }
 }
