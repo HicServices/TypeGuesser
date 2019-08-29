@@ -144,12 +144,14 @@ namespace TypeGuesser.Deciders
 
         public DateTimeTypeDecider(CultureInfo cultureInfo) : base(cultureInfo,TypeCompatibilityGroup.Exclusive, typeof(DateTime))
         {
+            _timeSpanTypeDecider = new TimeSpanTypeDecider(cultureInfo);
+            _decimalChecker = new DecimalTypeDecider(cultureInfo);
         }
 
         protected override object ParseImpl(string value)
         {
             if (!TryBruteParse(value, out DateTime dt))
-                throw new FormatException(string.Format(FAnsiStrings.DateTimeTypeDecider_ParseImpl_Could_not_parse___0___to_a_valid_DateTime, value));
+                throw new FormatException(string.Format(SR.DateTimeTypeDecider_ParseImpl_Could_not_parse___0___to_a_valid_DateTime, value));
 
             return dt;
         }
@@ -250,7 +252,7 @@ namespace TypeGuesser.Deciders
 
         private bool TryGetDate(string v, out DateTime date)
         {
-            return DateTime.TryParseExact(v, DateFormatsDM, Culture, DateTimeStyles.AllowInnerWhite, out date);
+            return DateTime.TryParseExact(v, _dateFormatToUse, Culture, DateTimeStyles.AllowInnerWhite, out date);
         }
 
         private bool TryGetTime(string v, out DateTime time)

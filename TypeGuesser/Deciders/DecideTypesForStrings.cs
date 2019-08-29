@@ -7,7 +7,7 @@ namespace TypeGuesser.Deciders
 {
     public abstract class DecideTypesForStrings :IDecideTypesForStrings
     {
-        public virtual CultureInfo Culture { get; protected set }
+        public virtual CultureInfo Culture { get; protected set; }
         public TypeCompatibilityGroup CompatibilityGroup { get; private set; }
         public HashSet<Type> TypesSupported { get; private set; }
 
@@ -30,7 +30,7 @@ namespace TypeGuesser.Deciders
             CompatibilityGroup = compatibilityGroup;
             
             if(typesSupported.Length == 0)
-                throw new ArgumentException(FAnsiStrings.DecideTypesForStrings_DecideTypesForStrings_DecideTypesForStrings_abstract_base_was_not_passed_any_typesSupported_by_implementing_derived_class);
+                throw new ArgumentException(SR.DecideTypesForStrings_DecideTypesForStrings_DecideTypesForStrings_abstract_base_was_not_passed_any_typesSupported_by_implementing_derived_class);
             
             TypesSupported = new HashSet<Type>(typesSupported);
         }
@@ -54,7 +54,7 @@ namespace TypeGuesser.Deciders
                 return ParseImpl(value);
             }catch(Exception ex)
             {
-                throw new FormatException(string.Format(FAnsiStrings.DecideTypesForStrings_Parse_Could_not_parse_string_value___0___with_Decider_Type__1_, value, GetType().Name),ex);
+                throw new FormatException(string.Format(SR.DecideTypesForStrings_Parse_Could_not_parse_string_value___0___with_Decider_Type__1_, value, GetType().Name),ex);
             }            
         }
 

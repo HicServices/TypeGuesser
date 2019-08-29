@@ -179,7 +179,7 @@ namespace TypeGuesser
             if (IsPrimedWithBonafideType)
                 if (CurrentEstimate != o.GetType())
                     throw new DataTypeComputerException(string.Format(
-                        FAnsiStrings.DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues,
+                        SR.DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues,
                         o, o.GetType(), CurrentEstimate));
 
             var oToString = o.ToString();
@@ -223,7 +223,7 @@ namespace TypeGuesser
             {
                 //if we ever made a decision about a string inputs then we won't accept hard typed objects now
                 if(_validTypesSeen != TypeCompatibilityGroup.None || CurrentEstimate == typeof(string))
-                    throw new DataTypeComputerException(string.Format(FAnsiStrings.DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues,o,o.GetType(),CurrentEstimate));
+                    throw new DataTypeComputerException(string.Format(SR.DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues,o,o.GetType(),CurrentEstimate));
 
                 //if we have yet to see a proper type
                 if (!IsPrimedWithBonafideType)
@@ -325,7 +325,7 @@ namespace TypeGuesser
                 return;
 
             if (!_typeDeciders.IsSupported(CurrentEstimate))
-                throw new NotSupportedException(string.Format(FAnsiStrings.DataTypeComputer_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_, CurrentEstimate));
+                throw new NotSupportedException(string.Format(SR.DataTypeComputer_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_, CurrentEstimate));
         }
 
     }

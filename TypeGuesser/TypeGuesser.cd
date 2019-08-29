@@ -13,64 +13,11 @@
     <Position X="0.5" Y="9.375" Height="0.562" Width="2.023" />
   </Comment>
   <Comment CommentText="All strings are represented with one of the following (or left as System.String).">
-    <Position X="9.25" Y="7.25" Height="0.75" Width="1.7" />
+    <Position X="9.229" Y="7.26" Height="0.75" Width="1.7" />
   </Comment>
   <Comment CommentText="Fallback compatibility between types e.g. when DataTypeComputer sees &quot;1&quot; followed by &quot;1.1&quot;.">
-    <Position X="11.704" Y="3.652" Height="0.918" Width="1.7" />
+    <Position X="14.584" Y="3.804" Height="0.918" Width="1.7" />
   </Comment>
-  <Class Name="FAnsi.Discovery.TypeTranslation.TypeDeciders.TypeDeciderFactory" Collapsed="true">
-    <Position X="5.5" Y="0.5" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAABEAAAAAAAAAAAAA=</HashCode>
-      <FileName>Discovery\TypeTranslation\TypeDeciders\TypeDeciderFactory.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Field Name="Dictionary" />
-    </ShowAsCollectionAssociation>
-  </Class>
-  <Class Name="FAnsi.Discovery.TypeTranslation.TypeDeciders.BoolTypeDecider" Collapsed="true">
-    <Position X="9" Y="3.25" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
-      <FileName>Discovery\TypeTranslation\TypeDeciders\BoolTypeDecider.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="FAnsi.Discovery.TypeTranslation.TypeDeciders.DateTimeTypeDecider" Collapsed="true">
-    <Position X="9" Y="5.75" Width="2" />
-    <TypeIdentifier>
-      <HashCode>ACQGGAEAAgAoCEAAAEQBgAAgAQUAEAAAgAAAIAAAAgA=</HashCode>
-      <FileName>Discovery\TypeTranslation\TypeDeciders\DateTimeTypeDecider.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="FAnsi.Discovery.TypeTranslation.TypeDeciders.DecideTypesForStrings" Collapsed="true">
-    <Position X="8.75" Y="2.5" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AgAgAAEAAAAAAAAAAAEBAAAAAAAAAAAAAAgAAAAAAgA=</HashCode>
-      <FileName>Discovery\TypeTranslation\TypeDeciders\DecideTypesForStrings.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="FAnsi.Discovery.TypeTranslation.TypeDeciders.DecimalTypeDecider" Collapsed="true">
-    <Position X="9" Y="4.75" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAQEAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
-      <FileName>Discovery\TypeTranslation\TypeDeciders\DecimalTypeDecider.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="FAnsi.Discovery.TypeTranslation.TypeDeciders.IntTypeDecider" Collapsed="true">
-    <Position X="9" Y="4" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
-      <FileName>Discovery\TypeTranslation\TypeDeciders\IntTypeDecider.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="FAnsi.Discovery.TypeTranslation.TypeDeciders.TimeSpanTypeDecider" Collapsed="true">
-    <Position X="9" Y="6.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
-      <FileName>Discovery\TypeTranslation\TypeDeciders\TimeSpanTypeDecider.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="FAnsi.Discovery.TypeTranslation.TypeTranslater" Collapsed="true">
     <Position X="5.25" Y="7.25" Width="2.5" />
     <TypeIdentifier>
@@ -91,7 +38,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="FAnsi.Discovery.DatabaseColumnRequest">
-    <Position X="5.75" Y="3.75" Width="2.5" />
+    <Position X="6" Y="4" Width="4.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -137,7 +84,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="TypeGuesser.DataTypeComputer">
-    <Position X="2.5" Y="0.5" Width="2" />
+    <Position X="2.5" Y="0.5" Width="3.25" />
     <TypeIdentifier>
       <HashCode>CAABASAARAAAAAAAAAAAIgRAAQAACAgAIAAgAAQEAAA=</HashCode>
       <FileName>DataTypeComputer.cs</FileName>
@@ -147,22 +94,106 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="TypeGuesser.DecimalSize" Collapsed="true">
-    <Position X="6" Y="1.75" Width="1.5" />
+    <Position X="6.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AQBAAAAAAAAAAgACgAIAAAAAAAAAAIAAAAABAAAAEAA=</HashCode>
       <FileName>DecimalSize.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="FAnsi.Discovery.TypeTranslation.TypeDeciders.IDecideTypesForStrings">
-    <Position X="8.75" Y="0.5" Width="2.25" />
+  <Class Name="TypeGuesser.TypeDeciderFactory" Collapsed="true">
+    <Position X="6.25" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AgAgAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
-      <FileName>Discovery\TypeTranslation\TypeDeciders\IDecideTypesForStrings.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAABEAAAAAAAAAAAAA=</HashCode>
+      <FileName>TypeDeciderFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TypeGuesser.Deciders.BoolTypeDecider" Collapsed="true">
+    <Position X="8.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Deciders\BoolTypeDecider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TypeGuesser.Deciders.DateTimeTypeDecider" Collapsed="true">
+    <Position X="10.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACQGGAEAAgAgCEAAAEQBgAAgAQUAEAAAgAAAIAAAAgA=</HashCode>
+      <FileName>Deciders\DateTimeTypeDecider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TypeGuesser.Deciders.DecideTypesForStrings">
+    <Position X="11.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAgAAEAAAAAAAAAAAEBAAAAAQAAAAAAAAgAAAAAAgA=</HashCode>
+      <FileName>Deciders\DecideTypesForStrings.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="CompatibilityGroup" />
     </ShowAsAssociation>
-  </Interface>
+  </Class>
+  <Class Name="TypeGuesser.Deciders.DecimalTypeDecider" Collapsed="true">
+    <Position X="15" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQEAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Deciders\DecimalTypeDecider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TypeGuesser.Deciders.IntTypeDecider" Collapsed="true">
+    <Position X="17.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Deciders\IntTypeDecider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TypeGuesser.Deciders.NeverGuessTheseTypeDecider" Collapsed="true">
+    <Position X="6" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Deciders\NeverGuessedTypeDecider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TypeGuesser.Deciders.TimeSpanTypeDecider" Collapsed="true">
+    <Position X="12.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Deciders\TimeSpanTypeDecider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TypeGuesser.DatabaseTypeRequest">
+    <Position X="18.25" Y="1" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAABAAAAAAgAEAAAAASAAAAIACAAAAAAAAAiA=</HashCode>
+      <FileName>DatabaseTypeRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TypeGuesser.DataTypeComputerException" Collapsed="true">
+    <Position X="21.5" Y="1" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataTypeComputerException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TypeGuesser.Guess" Collapsed="true">
+    <Position X="19.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Guess.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TypeGuesser.TypeNotMappedException" Collapsed="true">
+    <Position X="21.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TypeNotMappedException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TypeGuesser.TypeNotSupportedException" Collapsed="true">
+    <Position X="23.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TypeNotSupportedException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
   <Interface Name="FAnsi.Discovery.TypeTranslation.ITypeTranslater" Collapsed="true">
     <Position X="5.75" Y="6.25" Width="1.5" />
     <TypeIdentifier>
@@ -177,11 +208,18 @@
       <FileName>Discovery\QuerySyntax\IQuerySyntaxHelper.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Enum Name="FAnsi.Discovery.TypeTranslation.TypeDeciders.TypeCompatibilityGroup">
-    <Position X="11.5" Y="2.25" Width="2" />
+  <Interface Name="TypeGuesser.Deciders.IDecideTypesForStrings" Collapsed="true">
+    <Position X="9.25" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AgAgAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Deciders\IDecideTypesForStrings.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="TypeGuesser.TypeCompatibilityGroup">
+    <Position X="14.75" Y="1.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAEAAAA=</HashCode>
-      <FileName>Discovery\TypeTranslation\TypeDeciders\TypeCompatibilityGroup.cs</FileName>
+      <FileName>TypeCompatibilityGroup.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Segoe UI" Size="9" />
