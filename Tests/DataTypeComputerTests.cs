@@ -16,6 +16,30 @@ namespace Tests
     {
 
         [TestCase("5",typeof(int),"en-us")]
+        [TestCase("true",typeof(bool),"en-us")]
+        [TestCase("false",typeof(bool),"en-us")]
+        [TestCase("0"    ,typeof(bool),"en-us")]
+        [TestCase("1"    ,typeof(bool),"en-us")]
+        [TestCase("j"    ,typeof(bool),"en-us")]
+        [TestCase("y"    ,typeof(bool),"en-us")]
+        [TestCase("n"    ,typeof(bool),"en-us")]
+        [TestCase("0"    ,typeof(bool),"en-us")]
+        [TestCase("1"    ,typeof(bool),"en-us")]
+        [TestCase("T"    ,typeof(bool),"en-us")]
+        [TestCase("F"    ,typeof(bool),"en-us")]
+        [TestCase("x"    ,typeof(string),"en-us")]
+        [TestCase("100"  ,typeof(int),"en-us")]
+        [TestCase("255"  ,typeof(int),"en-us")]
+        [TestCase("abc"  ,typeof(string),"en-us")]
+        [TestCase("ja"   ,typeof(bool),"de-de")]
+        [TestCase("yes"  ,typeof(bool),"en-us")]
+        [TestCase("n"    ,typeof(bool),"en-us")]
+        [TestCase("nein" ,typeof(bool),"en-us")]
+        [TestCase("no"   ,typeof(bool),"en-us")]
+        [TestCase("t"    ,typeof(bool),"en-us")]
+        [TestCase("f"    ,typeof(bool),"en-us")]
+        [TestCase(".t."  ,typeof(bool),"en-us")]
+        [TestCase(".f."  ,typeof(bool),"en-us")]
         public void Test_OneString_IsType(string guessFor, Type expectedGuess, string culture)
         {
             var cultureInfo = new CultureInfo(culture);
@@ -89,7 +113,7 @@ namespace Tests
             Guesser t = new Guesser();
             
             t.AdjustToCompensateForValue("0");
-            Assert.AreEqual(typeof(int), t.Guess.CSharpType);
+            Assert.AreEqual(typeof(bool), t.Guess.CSharpType);
             Assert.AreEqual(1, t.Guess.Width);
 
             t.AdjustToCompensateForValue("-0");
@@ -150,7 +174,7 @@ namespace Tests
 
         //Tests system being happy to sign off in the orders bool=>int=>decimal but nothing else
         [TestCase("true", typeof(bool), "11", typeof(int))]
-        [TestCase("1", typeof(int), "1.1",typeof(decimal))]
+        [TestCase("1", typeof(bool), "1.1",typeof(decimal))]
         [TestCase("true", typeof(bool), "1.1", typeof(decimal))]
         public void TestDataTypeComputer_FallbackCompatible(string input1, Type expectedTypeAfterFirstInput, string input2, Type expectedTypeAfterSecondInput)
         {
@@ -165,7 +189,7 @@ namespace Tests
 
         //Tests system being angry at having signed off on a bool=>int=>decimal then seeing a valid non string type (e.g. DateTime)
         //under these circumstances it should go directly to System.String
-        [TestCase("1",typeof(int),"2001-01-01")]
+        [TestCase("1",typeof(bool),"2001-01-01")]
         [TestCase("true", typeof(bool), "2001-01-01")]
         [TestCase("1.1", typeof(decimal), "2001-01-01")]
         [TestCase("1.1", typeof(decimal), "10:00am")]
@@ -433,11 +457,11 @@ namespace Tests
             Guesser t = new Guesser();
             t.AdjustToCompensateForValue("-111.000");
             
-            Assert.AreEqual(typeof(decimal), t.Guess.CSharpType);
+            Assert.AreEqual(typeof(int), t.Guess.CSharpType);
             Assert.AreEqual(3, t.Guess.Size.NumbersBeforeDecimalPlace);
 
             //even though they are trailing zeroes we still need this much space... there must be a reason why they are there right? (also makes it easier to go to string later if needed eh!)
-            Assert.AreEqual(3, t.Guess.Size.NumbersAfterDecimalPlace); 
+            Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace); 
             
             t.AdjustToCompensateForValue("P");
 
@@ -596,7 +620,7 @@ namespace Tests
 
         [TestCase("0.01",typeof(decimal),"A",4)]
         [TestCase("1234",typeof(int),"F",4)]
-        [TestCase("false",typeof(bool), "F", 5)]
+        [TestCase("false",typeof(bool), "M", 5)]
         [TestCase("2001-01-01",typeof(DateTime), "F", 27)]
         [TestCase("2001-01-01",typeof(DateTime), "FingersMcNultyFishBonesdlsiea", 29)]
         public void TestDatatypeComputer_FallbackOntoStringLength(string legitType, Type expectedLegitType, string str, int expectedLength)

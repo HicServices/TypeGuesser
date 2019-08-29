@@ -6,7 +6,7 @@ namespace TypeGuesser.Deciders
     /// <summary>
     /// DecideTypesForStrings for types that we should never assign to strings but need to support for CurrentEstimate
     /// </summary>
-    public class NeverGuessTheseTypeDecider : DecideTypesForStrings
+    public class NeverGuessTheseTypeDecider : DecideTypesForStrings<object>
     {
         public NeverGuessTheseTypeDecider(CultureInfo culture) : base(culture,TypeCompatibilityGroup.Exclusive, typeof(byte[]), typeof(Guid))
         {

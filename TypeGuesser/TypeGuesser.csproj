@@ -5,4 +5,8 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="UniversalTypeConverter" Version="2.0.0" />
+  </ItemGroup>
+
 </Project>

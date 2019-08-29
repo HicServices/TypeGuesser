@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace TypeGuesser.Deciders
 {
-    public class DateTimeTypeDecider : DecideTypesForStrings
+    public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
     {
         private readonly TimeSpanTypeDecider _timeSpanTypeDecider;
         private readonly DecimalTypeDecider _decimalChecker;

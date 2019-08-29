@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace TypeGuesser.Deciders
 {
-    public class TimeSpanTypeDecider : DecideTypesForStrings
+    public class TimeSpanTypeDecider : DecideTypesForStrings<TimeSpan>
     {
         public TimeSpanTypeDecider(CultureInfo culture): base(culture,TypeCompatibilityGroup.Exclusive, typeof(TimeSpan))
         {

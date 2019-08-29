@@ -15,7 +15,7 @@
   <Class Name="TypeGuesser.Guesser">
     <Position X="2.5" Y="0.5" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AAABASAARAAAAAAAAAAAIgQAAQAACAAAAAAgAAQEAAA=</HashCode>
+      <HashCode>AAABASAARAAAAAAAAAAAIgQAAQABCAAAAAAgAAQEAAA=</HashCode>
       <FileName>Guesser.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -36,7 +36,7 @@
   <Class Name="TypeGuesser.Deciders.BoolTypeDecider" Collapsed="true">
     <Position X="7.75" Y="6.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Deciders\BoolTypeDecider.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -47,7 +47,7 @@
       <FileName>Deciders\DateTimeTypeDecider.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TypeGuesser.Deciders.DecideTypesForStrings">
+  <Class Name="TypeGuesser.Deciders.DecideTypesForStrings&lt;T&gt;">
     <Position X="11.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AgAgAAEAAAAAAAAAAAEBAAAAAQAAAAAAAAgAAAAAAgA=</HashCode>
@@ -61,14 +61,14 @@
   <Class Name="TypeGuesser.Deciders.DecimalTypeDecider" Collapsed="true">
     <Position X="14.5" Y="6.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAQEAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <HashCode>AAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Deciders\DecimalTypeDecider.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TypeGuesser.Deciders.IntTypeDecider" Collapsed="true">
     <Position X="16.5" Y="6.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Deciders\IntTypeDecider.cs</FileName>
     </TypeIdentifier>
   </Class>

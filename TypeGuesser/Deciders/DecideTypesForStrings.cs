@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using TB.ComponentModel;
 
 namespace TypeGuesser.Deciders
 {
-    public abstract class DecideTypesForStrings :IDecideTypesForStrings
+    public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     {
         public virtual CultureInfo Culture { get; protected set; }
         public TypeCompatibilityGroup CompatibilityGroup { get; private set; }
@@ -58,8 +59,14 @@ namespace TypeGuesser.Deciders
             }            
         }
 
-        protected abstract object ParseImpl(string value);
+        protected virtual object ParseImpl(string value)
+        {
+            return value.To<T>(Culture);
+        }
 
-        protected abstract bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize size);
+        protected virtual bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize size)
+        {
+            return candidateString.IsConvertibleTo<T>(Culture);
+        }
     }
 }

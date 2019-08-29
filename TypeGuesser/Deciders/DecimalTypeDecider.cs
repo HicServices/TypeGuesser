@@ -1,30 +1,25 @@
 ﻿using System;
 using System.Globalization;
+using System.Xml;
+using TB.ComponentModel;
 
 namespace TypeGuesser.Deciders
 {
-    public class DecimalTypeDecider : DecideTypesForStrings
+    public class DecimalTypeDecider : DecideTypesForStrings<decimal>
     {
         public DecimalTypeDecider(CultureInfo culture) : base(culture,TypeCompatibilityGroup.Numerical,typeof(decimal), typeof(float) , typeof(double))
         {
         }
-
-        protected override object ParseImpl(string value)
-        {
-            return TryParseVague(value);
-        }
-
+        
         protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize sizeRecord)
         {
-            decimal? t = TryParseVague(candidateString);
-
-            if (t == null)
+            if (!candidateString.IsConvertibleTo(out decimal t,Culture))
                 return false;
 
             int before;
             int after;
 
-            GetDecimalPlaces(t.Value, out before, out after);
+            GetDecimalPlaces(t, out before, out after);
 
             sizeRecord.Size.IncreaseTo(before,after);
 
@@ -32,18 +27,6 @@ namespace TypeGuesser.Deciders
             return true;
         } 
 
-        private decimal? TryParseVague(string candidate)
-        {
-            decimal x;
-
-            if (decimal.TryParse(candidate, out x))
-                return x;
-
-            if (decimal.TryParse(candidate, NumberStyles.Float,CultureInfo.CurrentCulture, out x))
-                return x;
-
-            return null;
-        }
 
         private void GetDecimalPlaces(decimal value, out int before, out int after)
         {

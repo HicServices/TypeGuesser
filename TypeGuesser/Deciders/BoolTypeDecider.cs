@@ -1,23 +1,12 @@
 ﻿using System.Globalization;
+using TB.ComponentModel;
 
 namespace TypeGuesser.Deciders
 {
-    public class BoolTypeDecider: DecideTypesForStrings
+    public class BoolTypeDecider: DecideTypesForStrings<bool>
     {
         public BoolTypeDecider(CultureInfo culture): base(culture,TypeCompatibilityGroup.Numerical,typeof(bool))
         {
-        }
-
-        protected override object ParseImpl(string value)
-        {
-            return bool.Parse(value);
-        }
-
-        protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize size)
-        {
-            bool result;
-
-            return bool.TryParse(candidateString, out result);
         }
     }
 }
