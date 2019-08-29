@@ -12,11 +12,11 @@
   <Comment CommentText="Fallback compatibility between types e.g. when DataTypeComputer sees &quot;1&quot; followed by &quot;1.1&quot;.">
     <Position X="14.584" Y="3.804" Height="0.918" Width="1.7" />
   </Comment>
-  <Class Name="TypeGuesser.DataTypeComputer">
+  <Class Name="TypeGuesser.Guesser">
     <Position X="2.5" Y="0.5" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>CAABASAARAAAAAAAAAAAIgQAAQAACAAAAAAgAAQEAAA=</HashCode>
-      <FileName>DataTypeComputer.cs</FileName>
+      <HashCode>AAABASAARAAAAAAAAAAAIgQAAQAACAAAAAAgAAQEAAA=</HashCode>
+      <FileName>Guesser.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TypeGuesser.DecimalSize" Collapsed="true">

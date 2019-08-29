@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Globalization;
@@ -16,7 +17,7 @@ namespace TypeGuesser
     /// <para>DataTypeComputer will always use the most restrictive data type possible first and then fall back on weaker types as new values are seen that do not fit
     /// the guessed Type, ultimately falling back to varchar(x).</para>
     /// </summary>
-    public class DataTypeComputer 
+    public class Guesser 
     {
         /// <summary>
         /// Normally when measuring the lengths of strings something like "It’s" would be 4 but for Oracle it needs extra width.  If this is
@@ -31,7 +32,7 @@ namespace TypeGuesser
         /// </summary>
         public const int MinimumLengthRequiredForDateStringRepresentation = 27;
 
-        public DatabaseTypeRequest CurrentEstimate { get; set; }
+        public DatabaseTypeRequest Guess { get; set; }
 
         /// <summary>
         /// The culture to use for type deciders, determines what symbol decimal place is etc
@@ -60,7 +61,7 @@ namespace TypeGuesser
         /// <summary>
         /// Creates a new DataType 
         /// </summary>
-        public DataTypeComputer():this(new DatabaseTypeRequest(DatabaseTypeRequest.PreferenceOrder[0]))
+        public Guesser():this(new DatabaseTypeRequest(DatabaseTypeRequest.PreferenceOrder[0]))
         {
             
         }
@@ -70,9 +71,9 @@ namespace TypeGuesser
         /// Creates a new computer primed with the size of the given <paramref name="request"/>.
         /// </summary>
         /// <param name="request"></param>
-        public DataTypeComputer(DatabaseTypeRequest request)
+        public Guesser(DatabaseTypeRequest request)
         {
-            CurrentEstimate = request;
+            Guess = request;
             _typeDeciders = new TypeDeciderFactory(CultureInfo.CurrentCulture);
 
             ThrowIfNotSupported(request.CSharpType);
@@ -83,6 +84,11 @@ namespace TypeGuesser
             var dt = column.Table;
             foreach (DataRow row in dt.Rows)
                 AdjustToCompensateForValue(row[column]);
+        }
+        public void AdjustToCompensateForValues(IEnumerable<object> collection)
+        {
+            foreach (var o in collection)
+                AdjustToCompensateForValue(o);
         }
 
         public void AdjustToCompensateForValue(object o)
@@ -95,16 +101,16 @@ namespace TypeGuesser
 
             //if we have previously seen a hard typed value then we can't just change datatypes to something else!
             if (IsPrimedWithBonafideType)
-                if (CurrentEstimate.CSharpType != o.GetType())
+                if (Guess.CSharpType != o.GetType())
                     throw new DataTypeComputerException(string.Format(
                         SR.DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues,
-                        o, o.GetType(), CurrentEstimate.CSharpType));
+                        o, o.GetType(), Guess.CSharpType));
 
             var oToString = o.ToString();
             var oAsString = o as string;
 
             //we might need to fallback on a string later on, in this case we should always record the maximum length of input seen before even if it is acceptable as int, double, dates etc
-            CurrentEstimate.Width = Math.Max(CurrentEstimate.Width??-1, GetStringLength(oToString));
+            Guess.Width = Math.Max(Guess.Width??-1, GetStringLength(oToString));
 
             //if it's a string
             if (oAsString != null)
@@ -114,18 +120,18 @@ namespace TypeGuesser
                     return;
                 
                 //if we have already fallen back to string then just stick with it (theres no going back up the ladder)
-                if(CurrentEstimate.CSharpType == typeof(string))
+                if(Guess.CSharpType == typeof(string))
                     return;
 
-                var result = _typeDeciders.Dictionary[CurrentEstimate.CSharpType].IsAcceptableAsType(oAsString, CurrentEstimate);
+                var result = _typeDeciders.Dictionary[Guess.CSharpType].IsAcceptableAsType(oAsString, Guess);
                 
                 //if the current estimate compatible
                 if (result)
                 {
-                    _validTypesSeen = _typeDeciders.Dictionary[CurrentEstimate.CSharpType].CompatibilityGroup;
+                    _validTypesSeen = _typeDeciders.Dictionary[Guess.CSharpType].CompatibilityGroup;
 
-                    if (CurrentEstimate.CSharpType == typeof (DateTime))
-                        CurrentEstimate.Width = Math.Max(CurrentEstimate.Width??-1, MinimumLengthRequiredForDateStringRepresentation);
+                    if (Guess.CSharpType == typeof (DateTime))
+                        Guess.Width = Math.Max(Guess.Width??-1, MinimumLengthRequiredForDateStringRepresentation);
 
 
                     return;
@@ -140,19 +146,19 @@ namespace TypeGuesser
             else
             {
                 //if we ever made a decision about a string inputs then we won't accept hard typed objects now
-                if(_validTypesSeen != TypeCompatibilityGroup.None || CurrentEstimate.CSharpType == typeof(string))
-                    throw new DataTypeComputerException(string.Format(SR.DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues,o,o.GetType(),CurrentEstimate));
+                if(_validTypesSeen != TypeCompatibilityGroup.None || Guess.CSharpType == typeof(string))
+                    throw new DataTypeComputerException(string.Format(SR.DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues,o,o.GetType(),Guess));
 
                 //if we have yet to see a proper type
                 if (!IsPrimedWithBonafideType)
                 {
-                    CurrentEstimate.CSharpType = o.GetType();//get its type
+                    Guess.CSharpType = o.GetType();//get its type
                     IsPrimedWithBonafideType = true;
                 }
 
                 //if we have a decider for this lets get it to tell us the decimal places (if any)
                 if (_typeDeciders.Dictionary.ContainsKey(o.GetType()))
-                    _typeDeciders.Dictionary[o.GetType()].IsAcceptableAsType(oToString, CurrentEstimate);
+                    _typeDeciders.Dictionary[o.GetType()].IsAcceptableAsType(oToString, Guess);
             }
         }
 
@@ -176,11 +182,11 @@ namespace TypeGuesser
 
         private void ChangeEstimateToNext()
         {
-            int current = DatabaseTypeRequest.PreferenceOrder.IndexOf(CurrentEstimate.CSharpType);
+            int current = DatabaseTypeRequest.PreferenceOrder.IndexOf(Guess.CSharpType);
             
             //if we have never seen any good data just try the next one
             if(_validTypesSeen == TypeCompatibilityGroup.None )
-                CurrentEstimate.CSharpType = DatabaseTypeRequest.PreferenceOrder[current + 1];
+                Guess.CSharpType = DatabaseTypeRequest.PreferenceOrder[current + 1];
             else
             {
                 //we have seen some good data before, but we have seen something that doesn't fit with the CurrentEstimate so
@@ -190,14 +196,14 @@ namespace TypeGuesser
 
                 //if the next estimate is a string or we have previously accepted an exclusive decider (e.g. DateTime)
                 if (nextEstiamte == typeof (string) || _validTypesSeen == TypeCompatibilityGroup.Exclusive)
-                    CurrentEstimate.CSharpType = typeof (string); //then just go with string
+                    Guess.CSharpType = typeof (string); //then just go with string
                 else
                 {
                     //if the next decider is in the same group as the previously used ones
                     if (_typeDeciders.Dictionary[nextEstiamte].CompatibilityGroup == _validTypesSeen)
-                        CurrentEstimate.CSharpType = nextEstiamte;
+                        Guess.CSharpType = nextEstiamte;
                     else
-                        CurrentEstimate.CSharpType = typeof (string); //the next Type decider is in an incompatible category so just go directly to string
+                        Guess.CSharpType = typeof (string); //the next Type decider is in an incompatible category so just go directly to string
                 }
             }
         }
@@ -216,7 +222,7 @@ namespace TypeGuesser
         {
             if(col.DataType == typeof(object) || col.DataType == typeof(string))
             {
-                int indexOfCurrentPreference = DatabaseTypeRequest.PreferenceOrder.IndexOf(CurrentEstimate.CSharpType);
+                int indexOfCurrentPreference = DatabaseTypeRequest.PreferenceOrder.IndexOf(Guess.CSharpType);
                 int indexOfCurrentColumn = DatabaseTypeRequest.PreferenceOrder.IndexOf(typeof(string));
                 
                 //e.g. if current preference based on data is DateTime/integer and col is a string then we SHOULD downgrade
@@ -232,8 +238,8 @@ namespace TypeGuesser
             if (currentEstimate == typeof(string))
                 return;
 
-            if (!_typeDeciders.IsSupported(CurrentEstimate.CSharpType))
-                throw new NotSupportedException(string.Format(SR.DataTypeComputer_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_, CurrentEstimate.CSharpType));
+            if (!_typeDeciders.IsSupported(Guess.CSharpType))
+                throw new NotSupportedException(string.Format(SR.DataTypeComputer_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_, Guess.CSharpType));
         }
 
     }

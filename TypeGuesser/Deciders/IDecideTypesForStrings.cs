@@ -9,7 +9,7 @@ namespace TypeGuesser.Deciders
     /// 
     /// <para>Each IDecideTypesForStrings should be for a single Type although different sizes is allowed e.g. Int16, Int32, Int64</para>
     /// 
-    /// <para>Implementations should be as mutually exclusive with as possible.  Look also at <see cref="DatabaseTypeRequest.PreferenceOrder"/> and <see cref="DataTypeComputer"/></para>
+    /// <para>Implementations should be as mutually exclusive with as possible.  Look also at <see cref="DatabaseTypeRequest.PreferenceOrder"/> and <see cref="Guesser"/></para>
     /// </summary>
     public interface IDecideTypesForStrings
     {

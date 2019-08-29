@@ -1,3 +1,7 @@
+# Type Guesser
+
+
+
 # DataTypeComputer
 ## Background
 Relational databases require typed columns (`int`,`datetime`, `varchar(10)` etc).  Often when dealing with researcher datasets we are provided with untyped raw data (e.g. CSV).  The DataTypeComputer is responsible for picking a suitable `System.Type` based on arbitrary supplied objects as well as determining the number of decimal places and maximum lengths for strings.  A single DataTypeComputer expects to handle data only from a single column (or other logical source).  The DataTypeComputer does not itself generate Sql types, that is done by an `ITypeTranslater` via the interchange class `DataTypeRequest`.
