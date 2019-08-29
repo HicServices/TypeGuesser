@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using TypeGuesser;
 
-namespace FAnsiTests.TypeTranslation
+namespace Tests
 {
     class DecimalSizeTests
     {

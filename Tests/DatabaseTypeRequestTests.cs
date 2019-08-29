@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using TypeGuesser;
 
-namespace FAnsiTests.TypeTranslation
+namespace Tests
 {
     class DatabaseTypeRequestTests
     {
