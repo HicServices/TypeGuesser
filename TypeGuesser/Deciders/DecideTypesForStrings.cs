@@ -35,13 +35,13 @@ namespace TypeGuesser.Deciders
             TypesSupported = new HashSet<Type>(typesSupported);
         }
 
-        public bool IsAcceptableAsType(string candidateString,DecimalSize sizeRecord)
+        public bool IsAcceptableAsType(string candidateString,IDataTypeSize size)
         {
             //we must preserve leading zeroes if its not actually 0 -- if they have 010101 then we have to use string but if they have just 0 we can use decimal
             if (zeroPrefixedNumber.IsMatch(candidateString))
                 return false;
 
-            return IsAcceptableAsTypeImpl(candidateString, sizeRecord);
+            return IsAcceptableAsTypeImpl(candidateString, size);
         }
 
         public object Parse(string value)
@@ -60,6 +60,6 @@ namespace TypeGuesser.Deciders
 
         protected abstract object ParseImpl(string value);
 
-        protected abstract bool IsAcceptableAsTypeImpl(string candidateString,DecimalSize sizeRecord);
+        protected abstract bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize size);
     }
 }

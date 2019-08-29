@@ -30,7 +30,7 @@ namespace TypeGuesser.Deciders
         /// <param name="sizeRecord">The current size estimate of floating point numbers (or null if not appropriate).  This will be modified by the method 
         /// if appropriate to the data passed</param>
         /// <returns>True if the <paramref name="candidateString"/> is a valid value for the <see cref="TypesSupported"/> by the decider</returns>
-        bool IsAcceptableAsType(string candidateString,DecimalSize sizeRecord);
+        bool IsAcceptableAsType(string candidateString,IDataTypeSize size);
 
         /// <summary>
         /// Converts the provided <paramref name="value"/> to an object of the Type modelled by this <see cref="IDecideTypesForStrings"/>.

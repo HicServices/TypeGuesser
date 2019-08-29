@@ -17,7 +17,7 @@ namespace TypeGuesser.Deciders
             throw new NotSupportedException();
         }
 
-        protected override bool IsAcceptableAsTypeImpl(string candidateString, DecimalSize sizeRecord)
+        protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize sizeRecord)
         {
             //strings should never be interpreted as byte arrays
             return false;

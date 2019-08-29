@@ -16,7 +16,7 @@ namespace TypeGuesser.Deciders
             return dt.TimeOfDay;
         }
 
-        protected override bool IsAcceptableAsTypeImpl(string candidateString,DecimalSize sizeRecord)
+        protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize sizeRecord)
         {
             try
             {

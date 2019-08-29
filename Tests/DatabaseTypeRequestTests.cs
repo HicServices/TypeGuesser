@@ -17,7 +17,7 @@ namespace FAnsiTests.TypeTranslation
                 new DatabaseTypeRequest(typeof(string), 2, null)
                 );
 
-            Assert.AreEqual(2,max.MaxWidthForStrings);
+            Assert.AreEqual(2,max.Width);
             Assert.IsTrue(max.Unicode,"If either arg in a Max call is Unicode then the resulting maximum should be Unicode=true");
         }
     }

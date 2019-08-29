@@ -184,7 +184,7 @@ namespace TypeGuesser.Deciders
                 _dateFormatToUse = DateFormatsDM;
         }
 
-        protected override bool IsAcceptableAsTypeImpl(string candidateString, DecimalSize sizeRecord)
+        protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize sizeRecord)
         {
             //if it's a float then it isn't a date is it! thanks C# for thinking 1.1 is the first of January
             if (_decimalChecker.IsAcceptableAsType(candidateString, sizeRecord))

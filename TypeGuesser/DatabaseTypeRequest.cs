@@ -9,7 +9,7 @@ namespace TypeGuesser
     /// <para>See ITypeTranslater to see how a DatabaseTypeRequest is turned into the proprietary string e.g. A DatabaseTypeRequest with CSharpType = typeof(DateTime)
     /// is translated into 'datetime2' in Microsoft SQL Server but 'datetime' in MySql server.</para>
     /// </summary>
-    public class DatabaseTypeRequest
+    public class DatabaseTypeRequest : IDataTypeSize
     {
         /// <summary>
         /// Any input string of unknown Type will be assignable to one of the following C# data types.  The order denotes system wide which data types to try 
@@ -27,9 +27,17 @@ namespace TypeGuesser
             typeof(string)
         });
 
+        private int? _maxWidthForStrings;
+
         public Type CSharpType { get; set; }
-        public int? MaxWidthForStrings { get; set; }
-        public DecimalSize DecimalPlacesBeforeAndAfter { get; set; }
+        public DecimalSize Size { get; set; }
+
+        public int? Width
+        {
+            get => _maxWidthForStrings.HasValue ? Math.Max(_maxWidthForStrings.Value, Size.ToStringLength()): (int?)null;
+            set => _maxWidthForStrings = value;
+        }
+
 
         /// <summary>
         /// Only applies when <see cref="CSharpType"/> is <see cref="string"/>.  True indicates that the column should be
@@ -41,14 +49,14 @@ namespace TypeGuesser
             DecimalSize decimalPlacesBeforeAndAfter = null)
         {
             CSharpType = cSharpType;
-            MaxWidthForStrings = maxWidthForStrings;
-            DecimalPlacesBeforeAndAfter = decimalPlacesBeforeAndAfter;
+            Width = maxWidthForStrings;
+            Size = decimalPlacesBeforeAndAfter?? new DecimalSize();
         }
 
         #region Equality
         protected bool Equals(DatabaseTypeRequest other)
         {
-            return Equals(CSharpType, other.CSharpType) && MaxWidthForStrings == other.MaxWidthForStrings && Equals(DecimalPlacesBeforeAndAfter, other.DecimalPlacesBeforeAndAfter);
+            return Equals(CSharpType, other.CSharpType) && Width == other.Width && Equals(Size, other.Size);
         }
 
         public override bool Equals(object obj)
@@ -64,8 +72,8 @@ namespace TypeGuesser
             unchecked
             {
                 int hashCode = (CSharpType != null ? CSharpType.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ MaxWidthForStrings.GetHashCode();
-                hashCode = (hashCode*397) ^ (DecimalPlacesBeforeAndAfter != null ? DecimalPlacesBeforeAndAfter.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ Width.GetHashCode();
+                hashCode = (hashCode*397) ^ (Size != null ? Size.GetHashCode() : 0);
                 return hashCode;
             }
         }
@@ -101,19 +109,19 @@ namespace TypeGuesser
 
             //Types are the same, so max the sub elements (width, DecimalSize etc)
 
-            int? newMaxWidthIfStrings = first.MaxWidthForStrings;
+            int? newMaxWidthIfStrings = first.Width;
 
             //if first doesn't have a max string width
             if (newMaxWidthIfStrings == null)
-                newMaxWidthIfStrings = second.MaxWidthForStrings; //use the second
-            else if (second.MaxWidthForStrings != null)
-                newMaxWidthIfStrings = Math.Max(newMaxWidthIfStrings.Value, second.MaxWidthForStrings.Value); //else use the max of the two
+                newMaxWidthIfStrings = second.Width; //use the second
+            else if (second.Width != null)
+                newMaxWidthIfStrings = Math.Max(newMaxWidthIfStrings.Value, second.Width.Value); //else use the max of the two
 
             //types are the same
             return new DatabaseTypeRequest(
                 first.CSharpType,
                 newMaxWidthIfStrings,
-                DecimalSize.Combine(first.DecimalPlacesBeforeAndAfter, second.DecimalPlacesBeforeAndAfter)
+                DecimalSize.Combine(first.Size, second.Size)
                 )
                 {Unicode = first.Unicode || second.Unicode};
 

@@ -6,92 +6,18 @@
   <Comment CommentText="Manual Column Creation (either from C# Types or explicit database SQL type string)">
     <Position X="0.5" Y="2.771" Height="0.846" Width="1.7" />
   </Comment>
-  <Comment CommentText="Translation layer between C# Types and Database Types">
-    <Position X="0.5" Y="6.25" Height="0.708" Width="2.023" />
-  </Comment>
-  <Comment CommentText="Discovery of columns already existing in the database">
-    <Position X="0.5" Y="9.375" Height="0.562" Width="2.023" />
-  </Comment>
   <Comment CommentText="All strings are represented with one of the following (or left as System.String).">
     <Position X="9.229" Y="7.26" Height="0.75" Width="1.7" />
   </Comment>
   <Comment CommentText="Fallback compatibility between types e.g. when DataTypeComputer sees &quot;1&quot; followed by &quot;1.1&quot;.">
     <Position X="14.584" Y="3.804" Height="0.918" Width="1.7" />
   </Comment>
-  <Class Name="FAnsi.Discovery.TypeTranslation.TypeTranslater" Collapsed="true">
-    <Position X="5.25" Y="7.25" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>EtAAECiSEAA8gAgNEBAQMACAEDAFwDAQCgKSSCCAdgA=</HashCode>
-      <FileName>Discovery\TypeTranslation\TypeTranslater.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="FAnsi.Discovery.QuerySyntaxHelper" Collapsed="true">
-    <Position X="2.75" Y="6.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>gEMYIICCEIAASBAggAAAAASOAAgkg5GAkCAAABFiAZk=</HashCode>
-      <FileName>Discovery\QuerySyntaxHelper.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="TypeTranslater" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="FAnsi.Discovery.DatabaseColumnRequest">
-    <Position X="6" Y="4" Width="4.5" />
-    <Compartments>
-      <Compartment Name="Methods" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier>
-      <HashCode>AAQAAAAQACAAAAAAgABAKAAAABAAAAAAAAAAAAACAAA=</HashCode>
-      <FileName>Discovery\DatabaseColumnRequest.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="TypeRequested" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="FAnsi.Discovery.TypeTranslation.DatabaseTypeRequest">
-    <Position X="6.25" Y="2.5" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AAAAACAAABAAAAAAgAEAAAAASAAAAIACAAAAAAAAAiA=</HashCode>
-      <FileName>Discovery\TypeTranslation\DatabaseTypeRequest.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="DecimalPlacesBeforeAndAfter" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="FAnsi.Discovery.DiscoveredColumn">
-    <Position X="2.75" Y="9.5" Width="2" />
-    <Compartments>
-      <Compartment Name="Properties" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier>
-      <HashCode>AARAIAAAAAIAAEAEgBAAQAAAABwAAICAAAAAAAACBAA=</HashCode>
-      <FileName>Discovery\DiscoveredColumn.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_querySyntaxHelper" />
-      <Property Name="DataType" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="FAnsi.Discovery.DiscoveredDataType">
-    <Position X="5.75" Y="9.25" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAEEAAAAAAAEkAFAAAAAAAAAAIAAAIAACAEAAAA=</HashCode>
-      <FileName>Discovery\DiscoveredDataType.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="TypeGuesser.DataTypeComputer">
     <Position X="2.5" Y="0.5" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>CAABASAARAAAAAAAAAAAIgRAAQAACAgAIAAgAAQEAAA=</HashCode>
+      <HashCode>CAABASAARAAAAAAAAAAAIgQAAQAACAAAAAAgAAQEAAA=</HashCode>
       <FileName>DataTypeComputer.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="DecimalSize" />
-    </ShowAsAssociation>
   </Class>
   <Class Name="TypeGuesser.DecimalSize" Collapsed="true">
     <Position X="6.5" Y="1.75" Width="1.5" />
@@ -108,14 +34,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="TypeGuesser.Deciders.BoolTypeDecider" Collapsed="true">
-    <Position X="8.25" Y="5.25" Width="1.5" />
+    <Position X="7.75" Y="6.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Deciders\BoolTypeDecider.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TypeGuesser.Deciders.DateTimeTypeDecider" Collapsed="true">
-    <Position X="10.5" Y="5.25" Width="1.5" />
+    <Position X="10" Y="6.5" Width="2" />
     <TypeIdentifier>
       <HashCode>ACQGGAEAAgAgCEAAAEQBgAAgAQUAEAAAgAAAIAAAAgA=</HashCode>
       <FileName>Deciders\DateTimeTypeDecider.cs</FileName>
@@ -130,84 +56,58 @@
     <ShowAsAssociation>
       <Property Name="CompatibilityGroup" />
     </ShowAsAssociation>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="TypeGuesser.Deciders.DecimalTypeDecider" Collapsed="true">
-    <Position X="15" Y="5.25" Width="1.5" />
+    <Position X="14.5" Y="6.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAQEAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Deciders\DecimalTypeDecider.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TypeGuesser.Deciders.IntTypeDecider" Collapsed="true">
-    <Position X="17.25" Y="5.25" Width="1.5" />
+    <Position X="16.5" Y="6.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Deciders\IntTypeDecider.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TypeGuesser.Deciders.NeverGuessTheseTypeDecider" Collapsed="true">
-    <Position X="6" Y="5.25" Width="1.5" />
+    <Position X="5.25" Y="6.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Deciders\NeverGuessedTypeDecider.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TypeGuesser.Deciders.TimeSpanTypeDecider" Collapsed="true">
-    <Position X="12.75" Y="5.25" Width="1.5" />
+    <Position X="12.25" Y="6.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Deciders\TimeSpanTypeDecider.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TypeGuesser.DatabaseTypeRequest">
-    <Position X="18.25" Y="1" Width="2.75" />
+    <Position X="6.5" Y="2.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAACAAABAAAAAAgAEAAAAASAAAAIACAAAAAAAAAiA=</HashCode>
+      <HashCode>AAAAACAAABAAgAAAgAAAAEAAQAAAAIACAAAAAAIAAiA=</HashCode>
       <FileName>DatabaseTypeRequest.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="TypeGuesser.DataTypeComputerException" Collapsed="true">
-    <Position X="21.5" Y="1" Width="2.25" />
+    <Position X="11.5" Y="7.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataTypeComputerException.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TypeGuesser.Guess" Collapsed="true">
-    <Position X="19.75" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
-      <FileName>Guess.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TypeGuesser.TypeNotMappedException" Collapsed="true">
-    <Position X="21.5" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TypeNotMappedException.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="TypeGuesser.TypeNotSupportedException" Collapsed="true">
-    <Position X="23.25" Y="5" Width="1.5" />
+    <Position X="11.5" Y="8" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>TypeNotSupportedException.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="FAnsi.Discovery.TypeTranslation.ITypeTranslater" Collapsed="true">
-    <Position X="5.75" Y="6.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAACAAAAAAAgBEBAAIAAAACAAACAAAAAAAAAABgA=</HashCode>
-      <FileName>Discovery\TypeTranslation\ITypeTranslater.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="FAnsi.Discovery.QuerySyntax.IQuerySyntaxHelper" Collapsed="true">
-    <Position X="2.75" Y="7" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AEMQIICAEIAACBAgAAAAAACKAAgkgxGAEAAAAABgAYg=</HashCode>
-      <FileName>Discovery\QuerySyntax\IQuerySyntaxHelper.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="TypeGuesser.Deciders.IDecideTypesForStrings" Collapsed="true">
     <Position X="9.25" Y="0.5" Width="2.5" />
     <TypeIdentifier>

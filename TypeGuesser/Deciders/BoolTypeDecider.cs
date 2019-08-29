@@ -13,7 +13,7 @@ namespace TypeGuesser.Deciders
             return bool.Parse(value);
         }
 
-        protected override bool IsAcceptableAsTypeImpl(string candidateString,DecimalSize sizeRecord)
+        protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize size)
         {
             bool result;
 

@@ -3,7 +3,7 @@ using System.Globalization;
 using NUnit.Framework;
 using TypeGuesser;
 
-namespace FAnsiTests.TypeTranslation
+namespace Tests
 {
     /// <summary>
     /// <para>These tests cover the systems ability to compute a final <see cref="DatabaseTypeRequest"/> from a set of mixed data types.</para>
@@ -20,15 +20,15 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("12");
             
-            Assert.AreEqual(typeof(int),t.CurrentEstimate);
-            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
-            Assert.AreEqual(2, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(typeof(int),t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(null, t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(2, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
 
             t.AdjustToCompensateForValue("0.1");
 
-            Assert.AreEqual(typeof(decimal), t.CurrentEstimate);
-            Assert.AreEqual(1, t.DecimalSize.NumbersAfterDecimalPlace);
-            Assert.AreEqual(2, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(typeof(decimal), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(1, t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(2, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
         }
 
 
@@ -38,16 +38,16 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("12");
 
-            Assert.AreEqual(typeof(int), t.CurrentEstimate);
-            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
-            Assert.AreEqual(2, t.DecimalSize.NumbersBeforeDecimalPlace);
-            Assert.AreEqual(2, t.Length);
+            Assert.AreEqual(typeof(int), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(null, t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(2, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(2, t.CurrentEstimate.Width);
 
             t.AdjustToCompensateForValue("2001-01-01");
 
-            Assert.AreEqual(typeof(string), t.CurrentEstimate);
-            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
-            Assert.AreEqual(10, t.Length);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(null, t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(10, t.CurrentEstimate.Width);
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue(null);
             t.AdjustToCompensateForValue(DBNull.Value);
 
-            Assert.AreEqual(typeof(decimal),t.CurrentEstimate);
+            Assert.AreEqual(typeof(decimal),t.CurrentEstimate.CSharpType);
         }
 
         [Test]
@@ -68,12 +68,12 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             
             t.AdjustToCompensateForValue("0");
-            Assert.AreEqual(typeof(int), t.CurrentEstimate);
-            Assert.AreEqual(1, t.Length);
+            Assert.AreEqual(typeof(int), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(1, t.CurrentEstimate.Width);
 
             t.AdjustToCompensateForValue("-0");
-            Assert.AreEqual(typeof(int), t.CurrentEstimate);
-            Assert.AreEqual(2, t.Length);
+            Assert.AreEqual(typeof(int), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(2, t.CurrentEstimate.Width);
             
             
             t.AdjustToCompensateForValue("15");
@@ -81,7 +81,7 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue(null);
             t.AdjustToCompensateForValue(DBNull.Value);
 
-            Assert.AreEqual(typeof(int),t.CurrentEstimate);
+            Assert.AreEqual(typeof(int),t.CurrentEstimate.CSharpType);
         }
 
 
@@ -95,7 +95,7 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue(null);
             t.AdjustToCompensateForValue(DBNull.Value);
 
-            Assert.AreEqual(typeof(decimal),t.CurrentEstimate);
+            Assert.AreEqual(typeof(decimal),t.CurrentEstimate.CSharpType);
         }
         [Test]
         public void TestDatatypeComputer_IntAnddecimal_MustUsedecimalThenString()
@@ -107,13 +107,13 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue(null);
             t.AdjustToCompensateForValue(DBNull.Value);
             
-            Assert.AreEqual(t.CurrentEstimate, typeof(decimal));
-            Assert.AreEqual(3,t.DecimalSize.NumbersBeforeDecimalPlace);
-            Assert.AreEqual(1,t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(typeof(decimal),t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(3,t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(1,t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
 
             t.AdjustToCompensateForValue("D");
-            Assert.AreEqual(typeof(string),t.CurrentEstimate);
-            Assert.AreEqual(5,t.Length);
+            Assert.AreEqual(typeof(string),t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(5,t.CurrentEstimate.Width);
         }
         
         [Test]
@@ -121,10 +121,10 @@ namespace FAnsiTests.TypeTranslation
         {
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("01/01/2001");
-            Assert.AreEqual(typeof(DateTime), t.CurrentEstimate);
+            Assert.AreEqual(typeof(DateTime), t.CurrentEstimate.CSharpType);
 
             t.AdjustToCompensateForValue("2013");
-            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate.CSharpType);
         }
 
         //Tests system being happy to sign off in the orders bool=>int=>decimal but nothing else
@@ -136,10 +136,10 @@ namespace FAnsiTests.TypeTranslation
             var t = new DataTypeComputer();
             t.AdjustToCompensateForValue(input1);
             
-            Assert.AreEqual(expectedTypeAfterFirstInput,t.CurrentEstimate);
+            Assert.AreEqual(expectedTypeAfterFirstInput,t.CurrentEstimate.CSharpType);
             
             t.AdjustToCompensateForValue(input2);
-            Assert.AreEqual(expectedTypeAfterSecondInput, t.CurrentEstimate);
+            Assert.AreEqual(expectedTypeAfterSecondInput, t.CurrentEstimate.CSharpType);
         }
 
         //Tests system being angry at having signed off on a bool=>int=>decimal then seeing a valid non string type (e.g. DateTime)
@@ -154,16 +154,16 @@ namespace FAnsiTests.TypeTranslation
             var t = new DataTypeComputer();
             t.AdjustToCompensateForValue(input1);
 
-            Assert.AreEqual(expectedTypeAfterFirstInput, t.CurrentEstimate);
+            Assert.AreEqual(expectedTypeAfterFirstInput, t.CurrentEstimate.CSharpType);
 
             t.AdjustToCompensateForValue(input2);
-            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate.CSharpType);
 
             //now check it in reverse just to be sure
             t = new DataTypeComputer();
             t.AdjustToCompensateForValue(input2);
             t.AdjustToCompensateForValue(input1);
-            Assert.AreEqual(typeof(string),t.CurrentEstimate);
+            Assert.AreEqual(typeof(string),t.CurrentEstimate.CSharpType);
         }
 
         [Test]
@@ -172,7 +172,7 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("2013");
             t.AdjustToCompensateForValue("01/01/2001");
-            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate.CSharpType);
         }
 
         [TestCase("fish",32)]
@@ -200,7 +200,7 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue("01/01/2001");
             t.AdjustToCompensateForValue(null);
 
-            Assert.AreEqual(t.CurrentEstimate, typeof(DateTime));
+            Assert.AreEqual(typeof(DateTime),t.CurrentEstimate.CSharpType);
         }
 
         [TestCase("1. 01 ", typeof(DateTime))]
@@ -209,7 +209,7 @@ namespace FAnsiTests.TypeTranslation
         {
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue(input);
-            Assert.AreEqual(expectedOutput, t.CurrentEstimate);
+            Assert.AreEqual(expectedOutput, t.CurrentEstimate.CSharpType);
         }
 
         [Test]
@@ -219,7 +219,7 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue(GetCultureSpecificDate());
             t.AdjustToCompensateForValue(null);
 
-            Assert.AreEqual(t.CurrentEstimate, typeof(DateTime));
+            Assert.AreEqual(typeof(DateTime),t.CurrentEstimate.CSharpType);
         }
 
         [Test]
@@ -233,8 +233,7 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue(GetCultureSpecificDate() + " 11:10");
             t.AdjustToCompensateForValue(null);
 
-            Assert.AreEqual(t.CurrentEstimate, typeof(DateTime));
-            Assert.AreEqual(typeof(DateTime),t.CurrentEstimate);
+            Assert.AreEqual(typeof(DateTime),t.CurrentEstimate.CSharpType);
         }
 
         private string GetCultureSpecificDate()
@@ -256,7 +255,7 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue(GetCultureSpecificDate()+" 11:10AM");
             t.AdjustToCompensateForValue(null);
 
-            Assert.AreEqual(typeof(DateTime),t.CurrentEstimate);
+            Assert.AreEqual(typeof(DateTime),t.CurrentEstimate.CSharpType);
         }
 
         [TestCase("01",2)]
@@ -275,8 +274,8 @@ namespace FAnsiTests.TypeTranslation
         {
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue(input);
-            Assert.AreEqual(typeof(string), t.CurrentEstimate);
-            Assert.AreEqual(expectedLength, t.Length);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(expectedLength, t.CurrentEstimate.Width);
         }
 
         [Test]
@@ -288,7 +287,7 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue(null);
             t.AdjustToCompensateForValue(DBNull.Value);
 
-            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate.CSharpType);
         }
         [Test]
         public void TestDatatypeComputer_Negatives()
@@ -297,9 +296,9 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue("-1");
             t.AdjustToCompensateForValue("-99.99");
 
-            Assert.AreEqual(typeof(decimal),t.CurrentEstimate);
-            Assert.AreEqual(4,t.DecimalSize.Precision);
-            Assert.AreEqual(2,t.DecimalSize.Scale);
+            Assert.AreEqual(typeof(decimal),t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(4,t.CurrentEstimate.Size.Precision);
+            Assert.AreEqual(2,t.CurrentEstimate.Size.Scale);
         }
 
 
@@ -309,10 +308,10 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue(299.99);
             
-            Assert.AreEqual(typeof(double), t.CurrentEstimate);
+            Assert.AreEqual(typeof(double), t.CurrentEstimate.CSharpType);
 
-            Assert.AreEqual(2, t.DecimalSize.NumbersAfterDecimalPlace);
-            Assert.AreEqual(3, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(2, t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(3, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
         }
 
         [TestCase(" 1.01", typeof(decimal))]
@@ -324,8 +323,8 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue(input);
 
-            Assert.AreEqual(expectedType, t.CurrentEstimate);
-            Assert.AreEqual(input.Length,t.Length);
+            Assert.AreEqual(expectedType, t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(input.Length,t.CurrentEstimate.Width);
         }
 
         [Test]
@@ -345,14 +344,14 @@ namespace FAnsiTests.TypeTranslation
             else
                 t.AdjustToCompensateForValue(false);
             
-            Assert.AreEqual(typeof(bool), t.CurrentEstimate);
+            Assert.AreEqual(typeof(bool), t.CurrentEstimate.CSharpType);
 
             t.AdjustToCompensateForValue(null);
 
-            Assert.AreEqual(typeof(bool), t.CurrentEstimate);
+            Assert.AreEqual(typeof(bool), t.CurrentEstimate.CSharpType);
 
-            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
-            Assert.AreEqual(null, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(null, t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(null, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
         }
 
         [Test]
@@ -374,10 +373,10 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue((Int16)30);
             t.AdjustToCompensateForValue((Int16)200);
 
-            Assert.AreEqual(typeof(Int16), t.CurrentEstimate);
+            Assert.AreEqual(typeof(Int16), t.CurrentEstimate.CSharpType);
 
-            Assert.AreEqual(3, t.DecimalSize.NumbersBeforeDecimalPlace);
-            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(3, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(null, t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
             
 
         }
@@ -387,11 +386,11 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue(new byte[5]);
 
-            Assert.AreEqual(typeof(byte[]), t.CurrentEstimate);
+            Assert.AreEqual(typeof(byte[]), t.CurrentEstimate.CSharpType);
 
-            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
-            Assert.AreEqual(null, t.DecimalSize.NumbersBeforeDecimalPlace);
-            Assert.IsTrue(t.DecimalSize.IsEmpty);
+            Assert.AreEqual(null, t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(null, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
+            Assert.IsTrue(t.CurrentEstimate.Size.IsEmpty);
         }
 
 
@@ -401,9 +400,9 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("111111111.11111111111115");
 
-            Assert.AreEqual(typeof(decimal), t.CurrentEstimate);
-            Assert.AreEqual(9, t.DecimalSize.NumbersBeforeDecimalPlace);
-            Assert.AreEqual(14, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(typeof(decimal), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(9, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(14, t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
         }
         
 
@@ -413,16 +412,16 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("-111.000");
             
-            Assert.AreEqual(typeof(decimal), t.CurrentEstimate);
-            Assert.AreEqual(3, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(typeof(decimal), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(3, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
 
             //even though they are trailing zeroes we still need this much space... there must be a reason why they are there right? (also makes it easier to go to string later if needed eh!)
-            Assert.AreEqual(3, t.DecimalSize.NumbersAfterDecimalPlace); 
+            Assert.AreEqual(3, t.CurrentEstimate.Size.NumbersAfterDecimalPlace); 
             
             t.AdjustToCompensateForValue("P");
 
-            Assert.AreEqual(typeof(string), t.CurrentEstimate);
-            Assert.AreEqual(8, t.Length);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(8, t.CurrentEstimate.Width);
         }
 
         [Test]
@@ -430,16 +429,16 @@ namespace FAnsiTests.TypeTranslation
         {
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("-1000");
-            Assert.AreEqual(typeof(int),t.CurrentEstimate);
+            Assert.AreEqual(typeof(int),t.CurrentEstimate.CSharpType);
 
             t.AdjustToCompensateForValue("1.1");
-            Assert.AreEqual(typeof(decimal),t.CurrentEstimate);
-            Assert.AreEqual(6,t.DecimalSize.Precision);
-            Assert.AreEqual(1,t.DecimalSize.Scale);
+            Assert.AreEqual(typeof(decimal),t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(6,t.CurrentEstimate.Size.Precision);
+            Assert.AreEqual(1,t.CurrentEstimate.Size.Scale);
             
             t.AdjustToCompensateForValue("A");
-            Assert.AreEqual(typeof(string),t.CurrentEstimate);
-            Assert.AreEqual(7,t.Length);
+            Assert.AreEqual(typeof(string),t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(7,t.CurrentEstimate.Width);
         }
 
         [Test]
@@ -449,8 +448,8 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue("15.5");
             t.AdjustToCompensateForValue("F");
 
-            Assert.AreEqual(typeof(string), t.CurrentEstimate);
-            Assert.AreEqual(4, t.Length);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(4, t.CurrentEstimate.Width);
         }
         [Test]
         public void TestDatatypeComputer_Time()
@@ -458,7 +457,7 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("12:30:00");
 
-            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
+            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate.CSharpType);
             
         }
 
@@ -468,7 +467,7 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("12:01");
 
-            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
+            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate.CSharpType);
             
         }
 
@@ -478,7 +477,7 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("1:01PM");
 
-            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
+            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate.CSharpType);
             
         }
         [Test]
@@ -487,7 +486,7 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("23:01");
 
-            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
+            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate.CSharpType);
             
         }
         [Test]
@@ -496,7 +495,7 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("00:00");
 
-            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
+            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate.CSharpType);
             
         }
         [Test]
@@ -505,7 +504,7 @@ namespace FAnsiTests.TypeTranslation
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue(new TimeSpan(10,1,1));
 
-            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
+            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate.CSharpType);
             
         }
         [Test]
@@ -513,11 +512,11 @@ namespace FAnsiTests.TypeTranslation
         {
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("09:01");
-            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
+            Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate.CSharpType);
 
             t.AdjustToCompensateForValue("2001-12-29 23:01");
-            Assert.AreEqual(typeof(string), t.CurrentEstimate);
-            Assert.AreEqual(16, t.Length);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(16, t.CurrentEstimate.Width);
         }
 
         [TestCase("1-1000")]
@@ -525,7 +524,7 @@ namespace FAnsiTests.TypeTranslation
         {
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue(wierdDateString);
-            Assert.AreEqual(typeof(DateTime), t.CurrentEstimate);
+            Assert.AreEqual(typeof(DateTime), t.CurrentEstimate.CSharpType);
         }
 
         [Test]
@@ -536,9 +535,9 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue(100.01f);
             t.AdjustToCompensateForValue(10000f);
 
-            Assert.AreEqual(typeof(float), t.CurrentEstimate);
-            Assert.AreEqual(2,t.DecimalSize.NumbersAfterDecimalPlace);
-            Assert.AreEqual(5, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(typeof(float), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(2,t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
         }
 
         [Test]
@@ -551,9 +550,9 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue(10000);
             t.AdjustToCompensateForValue(DBNull.Value);
 
-            Assert.AreEqual(typeof(int), t.CurrentEstimate);
-            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
-            Assert.AreEqual(5, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(typeof(int), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(null, t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
         }
 
 
@@ -568,9 +567,9 @@ namespace FAnsiTests.TypeTranslation
             t.AdjustToCompensateForValue(10000d);//<- d is required because Types must be homogenous
             t.AdjustToCompensateForValue(DBNull.Value);
 
-            Assert.AreEqual(typeof(double), t.CurrentEstimate);
-            Assert.AreEqual(3, t.DecimalSize.NumbersAfterDecimalPlace);
-            Assert.AreEqual(5, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(typeof(double), t.CurrentEstimate.CSharpType);
+            Assert.AreEqual(3, t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
         }
 
 
@@ -585,14 +584,14 @@ namespace FAnsiTests.TypeTranslation
             
             //give it the legit hard typed value e.g. a date
             t.AdjustToCompensateForValue(legitType);
-            Assert.AreEqual(expectedLegitType, t.CurrentEstimate);
+            Assert.AreEqual(expectedLegitType, t.CurrentEstimate.CSharpType);
 
             //then give it a string
             t.AdjustToCompensateForValue(str);
-            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate.CSharpType);
 
             //the length should be the max of the length of the legit string and the string str
-            Assert.AreEqual(expectedLength, t.Length);
+            Assert.AreEqual(expectedLength, t.CurrentEstimate.Width);
             
         }
 
@@ -606,7 +605,7 @@ namespace FAnsiTests.TypeTranslation
         {
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue(randomCrud);
-            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate.CSharpType);
         }
         
         [Test]
@@ -615,11 +614,11 @@ namespace FAnsiTests.TypeTranslation
             string val = "-4.10235746055587E-05"; //-0.0000410235746055587
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue(val);
-            Assert.AreEqual(typeof(decimal), t.CurrentEstimate);
+            Assert.AreEqual(typeof(decimal), t.CurrentEstimate.CSharpType);
             
             //there is always 1 decimal place before point in order to allow for changing to string later on and retain a single leading 0.
-            Assert.AreEqual(1, t.DecimalSize.NumbersBeforeDecimalPlace);
-            Assert.AreEqual(19, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(1, t.CurrentEstimate.Size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(19, t.CurrentEstimate.Size.NumbersAfterDecimalPlace);
         }
 
         [TestCase("didn’t")]
@@ -634,13 +633,16 @@ namespace FAnsiTests.TypeTranslation
             Assert.IsTrue(t.UseUnicode);
 
             //in most DBMS
-            Assert.AreEqual(t.Length,word.Length);
+            Assert.AreEqual(t.CurrentEstimate.Width,word.Length);
 
             //in the world of Oracle where you need varchar2(6) to store "It’s"
-            t = new DataTypeComputer(0,3);
+            t = new DataTypeComputer()
+            {
+                ExtraLengthPerNonAsciiCharacter = 3
+            };
             t.AdjustToCompensateForValue(word);
 
-            Assert.AreEqual(word.Length + 3, t.Length);
+            Assert.AreEqual(word.Length + 3, t.CurrentEstimate.Width);
         }
     }
 }

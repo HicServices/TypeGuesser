@@ -14,7 +14,7 @@ namespace TypeGuesser.Deciders
             return TryParseVague(value);
         }
 
-        protected override bool IsAcceptableAsTypeImpl(string candidateString,DecimalSize sizeRecord)
+        protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize sizeRecord)
         {
             decimal? t = TryParseVague(candidateString);
 
@@ -26,7 +26,7 @@ namespace TypeGuesser.Deciders
 
             GetDecimalPlaces(t.Value, out before, out after);
 
-            sizeRecord.IncreaseTo(before,after);
+            sizeRecord.Size.IncreaseTo(before,after);
 
             //could be whole number with no decimal
             return true;

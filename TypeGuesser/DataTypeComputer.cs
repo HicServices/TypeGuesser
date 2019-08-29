@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Globalization;
 using System.Linq;
@@ -15,14 +16,14 @@ namespace TypeGuesser
     /// <para>DataTypeComputer will always use the most restrictive data type possible first and then fall back on weaker types as new values are seen that do not fit
     /// the guessed Type, ultimately falling back to varchar(x).</para>
     /// </summary>
-    public class DataTypeComputer
+    public class DataTypeComputer 
     {
         /// <summary>
         /// Normally when measuring the lengths of strings something like "It’s" would be 4 but for Oracle it needs extra width.  If this is
         /// non zero then when <see cref="AdjustToCompensateForValue(object)"/> is a string then any non standard characters will have this number
         /// added to the length predicted.
         /// </summary>
-        public int ExtraLengthPerNonAsciiCharacter { get; private set; }
+        public int ExtraLengthPerNonAsciiCharacter { get; set; }
 
         /// <summary>
         /// The minimum amount of characters required to represent date values stored in the database when issuing ALTER statement to convert
@@ -30,21 +31,17 @@ namespace TypeGuesser
         /// </summary>
         public const int MinimumLengthRequiredForDateStringRepresentation = 27;
 
-        public Type CurrentEstimate { get; set; }
-        
-        public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
+        public DatabaseTypeRequest CurrentEstimate { get; set; }
 
-        private readonly TypeDeciderFactory _typeDeciders;
-        
-        private int _stringLength;
+        /// <summary>
+        /// The culture to use for type deciders, determines what symbol decimal place is etc
+        /// </summary>
+        public CultureInfo Culture {
+            set => _typeDeciders  = new TypeDeciderFactory(value);
+        } 
 
-        public int Length
-        {
-            get { return Math.Max(_stringLength, DecimalSize.ToStringLength()); }
-        }
+        private TypeDeciderFactory _typeDeciders;
         
-        public DecimalSize DecimalSize = new DecimalSize();
-
         /// <summary>
         /// Indicates whether characters have been seen in strings which require non ASCII representation.  If this is true
         /// then nvarchar instead of varchar should be created.
@@ -63,109 +60,30 @@ namespace TypeGuesser
         /// <summary>
         /// Creates a new DataType 
         /// </summary>
-        /// <param name="minimumLengthToMakeCharacterFields"></param>
-        public DataTypeComputer(int minimumLengthToMakeCharacterFields)
-        {
-            _stringLength = minimumLengthToMakeCharacterFields;
-
-            CurrentEstimate = DatabaseTypeRequest.PreferenceOrder[0];
-
-            _typeDeciders = new TypeDeciderFactory(Culture);
-        }
-
-        public DataTypeComputer():this(-1)
+        public DataTypeComputer():this(new DatabaseTypeRequest(DatabaseTypeRequest.PreferenceOrder[0]))
         {
             
         }
+
 
         /// <summary>
         /// Creates a new computer primed with the size of the given <paramref name="request"/>.
         /// </summary>
         /// <param name="request"></param>
-        public DataTypeComputer(DatabaseTypeRequest request): this(request.MaxWidthForStrings.HasValue? request.MaxWidthForStrings.Value:-1)
+        public DataTypeComputer(DatabaseTypeRequest request)
         {
-            CurrentEstimate = request.CSharpType;
-            if (request.DecimalPlacesBeforeAndAfter != null)
-                DecimalSize = request.DecimalPlacesBeforeAndAfter;
+            CurrentEstimate = request;
+            _typeDeciders = new TypeDeciderFactory(CultureInfo.CurrentCulture);
 
-            ThrowIfNotSupported(CurrentEstimate);
+            ThrowIfNotSupported(request.CSharpType);
         }
-        /// <summary>
-        /// Creates a new DataTypeComputer adjusted to compensate for all values in all rows of the supplied DataColumn
-        /// </summary>
-        /// <param name="column"></param>
-        public DataTypeComputer(DataColumn column):this(column,0)
+        
+        public void AdjustToCompensateForValues(DataColumn column)
         {
-            
-        }
-
-        /// <summary>
-        /// Creates a new computer primed with the size of the given <paramref name="request"/>.  Uses the provided
-        /// <paramref name="extraLengthPerNonAsciiCharacter"/>
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="extraLengthPerNonAsciiCharacter"></param>
-        public DataTypeComputer(DatabaseTypeRequest request, int extraLengthPerNonAsciiCharacter) : this(request)
-        {
-            ExtraLengthPerNonAsciiCharacter = extraLengthPerNonAsciiCharacter;
-        }
-
-        /// <summary>
-        /// Creates a new DataTypeComputer adjusted to compensate for all values in all rows of the supplied DataColumn.  Uses the
-        /// provided <paramref name="extraLengthPerNonAsciiCharacter"/>
-        /// </summary>
-        /// <param name="column"></param>
-        public DataTypeComputer(DataColumn column, int extraLengthPerNonAsciiCharacter) : this(-1)
-        {
-            ExtraLengthPerNonAsciiCharacter = extraLengthPerNonAsciiCharacter;
-
             var dt = column.Table;
             foreach (DataRow row in dt.Rows)
                 AdjustToCompensateForValue(row[column]);
         }
-
-        /// <summary>
-        /// Creates a new DataTypeComputer
-        /// </summary>
-        /// <param name="minimumLengthToMakeCharacterFields"></param>
-        /// <param name="extraLengthPerNonAsciiCharacter"></param>
-        public DataTypeComputer(int minimumLengthToMakeCharacterFields, int extraLengthPerNonAsciiCharacter):this(minimumLengthToMakeCharacterFields)
-        {
-            ExtraLengthPerNonAsciiCharacter = extraLengthPerNonAsciiCharacter;
-        }
-        /// <summary>
-        /// Creates a hydrated DataTypeComputer  for when you want to clone an existing one or otherwise make up a DataTypeComputer for a known starting datatype
-        /// (See TypeTranslater.GetDataTypeComputerFor)
-        /// </summary>
-        /// <param name="currentEstimatedType"></param>
-        /// <param name="decimalSize"></param>
-        /// <param name="lengthIfString"></param>
-        public DataTypeComputer(Type currentEstimatedType, DecimalSize decimalSize, int lengthIfString):this(currentEstimatedType, decimalSize,lengthIfString,0)
-        {
-            
-        }
-
-
-        /// <summary>
-        /// Creates a hydrated DataTypeComputer  for when you want to clone an existing one or otherwise make up a DataTypeComputer for a known starting datatype
-        /// (See TypeTranslater.GetDataTypeComputerFor)
-        /// </summary>
-        /// <param name="currentEstimatedType"></param>
-        /// <param name="decimalSize"></param>
-        /// <param name="lengthIfString"></param>
-        public DataTypeComputer(Type currentEstimatedType, DecimalSize decimalSize, int lengthIfString, int extraLengthPerNonAsciiCharacter) : this(-1)
-        {
-            CurrentEstimate = currentEstimatedType;
-            ExtraLengthPerNonAsciiCharacter = extraLengthPerNonAsciiCharacter;
-
-            ThrowIfNotSupported(CurrentEstimate);
-
-            if (lengthIfString > 0)
-                _stringLength = lengthIfString;
-
-            DecimalSize = decimalSize ?? new DecimalSize();
-        }
-
 
         public void AdjustToCompensateForValue(object o)
         {
@@ -177,16 +95,16 @@ namespace TypeGuesser
 
             //if we have previously seen a hard typed value then we can't just change datatypes to something else!
             if (IsPrimedWithBonafideType)
-                if (CurrentEstimate != o.GetType())
+                if (CurrentEstimate.CSharpType != o.GetType())
                     throw new DataTypeComputerException(string.Format(
                         SR.DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues,
-                        o, o.GetType(), CurrentEstimate));
+                        o, o.GetType(), CurrentEstimate.CSharpType));
 
             var oToString = o.ToString();
             var oAsString = o as string;
 
             //we might need to fallback on a string later on, in this case we should always record the maximum length of input seen before even if it is acceptable as int, double, dates etc
-            _stringLength = Math.Max(Length, GetStringLength(oToString));
+            CurrentEstimate.Width = Math.Max(CurrentEstimate.Width??-1, GetStringLength(oToString));
 
             //if it's a string
             if (oAsString != null)
@@ -196,18 +114,18 @@ namespace TypeGuesser
                     return;
                 
                 //if we have already fallen back to string then just stick with it (theres no going back up the ladder)
-                if(CurrentEstimate == typeof(string))
+                if(CurrentEstimate.CSharpType == typeof(string))
                     return;
 
-                var result = _typeDeciders.Dictionary[CurrentEstimate].IsAcceptableAsType(oAsString, DecimalSize);
+                var result = _typeDeciders.Dictionary[CurrentEstimate.CSharpType].IsAcceptableAsType(oAsString, CurrentEstimate);
                 
                 //if the current estimate compatible
                 if (result)
                 {
-                    _validTypesSeen = _typeDeciders.Dictionary[CurrentEstimate].CompatibilityGroup;
+                    _validTypesSeen = _typeDeciders.Dictionary[CurrentEstimate.CSharpType].CompatibilityGroup;
 
-                    if (CurrentEstimate == typeof (DateTime))
-                        _stringLength = Math.Max(_stringLength, MinimumLengthRequiredForDateStringRepresentation);
+                    if (CurrentEstimate.CSharpType == typeof (DateTime))
+                        CurrentEstimate.Width = Math.Max(CurrentEstimate.Width??-1, MinimumLengthRequiredForDateStringRepresentation);
 
 
                     return;
@@ -222,19 +140,19 @@ namespace TypeGuesser
             else
             {
                 //if we ever made a decision about a string inputs then we won't accept hard typed objects now
-                if(_validTypesSeen != TypeCompatibilityGroup.None || CurrentEstimate == typeof(string))
+                if(_validTypesSeen != TypeCompatibilityGroup.None || CurrentEstimate.CSharpType == typeof(string))
                     throw new DataTypeComputerException(string.Format(SR.DataTypeComputer_AdjustToCompensateForValue_DataTypeComputerPassedMixedTypeValues,o,o.GetType(),CurrentEstimate));
 
                 //if we have yet to see a proper type
                 if (!IsPrimedWithBonafideType)
                 {
-                    CurrentEstimate = o.GetType();//get its type
+                    CurrentEstimate.CSharpType = o.GetType();//get its type
                     IsPrimedWithBonafideType = true;
                 }
 
                 //if we have a decider for this lets get it to tell us the decimal places (if any)
                 if (_typeDeciders.Dictionary.ContainsKey(o.GetType()))
-                    _typeDeciders.Dictionary[o.GetType()].IsAcceptableAsType(oToString, DecimalSize);
+                    _typeDeciders.Dictionary[o.GetType()].IsAcceptableAsType(oToString, CurrentEstimate);
             }
         }
 
@@ -258,11 +176,11 @@ namespace TypeGuesser
 
         private void ChangeEstimateToNext()
         {
-            int current = DatabaseTypeRequest.PreferenceOrder.IndexOf(CurrentEstimate);
+            int current = DatabaseTypeRequest.PreferenceOrder.IndexOf(CurrentEstimate.CSharpType);
             
             //if we have never seen any good data just try the next one
             if(_validTypesSeen == TypeCompatibilityGroup.None )
-                CurrentEstimate = DatabaseTypeRequest.PreferenceOrder[current + 1];
+                CurrentEstimate.CSharpType = DatabaseTypeRequest.PreferenceOrder[current + 1];
             else
             {
                 //we have seen some good data before, but we have seen something that doesn't fit with the CurrentEstimate so
@@ -272,28 +190,18 @@ namespace TypeGuesser
 
                 //if the next estimate is a string or we have previously accepted an exclusive decider (e.g. DateTime)
                 if (nextEstiamte == typeof (string) || _validTypesSeen == TypeCompatibilityGroup.Exclusive)
-                    CurrentEstimate = typeof (string); //then just go with string
+                    CurrentEstimate.CSharpType = typeof (string); //then just go with string
                 else
                 {
                     //if the next decider is in the same group as the previously used ones
                     if (_typeDeciders.Dictionary[nextEstiamte].CompatibilityGroup == _validTypesSeen)
-                        CurrentEstimate = nextEstiamte;
+                        CurrentEstimate.CSharpType = nextEstiamte;
                     else
-                        CurrentEstimate = typeof (string); //the next Type decider is in an incompatible category so just go directly to string
+                        CurrentEstimate.CSharpType = typeof (string); //the next Type decider is in an incompatible category so just go directly to string
                 }
             }
         }
         
-        public DatabaseTypeRequest GetTypeRequest()
-        {
-            return new DatabaseTypeRequest(
-                CurrentEstimate,
-                Length == -1 ? (int?) null : Length,
-                DecimalSize)
-            {
-                Unicode =  UseUnicode
-            };
-        }
 
         /// <summary>
         /// Returns true if the DataTypeComputer CurrentEstimate is considered to be an improvement on the DataColumn provided. Use only when you actually want to
@@ -308,7 +216,7 @@ namespace TypeGuesser
         {
             if(col.DataType == typeof(object) || col.DataType == typeof(string))
             {
-                int indexOfCurrentPreference = DatabaseTypeRequest.PreferenceOrder.IndexOf(CurrentEstimate);
+                int indexOfCurrentPreference = DatabaseTypeRequest.PreferenceOrder.IndexOf(CurrentEstimate.CSharpType);
                 int indexOfCurrentColumn = DatabaseTypeRequest.PreferenceOrder.IndexOf(typeof(string));
                 
                 //e.g. if current preference based on data is DateTime/integer and col is a string then we SHOULD downgrade
@@ -324,8 +232,8 @@ namespace TypeGuesser
             if (currentEstimate == typeof(string))
                 return;
 
-            if (!_typeDeciders.IsSupported(CurrentEstimate))
-                throw new NotSupportedException(string.Format(SR.DataTypeComputer_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_, CurrentEstimate));
+            if (!_typeDeciders.IsSupported(CurrentEstimate.CSharpType))
+                throw new NotSupportedException(string.Format(SR.DataTypeComputer_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_, CurrentEstimate.CSharpType));
         }
 
     }

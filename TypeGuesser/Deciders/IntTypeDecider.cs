@@ -14,13 +14,13 @@ namespace TypeGuesser.Deciders
             return System.Convert.ToInt32(value);
         }
 
-        protected override bool IsAcceptableAsTypeImpl(string candidateString, DecimalSize sizeRecord)
+        protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize sizeRecord)
         {
             try
             {
                 var t = System.Convert.ToInt32(candidateString);
                 
-                sizeRecord.IncreaseTo(t.ToString().Length);
+                sizeRecord.Size.IncreaseTo(t.ToString().Length);
 
                 return true;
             }
