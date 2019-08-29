@@ -8,8 +8,8 @@ namespace TypeGuesser
     /// </summary>
     public class DecimalSize
     {
-        public int? NumbersBeforeDecimalPlace;
-        public int? NumbersAfterDecimalPlace;
+        public int NumbersBeforeDecimalPlace;
+        public int NumbersAfterDecimalPlace;
 
         /// <summary>
         /// Creates a new empty instance
@@ -33,24 +33,17 @@ namespace TypeGuesser
         /// <summary>
         /// Returns true if both <see cref="NumbersAfterDecimalPlace"/> and <see cref="NumbersBeforeDecimalPlace"/> are null/zero
         /// </summary>
-        public bool IsEmpty
-        {
-            get
-            {
-                return Precision == 0;
-                
-            }
-        }
+        public bool IsEmpty => Precision == 0;
 
         /// <summary>
         /// Returns the sum of <see cref="NumbersBeforeDecimalPlace"/> and <see cref="NumbersAfterDecimalPlace"/>
         /// </summary>
-        public int Precision { get { return  (NumbersBeforeDecimalPlace??0) + (NumbersAfterDecimalPlace??0); } }
+        public int Precision => (NumbersBeforeDecimalPlace) + (NumbersAfterDecimalPlace);
 
         /// <summary>
         /// Returns the <see cref="NumbersAfterDecimalPlace"/>
         /// </summary>
-        public int Scale { get { return NumbersAfterDecimalPlace??0; } }
+        public int Scale => NumbersAfterDecimalPlace;
 
         /// <summary>
         /// Expands the instance to accomodate the new size (if expansion is required)
@@ -58,7 +51,7 @@ namespace TypeGuesser
         /// <param name="numbersBeforeDecimalPlace"></param>
         public void IncreaseTo(int numbersBeforeDecimalPlace)
         {
-            NumbersBeforeDecimalPlace = NumbersBeforeDecimalPlace == null ? numbersBeforeDecimalPlace : Math.Max(NumbersBeforeDecimalPlace.Value, numbersBeforeDecimalPlace);
+            NumbersBeforeDecimalPlace = Math.Max(NumbersBeforeDecimalPlace, numbersBeforeDecimalPlace);
         }
 
         /// <summary>
@@ -68,8 +61,8 @@ namespace TypeGuesser
         /// <param name="numbersAfterDecimalPlace"></param>
         public void IncreaseTo(int numbersBeforeDecimalPlace, int numbersAfterDecimalPlace)
         {
-            NumbersBeforeDecimalPlace = NumbersBeforeDecimalPlace == null ? numbersBeforeDecimalPlace : Math.Max(NumbersBeforeDecimalPlace.Value, numbersBeforeDecimalPlace);
-            NumbersAfterDecimalPlace = NumbersAfterDecimalPlace == null ? numbersAfterDecimalPlace : Math.Max(NumbersAfterDecimalPlace.Value, numbersAfterDecimalPlace);
+            NumbersBeforeDecimalPlace = Math.Max(NumbersBeforeDecimalPlace, numbersBeforeDecimalPlace);
+            NumbersAfterDecimalPlace = Math.Max(NumbersAfterDecimalPlace, numbersAfterDecimalPlace);
         }
 
         /// <summary>
@@ -78,12 +71,8 @@ namespace TypeGuesser
         /// <param name="other"></param>
         private void IncreaseTo(DecimalSize other)
         {
-
-            if (other.NumbersBeforeDecimalPlace != null)
-                NumbersBeforeDecimalPlace = NumbersBeforeDecimalPlace == null ? other.NumbersBeforeDecimalPlace : Math.Max(NumbersBeforeDecimalPlace.Value, other.NumbersBeforeDecimalPlace.Value);
-
-            if(other.NumbersAfterDecimalPlace != null)
-                NumbersAfterDecimalPlace = NumbersAfterDecimalPlace == null ? other.NumbersAfterDecimalPlace : Math.Max(NumbersAfterDecimalPlace.Value, other.NumbersAfterDecimalPlace.Value);
+            NumbersBeforeDecimalPlace = Math.Max(NumbersBeforeDecimalPlace, other.NumbersBeforeDecimalPlace);
+            NumbersAfterDecimalPlace = Math.Max(NumbersAfterDecimalPlace, other.NumbersAfterDecimalPlace);
         }
 
 
@@ -95,8 +84,8 @@ namespace TypeGuesser
         {
             int lengthRequired = 0;
 
-            lengthRequired += NumbersAfterDecimalPlace ?? 0;
-            lengthRequired += NumbersBeforeDecimalPlace ??0;
+            lengthRequired += NumbersAfterDecimalPlace;
+            lengthRequired += NumbersBeforeDecimalPlace;
 
             //if it has things after the decimal point
             if (Scale != 0)
@@ -130,7 +119,7 @@ namespace TypeGuesser
         #region Equality
         protected bool Equals(DecimalSize other)
         {
-            return (NumbersBeforeDecimalPlace??0) == (other.NumbersBeforeDecimalPlace??0) && (NumbersAfterDecimalPlace??0) == (other.NumbersAfterDecimalPlace??0);
+            return NumbersBeforeDecimalPlace == other.NumbersBeforeDecimalPlace && NumbersAfterDecimalPlace == other.NumbersAfterDecimalPlace;
         }
 
         public override bool Equals(object obj)

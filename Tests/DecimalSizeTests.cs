@@ -9,9 +9,9 @@ namespace Tests
         public void Test_DecimalSize_Empty()
         {
             var empty = new DecimalSize();
-
-            Assert.IsNull(empty.NumbersAfterDecimalPlace);
-            Assert.IsNull(empty.NumbersBeforeDecimalPlace);
+            
+            Assert.AreEqual(0,empty.NumbersAfterDecimalPlace);
+            Assert.AreEqual(0,empty.NumbersBeforeDecimalPlace);
 
             Assert.AreEqual(0,empty.Precision);
             Assert.AreEqual(0,empty.Scale);

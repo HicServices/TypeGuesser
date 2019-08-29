@@ -100,7 +100,7 @@ namespace Tests
             t.AdjustToCompensateForValue("12");
             
             Assert.AreEqual(typeof(int),t.Guess.CSharpType);
-            Assert.AreEqual(null, t.Guess.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
             Assert.AreEqual(2, t.Guess.Size.NumbersBeforeDecimalPlace);
 
             t.AdjustToCompensateForValue("0.1");
@@ -125,7 +125,7 @@ namespace Tests
             t.AdjustToCompensateForValue("2001-01-01");
 
             Assert.AreEqual(typeof(string), t.Guess.CSharpType);
-            Assert.AreEqual(null, t.Guess.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
             Assert.AreEqual(10, t.Guess.Width);
         }
 
@@ -429,8 +429,8 @@ namespace Tests
 
             Assert.AreEqual(typeof(bool), t.Guess.CSharpType);
 
-            Assert.AreEqual(null, t.Guess.Size.NumbersAfterDecimalPlace);
-            Assert.AreEqual(null, t.Guess.Size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(0, t.Guess.Size.NumbersBeforeDecimalPlace);
         }
 
         [Test]
@@ -467,8 +467,8 @@ namespace Tests
 
             Assert.AreEqual(typeof(byte[]), t.Guess.CSharpType);
 
-            Assert.AreEqual(null, t.Guess.Size.NumbersAfterDecimalPlace);
-            Assert.AreEqual(null, t.Guess.Size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(0, t.Guess.Size.NumbersBeforeDecimalPlace);
             Assert.IsTrue(t.Guess.Size.IsEmpty);
         }
 
@@ -512,12 +512,12 @@ namespace Tests
 
             t.AdjustToCompensateForValue("1.1");
             Assert.AreEqual(typeof(decimal),t.Guess.CSharpType);
-            Assert.AreEqual(6,t.Guess.Size.Precision);
+            Assert.AreEqual(5,t.Guess.Size.Precision);
             Assert.AreEqual(1,t.Guess.Size.Scale);
             
             t.AdjustToCompensateForValue("A");
             Assert.AreEqual(typeof(string),t.Guess.CSharpType);
-            Assert.AreEqual(7,t.Guess.Width);
+            Assert.AreEqual(6,t.Guess.Width);
         }
 
         [Test]
