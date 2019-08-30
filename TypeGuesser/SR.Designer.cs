@@ -126,25 +126,5 @@ namespace TypeGuesser {
                         "rStrings", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No CSharp type mapping exists for SQL type &apos;{0}&apos;. TypeTranslater was &apos;{1}&apos;).
-        /// </summary>
-        internal static string TypeTranslater_GetCSharpTypeForSQLDBType_No_CSharp_type_mapping_exists_for_SQL_type___0____TypeTranslater_was___1___ {
-            get {
-                return ResourceManager.GetString("TypeTranslater_GetCSharpTypeForSQLDBType_No_CSharp_type_mapping_exists_for_SQL_ty" +
-                        "pe___0____TypeTranslater_was___1___", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unsure what SQL type to use for CSharp Type &apos;{0}&apos;.  TypeTranslater was &apos;{1}&apos;.
-        /// </summary>
-        internal static string TypeTranslater_GetSQLDBTypeForCSharpType_Unsure_what_SQL_type_to_use_for_CSharp_Type___0_____TypeTranslater_was___1__ {
-            get {
-                return ResourceManager.GetString("TypeTranslater_GetSQLDBTypeForCSharpType_Unsure_what_SQL_type_to_use_for_CSharp_T" +
-                        "ype___0_____TypeTranslater_was___1__", resourceCulture);
-            }
-        }
     }
 }

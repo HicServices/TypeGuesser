@@ -4,16 +4,14 @@ using System.Collections.ObjectModel;
 namespace TypeGuesser
 {
     /// <summary>
-    /// Describes a cross platform database field type you want created including maximum width for string based columns and precision/scale for decimals.
-    /// 
-    /// <para>See ITypeTranslater to see how a DatabaseTypeRequest is turned into the proprietary string e.g. A DatabaseTypeRequest with CSharpType = typeof(DateTime)
-    /// is translated into 'datetime2' in Microsoft SQL Server but 'datetime' in MySql server.</para>
+    /// Describes a cross platform database field type you want created including maximum width for string based columns and precision/scale for
+    /// decimals.
     /// </summary>
     public class DatabaseTypeRequest : IDataTypeSize
     {
         /// <summary>
-        /// Any input string of unknown Type will be assignable to one of the following C# data types.  The order denotes system wide which data types to try 
-        /// converting the string into in order of preference.  For the implementation of this see <see cref="Guesser"/>.
+        /// Any input string of unknown Type will be assignable to one of the following C# data types.  The order denotes system wide which
+        /// data types to try  converting the string into in order of preference.  For the implementation of this see <see cref="Guesser"/>.
         /// </summary>
         public static readonly ReadOnlyCollection<Type> PreferenceOrder = new ReadOnlyCollection<Type>(new Type[]
         {
@@ -29,16 +27,27 @@ namespace TypeGuesser
 
         private int? _maxWidthForStrings;
 
+        /// <summary>
+        /// The <see cref="System.Type"/> which this metadata describes.
+        /// </summary>
         public Type CSharpType { get; set; }
+
+        /// <summary>
+        /// The <see cref="DecimalSize"/> of the largest scale / precision you want to be able to represent.  This is valid even if <see cref="CSharpType"/>
+        /// is not a decimal (e.g. int).
+        /// </summary>
         public DecimalSize Size { get; set; }
 
+        /// <summary>
+        /// The width in characters of the longest string representation of data you want to support.  This is valid even if <see cref="CSharpType"/>
+        /// is not a string (E.g. a decimal).
+        /// </summary>
         public int? Width
         {
             get => _maxWidthForStrings.HasValue ? Math.Max(_maxWidthForStrings.Value, Size.ToStringLength()): (int?)null;
             set => _maxWidthForStrings = value;
         }
-
-
+        
         /// <summary>
         /// Only applies when <see cref="CSharpType"/> is <see cref="string"/>.  True indicates that the column should be
         /// nvarchar instead of varchar.
@@ -108,7 +117,6 @@ namespace TypeGuesser
                 throw new NotSupportedException(string.Format(SR.DatabaseTypeRequest_Max_Could_not_combine_Types___0___and___1___because_they_were_of_differing_Types_and_neither_Type_appeared_in_the_PreferenceOrder, first.CSharpType, second.CSharpType));
 
             //Types are the same, so max the sub elements (width, DecimalSize etc)
-
             int? newMaxWidthIfStrings = first.Width;
 
             //if first doesn't have a max string width
@@ -126,6 +134,5 @@ namespace TypeGuesser
                 {Unicode = first.Unicode || second.Unicode};
 
         }
-
     }
 }

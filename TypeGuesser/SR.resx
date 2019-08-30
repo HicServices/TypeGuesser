@@ -138,10 +138,4 @@
   <data name="Guesser_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_" xml:space="preserve">
     <value>No Type Decider exists for Type:{0}</value>
   </data>
-  <data name="TypeTranslater_GetSQLDBTypeForCSharpType_Unsure_what_SQL_type_to_use_for_CSharp_Type___0_____TypeTranslater_was___1__" xml:space="preserve">
-    <value>Unsure what SQL type to use for CSharp Type '{0}'.  TypeTranslater was '{1}'</value>
-  </data>
-  <data name="TypeTranslater_GetCSharpTypeForSQLDBType_No_CSharp_type_mapping_exists_for_SQL_type___0____TypeTranslater_was___1___" xml:space="preserve">
-    <value>No CSharp type mapping exists for SQL type '{0}'. TypeTranslater was '{1}')</value>
-  </data>
 </root>
