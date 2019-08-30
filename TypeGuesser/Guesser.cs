@@ -43,11 +43,6 @@ namespace TypeGuesser
 
         private TypeDeciderFactory _typeDeciders;
         
-        /// <summary>
-        /// Indicates whether characters have been seen in strings which require non ASCII representation.  If this is true
-        /// then nvarchar instead of varchar should be created.
-        /// </summary>
-        public bool UseUnicode = false;
 
         public bool IsPrimedWithBonafideType = false;
 
@@ -167,7 +162,7 @@ namespace TypeGuesser
             var nonAscii = oToString.Count(IsNotAscii);
 
             if(nonAscii > 0)
-                UseUnicode = true;
+                Guess.Unicode = true;
 
             if(ExtraLengthPerNonAsciiCharacter == 0)
                 return oToString.Length;

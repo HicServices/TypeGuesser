@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed Unicode flag not being set in `Guesser.Guess`
+
 ## [0.0.1] - 2019-08-29
 
 ### Added

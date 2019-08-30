@@ -709,7 +709,7 @@ namespace Tests
             t.AdjustToCompensateForValue(word);
             
             //guesser should have picked up that it needs unicode
-            Assert.IsTrue(t.UseUnicode);
+            Assert.IsTrue(t.Guess.Unicode);
 
             //in most DBMS
             Assert.AreEqual(t.Guess.Width,word.Length);
