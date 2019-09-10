@@ -3,13 +3,20 @@ using System.Data.SqlTypes;
 using System.Globalization;
 using System.Xml;
 using TB.ComponentModel;
+using System.Linq;
 
 namespace TypeGuesser.Deciders
 {
     public class DecimalTypeDecider : DecideTypesForStrings<decimal>
     {
+        /// <summary>
+        /// The culture specific symbol for decimal point e.g. '.' (in uk english)
+        /// </summary>
+        char decimalIndicator;
+
         public DecimalTypeDecider(CultureInfo culture) : base(culture,TypeCompatibilityGroup.Numerical,typeof(decimal), typeof(float) , typeof(double))
         {
+            decimalIndicator = Culture.NumberFormat.NumberDecimalSeparator.Last();
         }
         
         protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize sizeRecord)
@@ -31,16 +38,25 @@ namespace TypeGuesser.Deciders
             if (s.IndexOf(Culture.NumberFormat.NumberDecimalSeparator) == -1)
                 return s;
 
+            
             int trim = 0;
+            bool foundOnlyZeros = true;
 
             //step back from the end of the string
             for (int i = s.Length - 1; i >= 0; i--)
                 if (s[i] == '0')
-                    trim++;
-                else if (s[i] == 'E' || s[i] == 'e') //don't trim if there are exponents
+                {
+                    //if we have only found zeros up till now
+                    if (foundOnlyZeros)
+                        trim++; //we can trim
+                }
+                else
+                if (s[i] == decimalIndicator) //we have reached the decimal point, break out and do the trim
+                    break;
+                else if (!(s[i] > '0' && s[i] <= '9')) //we found something odd before the decimal point e.g. the exponent character
                     return s;
                 else
-                    break;  //non zero digit
+                    foundOnlyZeros = false; //we founda  non zero so we should stop trimming (but don't break incase we find a exponent or something else later on)
 
             if (trim > 0)
                 return s.Substring(0, s.Length - trim);

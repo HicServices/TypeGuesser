@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Improved performance of guessing decimals
-
+- Decimal guesser trims trailing zeros (after NumberDecimalSeparator) unless scientific notation is being used
 
 ## [0.0.2] - 2019-08-30
 

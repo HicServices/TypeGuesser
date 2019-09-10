@@ -42,6 +42,8 @@ namespace Tests
         [TestCase(".t."  ,typeof(bool),"en-us",3,0,0,true)]
         [TestCase(".f."  ,typeof(bool),"en-us",3,0,0,false)]
         [TestCase("5000"  ,typeof(int),"en-us",4,4,0,5000)]
+        [TestCase("5000.010", typeof(decimal), "en-us", 8, 4, 2, 5000.01)]
+        [TestCase("5,123.001e-10", typeof(decimal), "en-us", 14, 0,13, 0.0000005123001)] //<=it's string length is 14 because this would be the string value we would need to represent
         [TestCase("5,000"  ,typeof(int),"en-us",5,4,0,5000)]
         [TestCase("5,000.01"  ,typeof(decimal),"en-us",8,4,2,5000.01)]
         [TestCase("5,000.01000"  ,typeof(decimal),"en-us",11,4,2,5000.01)]
