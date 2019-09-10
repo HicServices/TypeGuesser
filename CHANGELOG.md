@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3] - 2019-09-10
+
 ### Changed
 - Improved performance of guessing decimals
 - Decimal guesser trims trailing zeros (after NumberDecimalSeparator) unless scientific notation is being used
@@ -22,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial port of content from [FAnsiSql](https://github.com/HicServices/FAnsiSql)
 
-[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/0.0.2...develop
+[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/0.0.3...develop
+[0.0.3]: https://github.com/HicServices/TypeGuesser/compare/0.0.1...0.0.3
 [0.0.2]: https://github.com/HicServices/TypeGuesser/compare/0.0.1...0.0.2
 [0.0.1]: https://github.com/HicServices/TypeGuesser/compare/88b9b5d6622673eadc13c342f95c2e69ef760995...0.0.1
