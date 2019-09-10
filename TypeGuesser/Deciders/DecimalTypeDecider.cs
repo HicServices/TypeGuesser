@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlTypes;
 using System.Globalization;
 using System.Xml;
 using TB.ComponentModel;
@@ -13,45 +14,38 @@ namespace TypeGuesser.Deciders
         
         protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize sizeRecord)
         {
-            if (!candidateString.IsConvertibleTo(out decimal t,Culture))
+            candidateString = TrimTrailingZeros(candidateString);
+
+            if (!decimal.TryParse(candidateString, NumberStyles.Any, Culture, out var t))
                 return false;
+            
+            var dec = ((SqlDecimal) t);
+            sizeRecord.Size.IncreaseTo(dec.Precision - dec.Scale,dec.Scale);
 
-            int before;
-            int after;
-
-            GetDecimalPlaces(t, out before, out after);
-
-            sizeRecord.Size.IncreaseTo(before,after);
-
-            //could be whole number with no decimal
             return true;
-        } 
+        }
 
-
-        private void GetDecimalPlaces(decimal value, out int before, out int after)
+        private string TrimTrailingZeros(string s)
         {
-            decimal destructive = Math.Abs(value);
+            //don't trim 0 unless theres a decimal point e.g. don't trim from 1,000
+            if (s.IndexOf(Culture.NumberFormat.NumberDecimalSeparator) == -1)
+                return s;
 
-            if (value == 0)
-            {
-                before = 1;
-                after = 0;
-                return;
-            }
+            int trim = 0;
 
-            before = 0;
-            while (destructive >= 1)
-            {
-                destructive = destructive / 10; //divide by 10
-                destructive = decimal.Floor(destructive);//get rid of any overflowing decimal places 
-                before++;
-            }
+            //step back from the end of the string
+            for (int i = s.Length - 1; i >= 0; i--)
+                if (s[i] == '0')
+                    trim++;
+                else if (s[i] == 'E' || s[i] == 'e') //don't trim if there are exponents
+                    return s;
+                else
+                    break;  //non zero digit
 
-            //always leave at least 1 before so that we can store 0s
-            before = Math.Max(before, 1);
+            if (trim > 0)
+                return s.Substring(0, s.Length - trim);
 
-            //as if by magic... apparently
-            after = BitConverter.GetBytes(decimal.GetBits(value)[3])[2];
+            return s;
         }
     }
 }

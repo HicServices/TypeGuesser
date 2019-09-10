@@ -16,47 +16,78 @@ namespace Tests
     public class GuesserTests
     {
 
-        [TestCase("5",typeof(int),"en-us")]
-        [TestCase("true",typeof(bool),"en-us")]
-        [TestCase("false",typeof(bool),"en-us")]
-        [TestCase("0"    ,typeof(bool),"en-us")]
-        [TestCase("1"    ,typeof(bool),"en-us")]
-        [TestCase("j"    ,typeof(bool),"en-us")]
-        [TestCase("y"    ,typeof(bool),"en-us")]
-        [TestCase("n"    ,typeof(bool),"en-us")]
-        [TestCase("0"    ,typeof(bool),"en-us")]
-        [TestCase("1"    ,typeof(bool),"en-us")]
-        [TestCase("T"    ,typeof(bool),"en-us")]
-        [TestCase("F"    ,typeof(bool),"en-us")]
-        [TestCase("x"    ,typeof(string),"en-us")]
-        [TestCase("100"  ,typeof(int),"en-us")]
-        [TestCase("255"  ,typeof(int),"en-us")]
-        [TestCase("abc"  ,typeof(string),"en-us")]
-        [TestCase("ja"   ,typeof(bool),"de-de")]
-        [TestCase("yes"  ,typeof(bool),"en-us")]
-        [TestCase("n"    ,typeof(bool),"en-us")]
-        [TestCase("nein" ,typeof(bool),"en-us")]
-        [TestCase("no"   ,typeof(bool),"en-us")]
-        [TestCase("t"    ,typeof(bool),"en-us")]
-        [TestCase("f"    ,typeof(bool),"en-us")]
-        [TestCase(".t."  ,typeof(bool),"en-us")]
-        [TestCase(".f."  ,typeof(bool),"en-us")]
-        public void Test_OneString_IsType(string guessFor, Type expectedGuess, string culture)
+        [TestCase("5",typeof(int),"en-us",1,1,0,5)]
+        [TestCase("true",typeof(bool),"en-us",4,0,0,true)]
+        [TestCase("false",typeof(bool),"en-us",5,0,0,false)]
+        [TestCase("0"    ,typeof(bool),"en-us",1,0,0,false)]
+        [TestCase("1"    ,typeof(bool),"en-us",1,0,00,true)]
+        [TestCase("j"    ,typeof(bool),"en-us",1,0,0,true)]
+        [TestCase("y"    ,typeof(bool),"en-us",1,0,0,true)]
+        [TestCase("n"    ,typeof(bool),"en-us",1,0,0,false)]
+        [TestCase("0"    ,typeof(bool),"en-us",1,0,0,false)]
+        [TestCase("1"    ,typeof(bool),"en-us",1,0,0,true)]
+        [TestCase("T"    ,typeof(bool),"en-us",1,0,0,true)]
+        [TestCase("F"    ,typeof(bool),"en-us",1,0,0,false)]
+        [TestCase("x"    ,typeof(string),"en-us",1,0,0,"x")]
+        [TestCase("100"  ,typeof(int),"en-us",3,3,0,100)]
+        [TestCase("255"  ,typeof(int),"en-us",3,3,0,255)]
+        [TestCase("abc"  ,typeof(string),"en-us",3,0,0,"abc")]
+        [TestCase("ja"   ,typeof(bool),"de-de",2,0,0,true)]
+        [TestCase("yes"  ,typeof(bool),"en-us",3,0,0,true)]
+        [TestCase("n"    ,typeof(bool),"en-us",1,0,0,false)]
+        [TestCase("nein" ,typeof(bool),"en-us",4,0,0,false)]
+        [TestCase("no"   ,typeof(bool),"en-us",2,0,0,false)]
+        [TestCase("t"    ,typeof(bool),"en-us",1,0,0,true)]
+        [TestCase("f"    ,typeof(bool),"en-us",1,0,0,false)]
+        [TestCase(".t."  ,typeof(bool),"en-us",3,0,0,true)]
+        [TestCase(".f."  ,typeof(bool),"en-us",3,0,0,false)]
+        [TestCase("5000"  ,typeof(int),"en-us",4,4,0,5000)]
+        [TestCase("5,000"  ,typeof(int),"en-us",5,4,0,5000)]
+        [TestCase("5,000.01"  ,typeof(decimal),"en-us",8,4,2,5000.01)]
+        [TestCase("5,000.01000"  ,typeof(decimal),"en-us",11,4,2,5000.01)]
+        [TestCase("5.000,01000", typeof(decimal), "de-de", 11, 4, 2,5000.01)] //germans swap commas and dots
+        [TestCase("5000010,000", typeof(int), "de-de", 11, 7, 0, 5000010)] //germans swap commas and dots
+        [TestCase("5.000.000", typeof(string), "en-us", 9, 0, 0, "5.000.000")] //germans swap commas and dots so this is an illegal number
+        [TestCase("5,000,000", typeof(string), "de-de", 9, 0, 0, "5,000,000")] //germans swap commas and dots so this is an illegal number
+        [TestCase("5,000", typeof(int), "de-de", 5, 1,0,5)] //germans swap commas and dots
+
+        public void Test_OneString_IsType(string guessFor, Type expectedGuess, string culture,int expectedStringLength, int expectedBefore,int expectedAfter,object expectedParseValue)
         {
             var cultureInfo = new CultureInfo(culture);
             var guesser = new Guesser(){Culture = cultureInfo};
             guesser.AdjustToCompensateForValue(guessFor);
-            Assert.AreEqual(expectedGuess,guesser.Guess.CSharpType);
+            Assert.AreEqual(expectedGuess,guesser.Guess.CSharpType,"Guessed Type did not match");
+            Assert.AreEqual(expectedStringLength,guesser.Guess.Width,"String length guessed didn't match");
+            Assert.AreEqual(expectedBefore,guesser.Guess.Size.NumbersBeforeDecimalPlace,"BeforeDecimalPlace didn't match");
+            Assert.AreEqual(expectedAfter,guesser.Guess.Size.NumbersAfterDecimalPlace,"AfterDecimalPlace didn't match");
+
+
+            TypeDeciderFactory factory = new TypeDeciderFactory(cultureInfo);
+            
+            if (factory.IsSupported(guesser.Guess.CSharpType))
+                Assert.AreEqual(expectedParseValue, factory.Create(guesser.Guess.CSharpType).Parse(guessFor));
+            else
+                Assert.AreEqual(expectedParseValue, guessFor);
+            
+            
         }
 
-        [TestCase(new []{"5","10"},typeof(int),"en-us")]
-        [TestCase(new []{"5","10.1"},typeof(decimal),"en-us")]
-        public void Test_ManyString_IsType(string[] guessFor, Type expectedGuess, string culture)
+        [TestCase("en-us",new []{"5","10"},
+            typeof(int),2,2,0)]
+        [TestCase("en-us", new []{"5","10.1"},
+            typeof(decimal),4,2,1)]
+        [TestCase("en-us", new []{"5.1","5.000000000"},
+            typeof(decimal),11,1,1)]
+        public void Test_ManyString_IsType(string culture, string[] guessFor, Type expectedGuess,int expectedStringLength, int expectedBefore,int expectedAfter)
         {
             var cultureInfo = new CultureInfo(culture);
             var guesser = new Guesser(){Culture = cultureInfo};
             guesser.AdjustToCompensateForValues(guessFor);
-            Assert.AreEqual(expectedGuess,guesser.Guess.CSharpType);
+
+            Assert.AreEqual(expectedGuess,guesser.Guess.CSharpType,"Guessed Type did not match");
+            Assert.AreEqual(expectedStringLength,guesser.Guess.Width,"String length guessed didn't match");
+            Assert.AreEqual(expectedBefore,guesser.Guess.Size.NumbersBeforeDecimalPlace,"BeforeDecimalPlace didn't match");
+            Assert.AreEqual(expectedAfter,guesser.Guess.Size.NumbersAfterDecimalPlace,"AfterDecimalPlace didn't match");
         }
 
         [Test]
@@ -696,7 +727,7 @@ namespace Tests
             Assert.AreEqual(typeof(decimal), t.Guess.CSharpType);
             
             //there is always 1 decimal place before point in order to allow for changing to string later on and retain a single leading 0.
-            Assert.AreEqual(1, t.Guess.Size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(0, t.Guess.Size.NumbersBeforeDecimalPlace);
             Assert.AreEqual(19, t.Guess.Size.NumbersAfterDecimalPlace);
         }
 
