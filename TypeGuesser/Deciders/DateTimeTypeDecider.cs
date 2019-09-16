@@ -13,8 +13,19 @@ namespace TypeGuesser.Deciders
         private readonly TimeSpanTypeDecider _timeSpanTypeDecider;
         private readonly DecimalTypeDecider _decimalChecker;
 
+        /// <summary>
+        /// Array of all supported DateTime formats in which the Month appears before the Day e.g. e.g. "MMM-dd-yy" ("Sep-16-19")
+        /// </summary>
         public static string[] DateFormatsMD;
+
+        /// <summary>
+        /// Array of all supported DateTime formats in which the Day appears before the Month e.g. "dd-MMM-yy" ("16-Sep-19")
+        /// </summary>
         public static string[] DateFormatsDM;
+
+        /// <summary>
+        /// Array of all supported Time formats e.g. "h:mm:ss tt" ("9:34:39 AM")
+        /// </summary>
         public static string[] TimeFormats;
         
         string[] _dateFormatToUse;
@@ -145,17 +156,23 @@ namespace TypeGuesser.Deciders
             ":"
         };
 
+        /// <summary>
+        /// Creates a new instance for detecting/parsing <see cref="DateTime"/> strings according to the <paramref name="cultureInfo"/>
+        /// </summary>
+        /// <param name="cultureInfo"></param>
         public DateTimeTypeDecider(CultureInfo cultureInfo) : base(cultureInfo,TypeCompatibilityGroup.Exclusive, typeof(DateTime))
         {
             _timeSpanTypeDecider = new TimeSpanTypeDecider(cultureInfo);
             _decimalChecker = new DecimalTypeDecider(cultureInfo);
         }
 
+        /// <inheritdoc/>
         protected override IDecideTypesForStrings CloneImpl(CultureInfo culture)
         {
             return new DateTimeTypeDecider(culture);
         }
 
+        /// <inheritdoc/>
         protected override object ParseImpl(string value)
         {
             if (!TryBruteParse(value, out DateTime dt))
@@ -192,6 +209,7 @@ namespace TypeGuesser.Deciders
                 _dateFormatToUse = DateFormatsDM;
         }
 
+        /// <inheritdoc/>
         protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize sizeRecord)
         {
             //if it's a float then it isn't a date is it! thanks C# for thinking 1.1 is the first of January

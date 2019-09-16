@@ -69,11 +69,17 @@ namespace TypeGuesser
         }
 
         #region Equality
+        /// <summary>
+        /// Property based equality
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         protected bool Equals(DatabaseTypeRequest other)
         {
             return Equals(CSharpType, other.CSharpType) && Width == other.Width && Equals(Size, other.Size) && Unicode == other.Unicode;
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             if (obj is null) return false;
@@ -82,6 +88,7 @@ namespace TypeGuesser
             return Equals((DatabaseTypeRequest) obj);
         }
 
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             unchecked
@@ -93,17 +100,37 @@ namespace TypeGuesser
             }
         }
 
+        /// <summary>
+        /// Overridden operator for <see cref="Equals(TypeGuesser.DatabaseTypeRequest)"/>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator ==(DatabaseTypeRequest left, DatabaseTypeRequest right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Overridden operator for <see cref="Equals(TypeGuesser.DatabaseTypeRequest)"/>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator !=(DatabaseTypeRequest left, DatabaseTypeRequest right)
         {
             return !Equals(left, right);
         }
         #endregion
 
+        /// <summary>
+        /// Returns a <see cref="DatabaseTypeRequest"/> in which the <see cref="Width"/> etc are large enough to accomodate
+        /// both <paramref name="first" /> and <paramref name="second" />.  This may be a new instance or it may be <paramref name="first" />
+        /// or <paramref name="second" /> (if one is already big enough to encompass the other).
+        /// </summary>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <returns></returns>
         public static DatabaseTypeRequest Max(DatabaseTypeRequest first, DatabaseTypeRequest second)
         {
             //if types differ

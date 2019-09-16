@@ -7,23 +7,32 @@ using System.Linq;
 
 namespace TypeGuesser.Deciders
 {
+    /// <summary>
+    /// Guesses whether strings are <see cref="decimal"/> and handles parsing approved strings according to the <see cref="DecideTypesForStrings{T}.Culture"/>
+    /// </summary>
     public class DecimalTypeDecider : DecideTypesForStrings<decimal>
     {
         /// <summary>
         /// The culture specific symbol for decimal point e.g. '.' (in uk english)
         /// </summary>
-        char decimalIndicator;
+        readonly char _decimalIndicator;
 
+        /// <summary>
+        /// Creates new instance that recognizes strings with a decimal point representation
+        /// </summary>
+        /// <param name="culture"></param>
         public DecimalTypeDecider(CultureInfo culture) : base(culture,TypeCompatibilityGroup.Numerical,typeof(decimal), typeof(float) , typeof(double))
         {
-            decimalIndicator = Culture.NumberFormat.NumberDecimalSeparator.Last();
+            _decimalIndicator = Culture.NumberFormat.NumberDecimalSeparator.Last();
         }
 
+        /// <inheritdoc/>
         protected override IDecideTypesForStrings CloneImpl(CultureInfo culture)
         {
             return new DecimalTypeDecider(culture);
         }
 
+        /// <inheritdoc/>
         protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize sizeRecord)
         {
             candidateString = TrimTrailingZeros(candidateString);
@@ -56,7 +65,7 @@ namespace TypeGuesser.Deciders
                         trim++; //we can trim
                 }
                 else
-                if (s[i] == decimalIndicator) //we have reached the decimal point, break out and do the trim
+                if (s[i] == _decimalIndicator) //we have reached the decimal point, break out and do the trim
                     break;
                 else if (!(s[i] > '0' && s[i] <= '9')) //we found something odd before the decimal point e.g. the exponent character
                     return s;

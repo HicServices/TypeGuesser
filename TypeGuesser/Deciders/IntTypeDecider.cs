@@ -9,15 +9,21 @@ namespace TypeGuesser.Deciders
     /// </summary>
     public class IntTypeDecider : DecideTypesForStrings<int>
     {
+        /// <summary>
+        /// Creates a new instance for recognizing whole numbers in string values
+        /// </summary>
+        /// <param name="culture"></param>
         public IntTypeDecider(CultureInfo culture) : base(culture,TypeCompatibilityGroup.Numerical, typeof(Int16) , typeof(Int32), typeof(Int64),typeof(byte))
         {
         }
 
+        /// <inheritdoc/>
         protected override IDecideTypesForStrings CloneImpl(CultureInfo culture)
         {
             return new IntTypeDecider(culture);
         }
 
+        /// <inheritdoc/>
         protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize sizeRecord)
         {
             if (!candidateString.IsConvertibleTo(out int i, Culture))

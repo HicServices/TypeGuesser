@@ -124,11 +124,18 @@ namespace TypeGuesser
         }
 
         #region Equality
+
+        /// <summary>
+        /// Property based equality
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         protected bool Equals(DecimalSize other)
         {
             return NumbersBeforeDecimalPlace == other.NumbersBeforeDecimalPlace && NumbersAfterDecimalPlace == other.NumbersAfterDecimalPlace;
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             if (obj is null) return false;
@@ -137,6 +144,7 @@ namespace TypeGuesser
             return Equals((DecimalSize)obj);
         }
 
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             unchecked

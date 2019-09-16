@@ -6,7 +6,7 @@ namespace TypeGuesser.Deciders
 {
     /// <summary>
     /// Class responsible for deciding whether a given string representation is likely to be for a given C# Type e.g. 
-    /// "2001-01-01" is likley to be a date.
+    /// "2001-01-01" is likely to be a date.
     /// 
     /// <para>Each IDecideTypesForStrings should be for a single Type although different sizes is allowed e.g. Int16, Int32, Int64</para>
     /// 
@@ -25,7 +25,7 @@ namespace TypeGuesser.Deciders
         HashSet<Type> TypesSupported { get; }
 
         /// <summary>
-        /// Change behaviour of deciders
+        /// Controls ambiguous parse behaviour e.g. whether "Y" should be interpreted as True or not
         /// </summary>
         GuessSettings Settings { get; set; }
 

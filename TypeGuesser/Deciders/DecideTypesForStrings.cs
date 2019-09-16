@@ -6,12 +6,22 @@ using TB.ComponentModel;
 
 namespace TypeGuesser.Deciders
 {
+    /// <summary>
+    /// Guesses whether strings are <see cref="DateTime"/> and handles parsing approved strings according to the <see cref="DecideTypesForStrings{T}.Culture"/>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     {
+        /// <inheritdoc/>
         public GuessSettings Settings { get; set; }
 
+        /// <inheritdoc/>
         public virtual CultureInfo Culture { get; protected set; }
+
+        /// <inheritdoc/>
         public TypeCompatibilityGroup CompatibilityGroup { get; private set; }
+
+        /// <inheritdoc/>
         public HashSet<Type> TypesSupported { get; private set; }
 
         /// <summary>
@@ -27,6 +37,12 @@ namespace TypeGuesser.Deciders
         /// </summary>
         readonly Regex zeroPrefixedNumber = new Regex(@"^\s*-?0+[1-9]+\.?[0-9]*\s*$");
 
+        /// <summary>
+        /// Determines behaviour of abstract base.  Call from derived classes to indicate what inter compatible Types you support parsing into / guessing
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <param name="compatibilityGroup">How your Type interacts with other Guessers, e.g. can you fallback from one to another</param>
+        /// <param name="typesSupported">All the Types your guesser supports e.g. multiple sizes of int (int32, int16 etc).  These should not overlap with other guessers in the app domain</param>
         protected DecideTypesForStrings(CultureInfo culture, TypeCompatibilityGroup compatibilityGroup,params Type[] typesSupported)
         {
             Culture = culture;
@@ -41,6 +57,7 @@ namespace TypeGuesser.Deciders
             TypesSupported = new HashSet<Type>(typesSupported);
         }
 
+        /// <inheritdoc/>
         public bool IsAcceptableAsType(string candidateString,IDataTypeSize size)
         {
             //we must preserve leading zeroes if its not actually 0 -- if they have 010101 then we have to use string but if they have just 0 we can use decimal
@@ -50,6 +67,7 @@ namespace TypeGuesser.Deciders
             return IsAcceptableAsTypeImpl(candidateString, size);
         }
 
+        /// <inheritdoc/>
         public object Parse(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -64,6 +82,7 @@ namespace TypeGuesser.Deciders
             }            
         }
 
+        /// <inheritdoc/>
         public IDecideTypesForStrings Clone()
         {
             IDecideTypesForStrings clone = CloneImpl(Culture);
@@ -78,11 +97,22 @@ namespace TypeGuesser.Deciders
         /// <returns></returns>
         protected abstract IDecideTypesForStrings CloneImpl(CultureInfo culture);
 
+        /// <summary>
+        /// Parses <paramref name="value"/> into Type T (of this decider).
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         protected virtual object ParseImpl(string value)
         {
             return value.To<T>(Culture);
         }
 
+        /// <summary>
+        /// Returns true if the given <paramref name="candidateString"/> is compatible with the T Type of this decider.
+        /// </summary>
+        /// <param name="candidateString"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
         protected virtual bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize size)
         {
             return candidateString.IsConvertibleTo<T>(Culture);

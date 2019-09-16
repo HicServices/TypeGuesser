@@ -19,6 +19,9 @@ namespace TypeGuesser
     /// </summary>
     public class Guesser 
     {
+        /// <summary>
+        /// Controls behaviour of deciders during <see cref="AdjustToCompensateForValue"/>
+        /// </summary>
         public GuessSettings Settings => _typeDeciders.Settings;
 
         /// <summary>
@@ -50,6 +53,10 @@ namespace TypeGuesser
         private TypeDeciderFactory _typeDeciders;
         
 
+        /// <summary>
+        /// Becomes true when <see cref="AdjustToCompensateForValue"/> is called with a hard Typed object (e.g. int). This prevents a <see cref="Guesser"/>
+        /// from being used with mixed Types of input (you should run only strings or only hard typed objects).
+        /// </summary>
         public bool IsPrimedWithBonafideType = false;
 
         /// <summary>
@@ -80,18 +87,37 @@ namespace TypeGuesser
             ThrowIfNotSupported(request.CSharpType);
         }
         
+        /// <summary>
+        /// Runs <see cref="AdjustToCompensateForValue"/> on all cells in <see cref="DataRow"/> under the <paramref name="column"/>
+        /// </summary>
+        /// <param name="column"></param>
         public void AdjustToCompensateForValues(DataColumn column)
         {
             var dt = column.Table;
             foreach (DataRow row in dt.Rows)
                 AdjustToCompensateForValue(row[column]);
         }
+
+        /// <summary>
+        /// Runs <see cref="AdjustToCompensateForValue"/> on all objects in the <paramref name="collection"/>
+        /// </summary>
+        /// <param name="collection"></param>
         public void AdjustToCompensateForValues(IEnumerable<object> collection)
         {
             foreach (var o in collection)
                 AdjustToCompensateForValue(o);
         }
 
+        /// <summary>
+        /// <para>Adjusts the current <see cref="Guess"/> based on the <paramref name="o"/>.  All calls to this method for a given <see cref="Guesser"/>
+        /// instance must be of the same Type e.g. string.  If you pass a hard Typed value in (e.g. int) then the <see cref="Guess"/> will change
+        /// to the Type of the object but it will still calculate length/digits.
+        /// </para>
+        /// 
+        /// <para>Passing null / <see cref="DBNull.Value"/> is always allowed and never changes the <see cref="Guess"/></para>
+        /// </summary>
+        /// <exception cref="MixedTypingException">Thrown if you mix strings with hard Typed objects when supplying <paramref name="o"/></exception>
+        /// <param name="o"></param>
         public void AdjustToCompensateForValue(object o)
         {
             if(o == null)
@@ -243,6 +269,12 @@ namespace TypeGuesser
                 throw new NotSupportedException(string.Format(SR.Guesser_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_, Guess.CSharpType));
         }
 
+        /// <summary>
+        /// Parses the given <paramref name="val"/> into a hard typed object that matches the current <see cref="Guess"/>
+        /// </summary>
+        /// <param name="val"></param>
+        /// <exception cref="NotSupportedException">If the current <see cref="Guess"/> does not have a parser defined</exception>
+        /// <returns></returns>
         public object Parse(string val)
         {
             if (Guess.CSharpType == typeof(string))
