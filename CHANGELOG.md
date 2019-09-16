@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added GuessSettings class for specifying behaviour in potentially ambigious situations e.g. whether "Y"/"N" is accepted as boolean ("Y" = true and "N" = false)
+
 ## [0.0.3] - 2019-09-10
 
 ### Changed
