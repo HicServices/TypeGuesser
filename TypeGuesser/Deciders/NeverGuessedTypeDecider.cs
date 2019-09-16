@@ -12,6 +12,11 @@ namespace TypeGuesser.Deciders
         {
         }
 
+        protected override IDecideTypesForStrings CloneImpl(CultureInfo culture)
+        {
+            return new NeverGuessTheseTypeDecider(culture);
+        }
+
         protected override object ParseImpl(string value)
         {
             throw new NotSupportedException();

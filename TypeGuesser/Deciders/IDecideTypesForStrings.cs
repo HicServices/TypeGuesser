@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace TypeGuesser.Deciders
 {
@@ -24,10 +25,20 @@ namespace TypeGuesser.Deciders
         HashSet<Type> TypesSupported { get; }
 
         /// <summary>
-        /// Returns true if the <paramref name="candidateString"/> is convertable and safely modelled as one of the <see cref="TypesSupported"/>.
+        /// Change behaviour of deciders
+        /// </summary>
+        GuessSettings Settings { get; set; }
+
+        /// <summary>
+        /// The culture for parsing with
+        /// </summary>
+        CultureInfo Culture { get; }
+
+        /// <summary>
+        /// Returns true if the <paramref name="candidateString"/> is convertable and safely modeled as one of the <see cref="TypesSupported"/>.
         /// </summary>
         /// <param name="candidateString">a string containing a value of unknown type (e.g. "fish" or "1")</param>
-        /// <param name="sizeRecord">The current size estimate of floating point numbers (or null if not appropriate).  This will be modified by the method 
+        /// <param name="size">The current size estimate of floating point numbers (or null if not appropriate).  This will be modified by the method 
         /// if appropriate to the data passed</param>
         /// <returns>True if the <paramref name="candidateString"/> is a valid value for the <see cref="TypesSupported"/> by the decider</returns>
         bool IsAcceptableAsType(string candidateString,IDataTypeSize size);
@@ -38,5 +49,11 @@ namespace TypeGuesser.Deciders
         /// <param name="value"></param>
         /// <returns></returns>
         object Parse(string value);
+
+        /// <summary>
+        /// Returns a new instance of this class with the same <see cref="Culture"/> and <see cref="Settings"/> etc
+        /// </summary>
+        /// <returns></returns>
+        IDecideTypesForStrings Clone();
     }
 }

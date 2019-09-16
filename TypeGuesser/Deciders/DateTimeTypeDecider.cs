@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace TypeGuesser.Deciders
 {
+    /// <summary>
+    /// Guesses whether strings are <see cref="DateTime"/> and handles parsing approved strings according to the <see cref="Culture"/>
+    /// </summary>
     public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
     {
         private readonly TimeSpanTypeDecider _timeSpanTypeDecider;
@@ -146,6 +149,11 @@ namespace TypeGuesser.Deciders
         {
             _timeSpanTypeDecider = new TimeSpanTypeDecider(cultureInfo);
             _decimalChecker = new DecimalTypeDecider(cultureInfo);
+        }
+
+        protected override IDecideTypesForStrings CloneImpl(CultureInfo culture)
+        {
+            return new DateTimeTypeDecider(culture);
         }
 
         protected override object ParseImpl(string value)

@@ -7,8 +7,19 @@
     /// </summary>
     public enum TypeCompatibilityGroup
     {
+        /// <summary>
+        /// Compatibility group has not been set, i.e. null
+        /// </summary>
         None,
+
+        /// <summary>
+        /// The Type cannot be converted sensible to another Type e.g. Dates can't be converted to int/decimal etc
+        /// </summary>
         Exclusive,
+
+        /// <summary>
+        /// Type can be converted to other numerical Types e.g. int values can be converted sensibly to decimal values
+        /// </summary>
         Numerical
     }
 }

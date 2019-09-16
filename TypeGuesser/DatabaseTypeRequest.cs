@@ -54,6 +54,12 @@ namespace TypeGuesser
         /// </summary>
         public bool Unicode { get;set;}
 
+        /// <summary>
+        /// Creates a new instance with the given initial type description
+        /// </summary>
+        /// <param name="cSharpType"></param>
+        /// <param name="maxWidthForStrings"></param>
+        /// <param name="decimalPlacesBeforeAndAfter"></param>
         public DatabaseTypeRequest(Type cSharpType, int? maxWidthForStrings = null,
             DecimalSize decimalPlacesBeforeAndAfter = null)
         {
@@ -65,7 +71,7 @@ namespace TypeGuesser
         #region Equality
         protected bool Equals(DatabaseTypeRequest other)
         {
-            return Equals(CSharpType, other.CSharpType) && Width == other.Width && Equals(Size, other.Size);
+            return Equals(CSharpType, other.CSharpType) && Width == other.Width && Equals(Size, other.Size) && Unicode == other.Unicode;
         }
 
         public override bool Equals(object obj)

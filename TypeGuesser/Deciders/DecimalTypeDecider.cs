@@ -18,7 +18,12 @@ namespace TypeGuesser.Deciders
         {
             decimalIndicator = Culture.NumberFormat.NumberDecimalSeparator.Last();
         }
-        
+
+        protected override IDecideTypesForStrings CloneImpl(CultureInfo culture)
+        {
+            return new DecimalTypeDecider(culture);
+        }
+
         protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize sizeRecord)
         {
             candidateString = TrimTrailingZeros(candidateString);

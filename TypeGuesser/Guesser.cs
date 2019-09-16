@@ -19,6 +19,8 @@ namespace TypeGuesser
     /// </summary>
     public class Guesser 
     {
+        public GuessSettings Settings => _typeDeciders.Settings;
+
         /// <summary>
         /// Normally when measuring the lengths of strings something like "It’s" would be 4 but for Oracle it needs extra width.  If this is
         /// non zero then when <see cref="AdjustToCompensateForValue(object)"/> is a string then any non standard characters will have this number
@@ -32,6 +34,10 @@ namespace TypeGuesser
         /// </summary>
         public const int MinimumLengthRequiredForDateStringRepresentation = 27;
 
+        /// <summary>
+        /// The currently computed data type (including string length / decimal scale/precisione etc) that can store all values seen
+        /// by <see cref="AdjustToCompensateForValue"/> so far.
+        /// </summary>
         public DatabaseTypeRequest Guess { get; set; }
 
         /// <summary>
@@ -70,7 +76,7 @@ namespace TypeGuesser
         {
             Guess = request;
             _typeDeciders = new TypeDeciderFactory(CultureInfo.CurrentCulture);
-
+            
             ThrowIfNotSupported(request.CSharpType);
         }
         

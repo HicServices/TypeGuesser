@@ -18,28 +18,35 @@ namespace TypeGuesser
         public readonly Dictionary<Type, IDecideTypesForStrings> Dictionary = new Dictionary<Type, IDecideTypesForStrings>();
 
         /// <summary>
+        /// Default settings to use for all entries in <see cref="Dictionary"/> and for instances created by <see cref="Create"/>
+        /// </summary>
+        public GuessSettings Settings { get; }
+
+        /// <summary>
         /// Initializes a new factory and populates decider <see cref="Dictionary"/>
         /// </summary>
         /// <param name="culture"></param>
         public TypeDeciderFactory(CultureInfo culture)
         {
+            Settings = new GuessSettingsFactory().Create();
+
             var deciders = new IDecideTypesForStrings[]
             {
-                new BoolTypeDecider(culture),
-                new IntTypeDecider(culture),
-                new DecimalTypeDecider(culture),
+                new BoolTypeDecider(culture){Settings = Settings},
+                new IntTypeDecider(culture){Settings = Settings},
+                new DecimalTypeDecider(culture){Settings = Settings},
 
-                new NeverGuessTheseTypeDecider(culture),
+                new NeverGuessTheseTypeDecider(culture){Settings = Settings},
 
-                new TimeSpanTypeDecider(culture),
-                new DateTimeTypeDecider(culture),
+                new TimeSpanTypeDecider(culture){Settings = Settings},
+                new DateTimeTypeDecider(culture){Settings = Settings},
             };
 
             foreach (IDecideTypesForStrings decider in deciders)
                 foreach (Type type in decider.TypesSupported)
                     Dictionary.Add(type, decider);
         }
-
+        
         /// <summary>
         /// Creates a new <see cref="IDecideTypesForStrings"/> for the given <paramref name="forDataType"/>
         /// </summary>
@@ -51,7 +58,7 @@ namespace TypeGuesser
             if(!Dictionary.ContainsKey(forDataType))
                 throw new TypeNotSupportedException(forDataType);
 
-            return Dictionary[forDataType];
+            return Dictionary[forDataType].Clone();
         }
 
         /// <summary>

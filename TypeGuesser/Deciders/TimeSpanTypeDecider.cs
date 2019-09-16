@@ -3,10 +3,18 @@ using System.Globalization;
 
 namespace TypeGuesser.Deciders
 {
+    /// <summary>
+    /// Guesses whether strings are <see cref="TimeSpan"/> and handles parsing approved strings according to the <see cref="DecideTypesForStrings{T}.Culture"/>
+    /// </summary>
     public class TimeSpanTypeDecider : DecideTypesForStrings<TimeSpan>
     {
         public TimeSpanTypeDecider(CultureInfo culture): base(culture,TypeCompatibilityGroup.Exclusive, typeof(TimeSpan))
         {
+        }
+
+        protected override IDecideTypesForStrings CloneImpl(CultureInfo culture)
+        {
+            return new TimeSpanTypeDecider(culture);
         }
 
         protected override object ParseImpl(string value)

@@ -8,6 +8,8 @@ namespace TypeGuesser.Deciders
 {
     public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     {
+        public GuessSettings Settings { get; set; }
+
         public virtual CultureInfo Culture { get; protected set; }
         public TypeCompatibilityGroup CompatibilityGroup { get; private set; }
         public HashSet<Type> TypesSupported { get; private set; }
@@ -28,6 +30,9 @@ namespace TypeGuesser.Deciders
         protected DecideTypesForStrings(CultureInfo culture, TypeCompatibilityGroup compatibilityGroup,params Type[] typesSupported)
         {
             Culture = culture;
+
+            Settings = new GuessSettingsFactory().Create();
+
             CompatibilityGroup = compatibilityGroup;
             
             if(typesSupported.Length == 0)
@@ -58,6 +63,20 @@ namespace TypeGuesser.Deciders
                 throw new FormatException(string.Format(SR.DecideTypesForStrings_Parse_Could_not_parse_string_value___0___with_Decider_Type__1_, value, GetType().Name),ex);
             }            
         }
+
+        public IDecideTypesForStrings Clone()
+        {
+            IDecideTypesForStrings clone = CloneImpl(Culture);
+            clone.Settings = Settings.Clone();
+            return clone;
+        }
+
+        /// <summary>
+        /// Create a new instance of Type {T}
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <returns></returns>
+        protected abstract IDecideTypesForStrings CloneImpl(CultureInfo culture);
 
         protected virtual object ParseImpl(string value)
         {
