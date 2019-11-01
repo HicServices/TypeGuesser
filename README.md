@@ -1,5 +1,7 @@
 # Type Guesser
 
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/HicServices/TypeGuesser.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/HicServices/TypeGuesser/alerts/)
+
 Guess the C# Types for untyped strings e.g. `"12.123"`.
 
 - [Nuget Package](https://www.nuget.org/packages/HIC.TypeGuesser/)
