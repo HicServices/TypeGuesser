@@ -24,6 +24,15 @@ namespace TypeGuesser
             return (GuessSettings)MemberwiseClone();
         }
 
+        /// <summary>
+        /// Copies all values of this object into <paramref name="copyInto"/>
+        /// </summary>
+        /// <param name="copyInto">The instance to populate with the current values of this</param>
+        public void CopyTo(GuessSettings copyInto)
+        {
+            copyInto.CharCanBeBoolean = CharCanBeBoolean;
+        }
+
         internal GuessSettings()
         {
             

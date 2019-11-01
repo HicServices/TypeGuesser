@@ -174,7 +174,7 @@ namespace TypeGuesser
             {
                 //if we ever made a decision about a string inputs then we won't accept hard typed objects now
                 if(_validTypesSeen != TypeCompatibilityGroup.None || Guess.CSharpType == typeof(string))
-                    throw new MixedTypingException(string.Format(SR.Guesser_AdjustToCompensateForValue_GuesserPassedMixedTypeValues,o,o.GetType(),Guess));
+                    throw new MixedTypingException(string.Format(SR.Guesser_AdjustToCompensateForValue_GuesserPassedMixedTypeValues,o,o.GetType(),Guess.CSharpType));
 
                 //if we have yet to see a proper type
                 if (!IsPrimedWithBonafideType)
