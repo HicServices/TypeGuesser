@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [0.0.5] - 2019-11-01
+
+### Fixed
+
+- Fixed Exception message when giving Guesser mixed type input
+
 ## [0.0.4] - 2019-09-16
 
 ### Added
@@ -32,7 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial port of content from [FAnsiSql](https://github.com/HicServices/FAnsiSql)
 
-[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/0.0.4...develop
+[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/0.0.5...develop
+[0.0.5]: https://github.com/HicServices/TypeGuesser/compare/0.0.4...0.0.5
 [0.0.4]: https://github.com/HicServices/TypeGuesser/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/HicServices/TypeGuesser/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/HicServices/TypeGuesser/compare/0.0.1...0.0.2
