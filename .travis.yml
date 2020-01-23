@@ -11,12 +11,12 @@ script:
   - "VERSION=`grep AssemblyInformationalVersion SharedAssemblyInfo.cs | cut -d'\"' -f2`"
   - "echo $VERSION"
   
-  - sed -i 's/VERSION/$VERSION/g' ./TypeGuesser.NuGet.nuspec
+  - sed -i "s/VERSION/$VERSION/g" ./TypeGuesser.NuGet.nuspec
   
   - cat ./TypeGuesser.NuGet.nuspec
   
-  - dotnet pack -c Release -p:NuspecFile=./../TypeGuesser.NuGet.nuspec -p:IncludeSymbols=true -o .
-  - "dotnet nuget push HIC.TypeGuesser.Release.nupkg -s https://api.nuget.org/v3/index.json -sk GoGoGo"
+  - dotnet pack -c Release -p:NuspecFile=./../TypeGuesser.NuGet.nuspec -p:IncludeSymbols=true
+  - "dotnet nuget push "./TypeGuesser/HIC.TypeGuesser.$VERSION.nupkg" -s https://api.nuget.org/v3/index.json -sk GoGoGo"
   
 after_success:
   - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi
