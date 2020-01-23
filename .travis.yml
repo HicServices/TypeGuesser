@@ -1,8 +1,22 @@
+--- 
+dotnet: "2.2.100"
 language: csharp
 mono: none
-dotnet: 2.2.100
+install: 
+  - "sudo apt-get install nuget"
 
-script:
- - dotnet restore
- - dotnet build
- - dotnet test
+script: 
+  - "dotnet restore"
+  - "dotnet build"
+  - "dotnet test"
+  
+  #Get nuget to list it's version
+  - "nuget"
+  
+  - "VERSION=`grep AssemblyInformationalVersion SharedAssemblyInfo.cs | cut -d'\"' -f2`"
+  - "echo $VERSION"
+  - "nuget pack TypeGuesser.NuGet.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version $VERSION"
+
+after_success:
+  - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi
+  - "nuget push HIC.TypeGuesser.Release.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey"
