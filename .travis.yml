@@ -7,12 +7,16 @@ script:
   - "dotnet restore"
   - "dotnet build"
   - "dotnet test"
-  
-  - curl -L -o nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+    
   - "VERSION=`grep AssemblyInformationalVersion SharedAssemblyInfo.cs | cut -d'\"' -f2`"
   - "echo $VERSION"
-  - "nuget.exe pack TypeGuesser.NuGet.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version $VERSION"
-
+  
+  - sed -i 's/VERSION/$VERSION/g' ./TypeGuesser.NuGet.nuspec
+  
+  - cat ./TypeGuesser.NuGet.nuspec
+  
+  - dotnet pack -c Release -p:NuspecFile=./../TypeGuesser.NuGet.nuspec -p:IncludeSymbols=true -o .
+  - "dotnet nuget push HIC.TypeGuesser.Release.nupkg -s https://api.nuget.org/v3/index.json -sk GoGoGo"
+  
 after_success:
   - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi
-  - "nuget.exe push HIC.TypeGuesser.Release.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey"
