@@ -22,6 +22,4 @@ script:
   
 after_success:
   - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fienv:
-env:
-  global:
-  - secure: "OjtCdHwi/1zapCh5hlhQIM3CnCKHCnY20/KZ5GgXJubXP+37wsoT+2cm/FyK86fdOOty3duFVf8wh/3xnwV9zDREwXr5DUnSl7YJXYj14X3SpCUXgd0yum9ydO/99FYKF///2ebu5+z6ac0GC4bfyInWcweQAF/NTiZkcmh7C6+CI0bxwlDYQng22w7nHlDRUIUzcEc8BsPZRFPhCEvnVaP/6tb7RfKfdxOkjyVd2zhjQ+1I6+Kh3YKkRZ2unal3oe86Dg5G4e9W26ah8gxID9+9DXaD55umziR9DmYI6pTMPD2cl3yIcUEw+QW+tpsxRc7TZm/O3cTyIyahBj430tVwDkEkuT0baXs0vv41SIpn/lrN50P5+G25J37rftF1EAh4FApcziPOxfTB5WHr3xAgGDedE4Pl2FUs4BunjKxP4+HEnoPYtVPIqJeMdUtFf0FkphlxaxKdkZISQOKHDcipQWbpx9LdugJ+Vbi1TAMy33F0+EpfnaZ4BSjP8YNzqVA8Sah/w3AyH9NnSron4W5AZlCrxDiR39aMrfdRFM59VnaQ8Tu8VWFluLMF2LcmHLraZ6s83RNFQ6hHh5cupV5FbaUJIRR9cwfEJSRswga5i7KUazwRrgs/wCJTCpXw2w8inlfDq8ysxE+mERV6PXV+LNUpn/6VDnTgUVMjE0Q="
+
