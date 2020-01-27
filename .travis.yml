@@ -18,7 +18,10 @@ script:
   - dotnet pack -c Release -p:NuspecFile=./../TypeGuesser.NuGet.nuspec -p:IncludeSymbols=true
   
   - pwd
-  - "dotnet nuget push \"./TypeGuesser/bin/Release/HIC.TypeGuesser.$VERSION.nupkg\" -s https://api.nuget.org/v3/index.json -sk GoGoGo"
+  - "dotnet nuget push \"./TypeGuesser/bin/Release/HIC.TypeGuesser.$VERSION.nupkg\" -s https://api.nuget.org/v3/index.json -k NUGET_KEY"
   
 after_success:
-  - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi
+  - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fienv:
+env:
+  global:
+  - secure: pb25Mui/NJT/R9YVuH1ibVLTCh26n+eQ8EGzHD581PhYFaysg0j24cEmoa8emSknQE1trAFnMwlTLPerUBQocQTufSNf5rMKFiXaMuKXp00EGK/MnrlZBFkFQd9euLjPYBBFa1PBnKPqnXPVClVVsWjG+pIT2DJeBw/PalfQbMAsrFXo8jQwPvO9HO1+htmCXcI6WeXsmOFEm1QGHt4vElzMtZ6sWOX04TBJzn8SqvEkwNCkvzwcKfFaPT1/HXf8iofld58Vc9WxO5bG8WMJsqt7mu6CpcBsJv0FOIo9LdDvRjw7WcR8EeCrptPKi6So3Nit5EcMPWzaoZ8y/2WvxTdam/QG7oQ/z7cmO4jTpp4Yh7Tm7ajmfEWb40UE9/oI15XOAo2daaw3pjUmcPW8uMlQliZ6PE+EZwQwJWrmAlNufrl8BcJMdyR3WXrA6g0SsdNQesRfJwscTELTYnmqQq0+9Vzm4XM8iebSHRGL1jBmUrYUF6GawNd0IHmtDCY5MXHHCM8VcTEGnB3XtYotK+5VhNXvzVnrYJj5AcIYiEJcuqXoWKgeWNTABwDaermEloNy6Z6Uu5bZ12BlEE9wo5pBSk5SEC+lMpCoTwcHZf+2I79cA6TOG4wMuNJy7KVdHxCwvLfBZZ1btLnHEI8Wvzly2rJITboK3OGVRlIK/K4=  
