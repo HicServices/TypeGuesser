@@ -18,7 +18,7 @@ script:
   - dotnet pack -c Release -p:NuspecFile=./../TypeGuesser.NuGet.nuspec -p:IncludeSymbols=true
   
   - pwd
-  - "dotnet nuget push \"./TypeGuesser/bin/Release/HIC.TypeGuesser.$VERSION.nupkg\" -s https://api.nuget.org/v3/index.json -k NUGET_KEY"
+  - "dotnet nuget push \"./TypeGuesser/bin/Release/HIC.TypeGuesser.$VERSION.nupkg\" -s https://api.nuget.org/v3/index.json -k $NUGET_KEY"
   
 after_success:
   - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fienv:
