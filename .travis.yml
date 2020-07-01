@@ -3,6 +3,11 @@ dotnet: "2.2.100"
 language: csharp
 mono: none
 
+cache:
+  directories:
+  - $HOME/.local/share/NuGet/
+  - $HOME/.nuget
+
 script: 
   - "dotnet restore"
   - "dotnet build"
@@ -20,5 +25,5 @@ script:
   - pwd
     
 after_success:
-  - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fienv:
+  - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi
   - "dotnet nuget push \"./TypeGuesser/bin/Release/HIC.TypeGuesser.$VERSION.nupkg\" -s https://api.nuget.org/v3/index.json -k $NUGET_KEY"
