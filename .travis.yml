@@ -3,6 +3,11 @@ dotnet: "2.2.100"
 language: csharp
 mono: none
 
+cache:
+  directories:
+  - $HOME/.local/share/NuGet/
+  - $HOME/.nuget
+
 script: 
   - "dotnet restore"
   - "dotnet build"
