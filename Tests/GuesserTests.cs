@@ -41,6 +41,7 @@ namespace Tests
         [TestCase("f"    ,typeof(bool),"en-us",1,0,0,false)]
         [TestCase(".t."  ,typeof(bool),"en-us",3,0,0,true)]
         [TestCase(".f."  ,typeof(bool),"en-us",3,0,0,false)]
+        [TestCase("9223372036854775807",typeof(decimal),"en-us",19,19,0,9223372036854775807L)]
         [TestCase("5000"  ,typeof(int),"en-us",4,4,0,5000)]
         [TestCase("5000.010", typeof(decimal), "en-us", 8, 4, 2, 5000.01)]
         [TestCase("5,123.001e-10", typeof(decimal), "en-us", 14, 0,13, 0.0000005123001)] //<=it's string length is 14 because this would be the string value we would need to represent
@@ -196,6 +197,35 @@ namespace Tests
             Assert.AreEqual(typeof(int),t.Guess.CSharpType);
         }
 
+        /// <summary>
+        /// Tests that we can fallback from an int guess to a long guess (which we will treat as decimal when parsing)
+        /// </summary>
+        [Test]
+        public void TestGuesser_IntThenLong()
+        {
+            Guesser t = new Guesser();
+            
+            //we see an int
+            t.AdjustToCompensateForValue("-100");
+
+            //we guess the column contains ints
+            Assert.AreEqual(typeof(int), t.Guess.CSharpType);
+            Assert.AreEqual(4, t.Guess.Width);
+            Assert.AreEqual(3, t.Guess.Size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
+
+            //we see a long
+            t.AdjustToCompensateForValue("9223372036854775807");
+
+            //we change our estimate to the compatible estimate of 'decimal'
+            Assert.AreEqual(typeof(decimal), t.Guess.CSharpType);
+            Assert.AreEqual(19, t.Guess.Width);
+            Assert.AreEqual(19, t.Guess.Size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
+            
+            //final estimate is decimal
+            Assert.AreEqual(typeof(decimal),t.Guess.CSharpType);
+        }
 
         [Test]
         public void TestGuesser_IntAnddecimal_MustUsedecimal()

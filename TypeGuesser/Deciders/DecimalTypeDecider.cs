@@ -21,7 +21,7 @@ namespace TypeGuesser.Deciders
         /// Creates new instance that recognizes strings with a decimal point representation
         /// </summary>
         /// <param name="culture"></param>
-        public DecimalTypeDecider(CultureInfo culture) : base(culture,TypeCompatibilityGroup.Numerical,typeof(decimal), typeof(float) , typeof(double))
+        public DecimalTypeDecider(CultureInfo culture) : base(culture,TypeCompatibilityGroup.Numerical,typeof(decimal), typeof(float) , typeof(double),typeof(Int64))
         {
             _decimalIndicator = Culture.NumberFormat.NumberDecimalSeparator.Last();
         }

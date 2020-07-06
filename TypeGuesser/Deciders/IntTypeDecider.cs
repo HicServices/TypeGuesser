@@ -13,7 +13,7 @@ namespace TypeGuesser.Deciders
         /// Creates a new instance for recognizing whole numbers in string values
         /// </summary>
         /// <param name="culture"></param>
-        public IntTypeDecider(CultureInfo culture) : base(culture,TypeCompatibilityGroup.Numerical, typeof(Int16) , typeof(Int32), typeof(Int64),typeof(byte))
+        public IntTypeDecider(CultureInfo culture) : base(culture,TypeCompatibilityGroup.Numerical, typeof(Int16) , typeof(Int32), typeof(byte))
         {
         }
 
