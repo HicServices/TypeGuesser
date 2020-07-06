@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ...
+## [1.0.1] - 2020-07-06
+
+### Fixed
+
+- Fixed guessing and parsing for bigint / long values e.g. `"9223372036854775807"`
 
 ## [0.0.5] - 2019-11-01
 
@@ -38,7 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial port of content from [FAnsiSql](https://github.com/HicServices/FAnsiSql)
 
-[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/0.0.5...develop
+[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/1.0.1...develop
+[1.0.1]: https://github.com/HicServices/TypeGuesser/compare/0.0.5...1.0.1
 [0.0.5]: https://github.com/HicServices/TypeGuesser/compare/0.0.4...0.0.5
 [0.0.4]: https://github.com/HicServices/TypeGuesser/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/HicServices/TypeGuesser/compare/0.0.2...0.0.3

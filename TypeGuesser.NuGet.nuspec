@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>HIC.TypeGuesser</id>
-    <version>$version$</version>
+    <version>VERSION</version>
     <title>HIC.TypeGuesser</title>
     <authors>Health Informatics Centre - University of Dundee</authors>
     <owners>Health Informatics Centre - University of Dundee</owners>
@@ -17,8 +17,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="TypeGuesser\bin\$configuration$\netstandard2.0\TypeGuesser*.dll" target="lib\netstandard2.0" />
-    <file src="TypeGuesser\bin\$configuration$\netstandard2.0\TypeGuesser*.pdb" target="lib\netstandard2.0" />
-    <file src="TypeGuesser\bin\$configuration$\netstandard2.0\TypeGuesser*.xml" target="lib\netstandard2.0" />
+    <file src="TypeGuesser\bin\Release\netstandard2.0\TypeGuesser*.dll" target="lib\netstandard2.0" />
+    <file src="TypeGuesser\bin\Release\netstandard2.0\TypeGuesser*.pdb" target="lib\netstandard2.0" />
+    <file src="TypeGuesser\bin\Release\netstandard2.0\TypeGuesser*.xml" target="lib\netstandard2.0" />
   </files>
 </package>
