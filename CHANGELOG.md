@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed guessing and parsing for bigint / long values e.g. `"9223372036854775807"`
+
 ## [0.0.5] - 2019-11-01
 
 ### Fixed
