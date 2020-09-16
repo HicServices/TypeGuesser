@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using NUnit.Framework;
 using TypeGuesser;
+using TypeGuesser.Deciders;
 
 namespace Tests
 {
@@ -256,6 +257,40 @@ namespace Tests
             t.AdjustToCompensateForValue("D");
             Assert.AreEqual(typeof(string),t.Guess.CSharpType);
             Assert.AreEqual(5,t.Guess.Width);
+        }
+
+        /// <summary>
+        /// Tests the <see cref="Guesser"/> and <see cref="DateTimeTypeDecider"/> classes to ensure they normally do not treat
+        /// these things as dates but will do when told (e.g. by <see cref="DateTimeTypeDecider.ExplicitDateFormats"/>)
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="format"></param>
+        /// <param name="yy"></param>
+        /// <param name="mm"></param>
+        /// <param name="dd"></param>
+        [TestCase("20013001","yyyyddMM", 2001,1,30)]
+        [TestCase("01302020","MMddyyyy", 2020,1,30)]
+        public void DateTimeTypeDecider_ExplicitDateTimeFormat(string value,string format, int yy, int mm, int dd)
+        {
+            var decider = new DateTimeTypeDecider(CultureInfo.InvariantCulture);
+
+            Assert.IsFalse(decider.IsAcceptableAsType(value, new DatabaseTypeRequest(typeof(DateTime),null,null)));
+
+            decider.Settings.ExplicitDateFormats = new []{format };
+            Assert.IsTrue(decider.IsAcceptableAsType(value, new DatabaseTypeRequest(typeof(DateTime),null,null)));
+
+            Assert.AreEqual(new DateTime(yy,mm,dd),decider.Parse(value));
+
+            var g = new Guesser();
+            g.AdjustToCompensateForValue(value);
+            Assert.IsTrue(g.Guess.CSharpType == typeof(Int32) || g.Guess.CSharpType == typeof(string) /*0 prefixed numbers are usually treated as strings*/);
+
+            
+            var g2 = new Guesser();
+            g2.Settings.ExplicitDateFormats = new string[]{format};
+            g2.AdjustToCompensateForValue(value);
+            Assert.AreEqual(typeof(DateTime),g2.Guess.CSharpType);
+
         }
         
         [Test]

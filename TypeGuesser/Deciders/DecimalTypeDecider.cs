@@ -36,6 +36,9 @@ namespace TypeGuesser.Deciders
         protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize sizeRecord)
         {
             candidateString = TrimTrailingZeros(candidateString);
+            
+            if(IsExplicitDate(candidateString))
+                return false;
 
             if (!decimal.TryParse(candidateString, NumberStyles.Any, Culture, out var t))
                 return false;
