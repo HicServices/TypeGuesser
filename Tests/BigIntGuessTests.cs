@@ -1,9 +1,6 @@
 ﻿using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using TypeGuesser;
 using TypeGuesser.Deciders;
 
