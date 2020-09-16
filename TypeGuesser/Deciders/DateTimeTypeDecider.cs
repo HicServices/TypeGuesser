@@ -175,6 +175,11 @@ namespace TypeGuesser.Deciders
         /// <inheritdoc/>
         protected override object ParseImpl(string value)
         {
+            // if user has specified a specific format that we are to use, use it
+            if(Settings.ExplicitDateFormats != null)
+                return DateTime.ParseExact(value,Settings.ExplicitDateFormats,culture,DateTimeStyles.None);
+
+            // otherwise parse a value using any of the valid culture formats
             if (!TryBruteParse(value, out DateTime dt))
                 throw new FormatException(string.Format(SR.DateTimeTypeDecider_ParseImpl_Could_not_parse___0___to_a_valid_DateTime, value));
 
@@ -207,6 +212,14 @@ namespace TypeGuesser.Deciders
 
             if(countDM >= countMD)
                 _dateFormatToUse = DateFormatsDM;
+        }
+
+        public override bool IsAcceptableAsType(string candidateString, IDataTypeSize size)
+        {
+            if(IsExplicitDate(candidateString))
+                return true;
+            
+            return base.IsAcceptableAsType(candidateString, size);
         }
 
         /// <inheritdoc/>

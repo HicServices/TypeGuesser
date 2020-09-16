@@ -58,13 +58,27 @@ namespace TypeGuesser.Deciders
         }
 
         /// <inheritdoc/>
-        public bool IsAcceptableAsType(string candidateString,IDataTypeSize size)
+        public virtual bool IsAcceptableAsType(string candidateString,IDataTypeSize size)
         {
             //we must preserve leading zeroes if its not actually 0 -- if they have 010101 then we have to use string but if they have just 0 we can use decimal
             if (zeroPrefixedNumber.IsMatch(candidateString))
                 return false;
 
             return IsAcceptableAsTypeImpl(candidateString, size);
+        }
+        
+        /// <summary>
+        /// Returns true if <see cref="Settings"/> contains an <see cref="GuessSettings.ExplicitDateFormats"/> and one of them matches the <paramref name="candidateString"/>
+        /// </summary>
+        /// <param name="candidateString"></param>
+        /// <returns></returns>
+        protected bool IsExplicitDate(string candidateString)
+        {
+            //if user has an explicit type format in mind and the candidate string is not null (which should hopefully be handled sensibly elsewhere)
+            if(Settings.ExplicitDateFormats != null && !string.IsNullOrWhiteSpace(candidateString))
+                return DateTime.TryParseExact(candidateString,Settings.ExplicitDateFormats,Culture,DateTimeStyles.None,out var _);
+
+            return false;
         }
 
         /// <inheritdoc/>
@@ -108,7 +122,7 @@ namespace TypeGuesser.Deciders
         }
 
         /// <summary>
-        /// Returns true if the given <paramref name="candidateString"/> is compatible with the T Type of this decider.
+        /// Returns true if the given <paramref name="candidateString"/> is compatible with the T Type of this decider.  This is the prefered method of overriding IsAcceptable.
         /// </summary>
         /// <param name="candidateString"></param>
         /// <param name="size"></param>
