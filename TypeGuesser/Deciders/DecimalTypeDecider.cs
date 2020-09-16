@@ -23,7 +23,7 @@ namespace TypeGuesser.Deciders
         /// <param name="culture"></param>
         public DecimalTypeDecider(CultureInfo culture) : base(culture,TypeCompatibilityGroup.Numerical,typeof(decimal), typeof(float) , typeof(double),typeof(Int64))
         {
-            _decimalIndicator = Culture.NumberFormat.NumberDecimalSeparator.Last();
+            _decimalIndicator = culture.NumberFormat.NumberDecimalSeparator.Last();
         }
 
         /// <inheritdoc/>
@@ -49,7 +49,7 @@ namespace TypeGuesser.Deciders
         private string TrimTrailingZeros(string s)
         {
             //don't trim 0 unless theres a decimal point e.g. don't trim from 1,000
-            if (s.IndexOf(Culture.NumberFormat.NumberDecimalSeparator) == -1)
+            if (s.IndexOf(Culture.NumberFormat.NumberDecimalSeparator, StringComparison.Ordinal) == -1)
                 return s;
 
             

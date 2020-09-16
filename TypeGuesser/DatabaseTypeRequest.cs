@@ -76,7 +76,7 @@ namespace TypeGuesser
         /// <returns></returns>
         protected bool Equals(DatabaseTypeRequest other)
         {
-            return Equals(CSharpType, other.CSharpType) && Width == other.Width && Equals(Size, other.Size) && Unicode == other.Unicode;
+            return CSharpType == other.CSharpType && Width == other.Width && Equals(Size, other.Size) && Unicode == other.Unicode;
         }
 
         /// <inheritdoc/>
@@ -84,8 +84,7 @@ namespace TypeGuesser
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((DatabaseTypeRequest) obj);
+            return obj.GetType() == this.GetType() && Equals((DatabaseTypeRequest) obj);
         }
 
         /// <inheritdoc/>

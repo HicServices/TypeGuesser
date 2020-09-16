@@ -84,7 +84,7 @@ namespace TypeGuesser
 
 
         /// <summary>
-        /// Returns the number of characters required to represent the currently computed decimal size e.g. 1.2 requries length of 3.
+        /// Returns the number of characters required to represent the currently computed decimal size e.g. 1.2 requires length of 3.
         /// </summary>
         /// <returns></returns>
         public int ToStringLength()
@@ -140,8 +140,7 @@ namespace TypeGuesser
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((DecimalSize)obj);
+            return obj.GetType() == GetType() && Equals(obj as DecimalSize);
         }
 
         /// <inheritdoc/>

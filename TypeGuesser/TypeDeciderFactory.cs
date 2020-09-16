@@ -39,7 +39,7 @@ namespace TypeGuesser
                 new NeverGuessTheseTypeDecider(culture){Settings = Settings},
 
                 new TimeSpanTypeDecider(culture){Settings = Settings},
-                new DateTimeTypeDecider(culture){Settings = Settings},
+                new DateTimeTypeDecider(culture){Settings = Settings}
             };
 
             foreach (IDecideTypesForStrings decider in deciders)

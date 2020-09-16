@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TypeGuesser
+﻿namespace TypeGuesser
 {
     /// <summary>
     /// Controls guess decisions where the choice is ambiguous e.g. is "T" and "F" True / False or just a string.  Use

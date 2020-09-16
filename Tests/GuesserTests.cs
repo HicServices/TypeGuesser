@@ -66,13 +66,11 @@ namespace Tests
 
 
             TypeDeciderFactory factory = new TypeDeciderFactory(cultureInfo);
-            
-            if (factory.IsSupported(guesser.Guess.CSharpType))
-                Assert.AreEqual(expectedParseValue, factory.Create(guesser.Guess.CSharpType).Parse(guessFor));
-            else
-                Assert.AreEqual(expectedParseValue, guessFor);
-            
-            
+
+            Assert.AreEqual(expectedParseValue,
+                factory.IsSupported(guesser.Guess.CSharpType)
+                    ? factory.Create(guesser.Guess.CSharpType).Parse(guessFor)
+                    : guessFor);
         }
 
         [TestCase("en-us",new []{"5","10"},

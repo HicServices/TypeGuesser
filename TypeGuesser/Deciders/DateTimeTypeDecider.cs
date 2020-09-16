@@ -48,10 +48,7 @@ namespace TypeGuesser.Deciders
                     if(value == null)
                         value = CultureInfo.CurrentCulture;
 
-                    if(value.DateTimeFormat.ShortDatePattern.IndexOf('M') > value.DateTimeFormat.ShortDatePattern.IndexOf('d'))
-                        _dateFormatToUse = DateFormatsDM;
-                    else
-                        _dateFormatToUse = DateFormatsMD;
+                    _dateFormatToUse = value.DateTimeFormat.ShortDatePattern.IndexOf('M') > value.DateTimeFormat.ShortDatePattern.IndexOf('d') ? DateFormatsDM : DateFormatsMD;
 
                     culture = value; 
                 } }
@@ -167,9 +164,9 @@ namespace TypeGuesser.Deciders
         }
 
         /// <inheritdoc/>
-        protected override IDecideTypesForStrings CloneImpl(CultureInfo culture)
+        protected override IDecideTypesForStrings CloneImpl(CultureInfo stringCulture)
         {
-            return new DateTimeTypeDecider(culture);
+            return new DateTimeTypeDecider(stringCulture);
         }
 
         /// <inheritdoc/>
@@ -241,26 +238,19 @@ namespace TypeGuesser.Deciders
 
             var split = s.Split(space, StringSplitOptions.RemoveEmptyEntries);
 
-            //if there are no tokens
-            if (split.Length == 0)
+            switch (split.Length)
             {
-                dt = DateTime.MinValue;
-                return false;
-            }
-
-            //if there is one token it is assumed either to be a date or a string
-            if (split.Length == 1)
-                if (TryGetTime(split[0], out dt))
-                {
-                    return true;
-                }
-                else
-                if (TryGetDate(split[0], out dt))
-                {
-                    return true;
-                }
-                else
+                //if there are no tokens
+                case 0:
+                    dt = DateTime.MinValue;
                     return false;
+                //if there is one token it is assumed either to be a date or a string
+                case 1 when TryGetTime(split[0], out dt):
+                case 1 when TryGetDate(split[0], out dt):
+                    return true;
+                case 1:
+                    return false;
+            }
 
             //if there are 2+ tokens then first token should be a date then the rest (concatenated) should be a time
             //e.g. "28/2/1993 5:36:27 AM" gets evaluated as "28/2/1993" and then "5:36:27 AM"

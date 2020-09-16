@@ -61,10 +61,7 @@ namespace TypeGuesser.Deciders
         public bool IsAcceptableAsType(string candidateString,IDataTypeSize size)
         {
             //we must preserve leading zeroes if its not actually 0 -- if they have 010101 then we have to use string but if they have just 0 we can use decimal
-            if (zeroPrefixedNumber.IsMatch(candidateString))
-                return false;
-
-            return IsAcceptableAsTypeImpl(candidateString, size);
+            return !zeroPrefixedNumber.IsMatch(candidateString) && IsAcceptableAsTypeImpl(candidateString, size);
         }
 
         /// <inheritdoc/>

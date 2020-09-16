@@ -218,18 +218,15 @@ namespace TypeGuesser
                 //we have seen some good data before, but we have seen something that doesn't fit with the CurrentEstimate so
                 //we need to degrade the Estimate to a new Type that is compatible with all the Types previously seen
                 
-                var nextEstiamte = DatabaseTypeRequest.PreferenceOrder[current + 1];
+                var nextEstimate = DatabaseTypeRequest.PreferenceOrder[current + 1];
 
                 //if the next estimate is a string or we have previously accepted an exclusive decider (e.g. DateTime)
-                if (nextEstiamte == typeof (string) || _validTypesSeen == TypeCompatibilityGroup.Exclusive)
+                if (nextEstimate == typeof (string) || _validTypesSeen == TypeCompatibilityGroup.Exclusive)
                     Guess.CSharpType = typeof (string); //then just go with string
                 else
                 {
                     //if the next decider is in the same group as the previously used ones
-                    if (_typeDeciders.Dictionary[nextEstiamte].CompatibilityGroup == _validTypesSeen)
-                        Guess.CSharpType = nextEstiamte;
-                    else
-                        Guess.CSharpType = typeof (string); //the next Type decider is in an incompatible category so just go directly to string
+                    Guess.CSharpType = _typeDeciders.Dictionary[nextEstimate].CompatibilityGroup == _validTypesSeen ? nextEstimate : typeof (string);
                 }
             }
         }
@@ -246,17 +243,14 @@ namespace TypeGuesser
         /// <returns></returns>
         public bool ShouldDowngradeColumnTypeToMatchCurrentEstimate(DataColumn col)
         {
-            if(col.DataType == typeof(object) || col.DataType == typeof(string))
-            {
-                int indexOfCurrentPreference = DatabaseTypeRequest.PreferenceOrder.IndexOf(Guess.CSharpType);
-                int indexOfCurrentColumn = DatabaseTypeRequest.PreferenceOrder.IndexOf(typeof(string));
+            if (col.DataType != typeof(object) && col.DataType != typeof(string)) return false;
+            int indexOfCurrentPreference = DatabaseTypeRequest.PreferenceOrder.IndexOf(Guess.CSharpType);
+            int indexOfCurrentColumn = DatabaseTypeRequest.PreferenceOrder.IndexOf(typeof(string));
                 
-                //e.g. if current preference based on data is DateTime/integer and col is a string then we SHOULD downgrade
-                return indexOfCurrentPreference < indexOfCurrentColumn;
-            }
+            //e.g. if current preference based on data is DateTime/integer and col is a string then we SHOULD downgrade
+            return indexOfCurrentPreference < indexOfCurrentColumn;
 
             //it's not a string or an object, user probably has a type in mind for his DataColumn, let's not change that
-            return false;
         }
 
         private void ThrowIfNotSupported(Type currentEstimate)
