@@ -66,6 +66,20 @@ namespace TypeGuesser.Deciders
 
             return IsAcceptableAsTypeImpl(candidateString, size);
         }
+        
+        /// <summary>
+        /// Returns true if <see cref="Settings"/> contains an <see cref="GuessSettings.ExplicitDateFormats"/> and one of them matches the <paramref name="candidateString"/>
+        /// </summary>
+        /// <param name="candidateString"></param>
+        /// <returns></returns>
+        protected bool IsExplicitDate(string candidateString)
+        {
+            //if user has an explicit type format in mind and the candidate string is not null (which should hopefully be handled sensibly elsewhere)
+            if(Settings.ExplicitDateFormats != null && !string.IsNullOrWhiteSpace(candidateString))
+                return DateTime.TryParseExact(candidateString,Settings.ExplicitDateFormats,Culture,DateTimeStyles.None,out var _);
+
+            return false;
+        }
 
         /// <inheritdoc/>
         public object Parse(string value)

@@ -56,11 +56,6 @@ namespace TypeGuesser.Deciders
                     culture = value; 
                 } }
 
-        /// <summary>
-        /// Optional, when set dates must be in one of these formats and any string in this format will be picked as a date.
-        /// </summary>
-        public string[] ExplicitDateFormats { get; set; }
-
         static DateTimeTypeDecider()
         {
             List<string> dateFormatsMD = new List<string>();
@@ -181,8 +176,8 @@ namespace TypeGuesser.Deciders
         protected override object ParseImpl(string value)
         {
             // if user has specified a specific format that we are to use, use it
-            if(ExplicitDateFormats != null)
-                return DateTime.ParseExact(value,ExplicitDateFormats,culture,DateTimeStyles.None);
+            if(Settings.ExplicitDateFormats != null)
+                return DateTime.ParseExact(value,Settings.ExplicitDateFormats,culture,DateTimeStyles.None);
 
             // otherwise parse a value using any of the valid culture formats
             if (!TryBruteParse(value, out DateTime dt))
@@ -221,9 +216,8 @@ namespace TypeGuesser.Deciders
 
         public override bool IsAcceptableAsType(string candidateString, IDataTypeSize size)
         {
-            //if user has an explicit type format in mind and the candidate string is not null (which should hopefully be handled sensibly elsewhere)
-            if(ExplicitDateFormats != null && !string.IsNullOrWhiteSpace(candidateString))
-                return DateTime.TryParseExact(candidateString,ExplicitDateFormats,culture,DateTimeStyles.None,out var _);
+            if(IsExplicitDate(candidateString))
+                return true;
             
             return base.IsAcceptableAsType(candidateString, size);
         }
