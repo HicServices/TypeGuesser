@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using NUnit.Framework;
 using TypeGuesser;
+using TypeGuesser.Deciders;
 
 namespace Tests
 {
@@ -256,6 +257,20 @@ namespace Tests
             t.AdjustToCompensateForValue("D");
             Assert.AreEqual(typeof(string),t.Guess.CSharpType);
             Assert.AreEqual(5,t.Guess.Width);
+        }
+        [TestCase("20013001","yyyyddMM", 2001,1,30)]
+        [TestCase("01302020","MMddyyyy", 2020,1,30)]
+        public void DateTimeTypeDecider_ExplicitDateTimeFormat(string value,string format, int yy, int mm, int dd)
+        {
+            var decider = new DateTimeTypeDecider(CultureInfo.InvariantCulture);
+
+            Assert.IsFalse(decider.IsAcceptableAsType(value, new DatabaseTypeRequest(typeof(DateTime),null,null)));
+
+            decider.ExplicitDateFormats = new []{format };
+            Assert.IsTrue(decider.IsAcceptableAsType(value, new DatabaseTypeRequest(typeof(DateTime),null,null)));
+
+            Assert.AreEqual(new DateTime(yy,mm,dd),decider.Parse(value));
+
         }
         
         [Test]
