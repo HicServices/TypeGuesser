@@ -26,6 +26,9 @@ namespace TypeGuesser.Deciders
         /// <inheritdoc/>
         protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize sizeRecord)
         {
+            if(IsExplicitDate(candidateString))
+                return false;
+
             if (!candidateString.IsConvertibleTo(out int i, Culture))
                 return false;
 

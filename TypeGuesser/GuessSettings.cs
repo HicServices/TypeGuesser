@@ -11,6 +11,13 @@
         /// </summary>
         public bool CharCanBeBoolean { get; set; } = true;
 
+        
+        /// <summary>
+        /// Optional, when set dates must be in one of these formats and any string in this format will be picked as a date.
+        /// </summary>
+        public string[] ExplicitDateFormats { get; set; }
+
+
         /// <summary>
         /// Creates a shallow clone of the settings
         /// </summary>
@@ -27,6 +34,7 @@
         public void CopyTo(GuessSettings copyInto)
         {
             copyInto.CharCanBeBoolean = CharCanBeBoolean;
+            copyInto.ExplicitDateFormats = ExplicitDateFormats;
         }
 
         internal GuessSettings()
