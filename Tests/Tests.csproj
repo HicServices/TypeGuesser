@@ -15,7 +15,7 @@
 <PrivateAssets>all</PrivateAssets>
 </PackageReference>
     <PackageReference Include="NunitXml.TestLogger" Version="3.0.91" />
-    <PackageReference Include="XunitXml.TestLogger" Version="2.1.45" />
+    <PackageReference Include="XunitXml.TestLogger" Version="3.0.56" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeGuesser\TypeGuesser.csproj" />
