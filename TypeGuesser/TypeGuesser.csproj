@@ -1,6 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>HIC.TypeGuesser</PackageId>
+    <Authors>Health Informatics Centre - University of Dundee</Authors>
+    <Company>Health Informatics Centre - University of Dundee</Company>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
