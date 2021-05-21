@@ -13,7 +13,7 @@ jobs:
     - name: Test
       run: |
         dotnet test --nologo -r testresults --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-        mv testresults/*/coverage.info lconv.info
+        mv testresults/*/coverage.info lcov.info
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
