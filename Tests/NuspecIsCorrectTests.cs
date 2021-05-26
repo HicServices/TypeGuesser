@@ -19,7 +19,7 @@ namespace Tests
     {
         static string[] Analyzers = new string[] { "SecurityCodeScan" };
 
-        [TestCase("../../../../TypeGuesser/TypeGuesser.csproj", "../../../../TypeGuesser.NuGet.nuspec", "../../../../Packages.md")]
+        [TestCase("../../../../TypeGuesser/TypeGuesser.csproj", null, "../../../../PACKAGES.md")]
         public void TestDependencyCorrect(string csproj, string nuspec, string packagesMarkdown)
         {
             if(csproj != null && !Path.IsPathRooted(csproj))

@@ -1,0 +1,41 @@
+name: Build, test and package
+
+on: push
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.x'
+    - name: Test
+      run: |
+        dotnet test --nologo -r testresults --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+        mv testresults/*/coverage.info lcov.info
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: lcov.info
+    - name: Pack Nuget
+      run: dotnet pack -o dist -c Release --include-source -p:PackageVersion=$(fgrep AssemblyFileVersion SharedAssemblyInfo.cs |cut -d'"' -f2)
+    - name: Store created nupkg files
+      uses: actions/upload-artifact@v2
+      with:
+        path: dist/*.nupkg
+        retention-days: 1
+    - name: Upload Nupkg to Github release
+      if: contains(github.ref,'refs/tags/')
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.ref }}
+        file: dist/*.nupkg
+        file_glob: true
+        overwrite: true
+    - name: Push Nuget
+      if: contains(github.ref,'refs/tags/')
+      run: dotnet nuget push dist/*[0-9].nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_KEY }} --skip-duplicate
+      

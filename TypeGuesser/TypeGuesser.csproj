@@ -1,6 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>HIC.TypeGuesser</PackageId>
+    <Authors>Health Informatics Centre - University of Dundee</Authors>
+    <Company>Health Informatics Centre - University of Dundee</Company>
+    <PackageProjectUrl>https://github.com/HicServices/TypeGuesser</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Guess the C# Types for a untyped strings e.g. "12.123"</Description>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -11,7 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="UniversalTypeConverter" Version="2.0.0" />
+    <PackageReference Include="UniversalTypeConverter" Version="2.0.0">
+      <PrivateAssets>None</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
