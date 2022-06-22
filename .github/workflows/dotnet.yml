@@ -15,7 +15,7 @@ jobs:
           ${{ runner.os }}-nuget-
     - uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '5.0.x'
+        dotnet-version: '6.0.x'
     - name: Test
       run: |
         dotnet test --nologo -r testresults --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
