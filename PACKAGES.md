@@ -9,6 +9,6 @@
 
 | Package | Source Code | Version | License | Purpose | Additional Risk Assessment |
 | ------- | ------------| --------| ------- | ------- | -------------------------- |
-| UniversalTypeConverter | [GitHub](https://github.com/t-bruning/UniversalTypeConverter) | [2.0.0](https://www.nuget.org/packages/UniversalTypeConverter/2.0.0) | [MS-PL](https://github.com/t-bruning/UniversalTypeConverter/blob/master/LICENSE.md) | Parsing of individual strings into specific target types |  |
+| UniversalTypeConverter | [GitHub](https://github.com/t-bruning/UniversalTypeConverter) | [2.6.0](https://www.nuget.org/packages/UniversalTypeConverter/2.6.0) | [MS-PL](https://github.com/t-bruning/UniversalTypeConverter/blob/master/LICENSE.md) | Parsing of individual strings into specific target types |  |
 
 
