@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [1.0.3] - 2022-06-22
+
+- Bump UniversalTypeConverter from 2.0.0 to 2.6.0
+- Update nupkg to target .net6 as well as .netstandard2.0
+- Update unit test project to .Net 6
+
 ## [1.0.2] - 2020-09-16
 
 - Added `ExplicitDateFormats` to GuessSettings
@@ -48,7 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial port of content from [FAnsiSql](https://github.com/HicServices/FAnsiSql)
 
-[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/1.0.2...develop
+[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/1.0.3...develop
+[1.0.3]: https://github.com/HicServices/TypeGuesser/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/HicServices/TypeGuesser/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/HicServices/TypeGuesser/compare/0.0.5...1.0.1
 [0.0.5]: https://github.com/HicServices/TypeGuesser/compare/0.0.4...0.0.5
