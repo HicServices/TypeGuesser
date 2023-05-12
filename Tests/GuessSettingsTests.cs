@@ -85,7 +85,6 @@ internal class GuessSettingsTests
     {
         //default is true
         Assert.IsTrue(GuessSettingsFactory.Defaults.CharCanBeBoolean);
-        var f = new GuessSettingsFactory();
         var instance = GuessSettingsFactory.Create();
         Assert.IsTrue(instance.CharCanBeBoolean);
 

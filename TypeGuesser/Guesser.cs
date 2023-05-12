@@ -217,15 +217,13 @@ public class Guesser
             var nextEstimate = DatabaseTypeRequest.PreferenceOrder[current + 1];
 
             //if the next estimate is a string or we have previously accepted an exclusive decider (e.g. DateTime)
-            if (nextEstimate == typeof (string) || _validTypesSeen == TypeCompatibilityGroup.Exclusive)
-                Guess.CSharpType = typeof (string); //then just go with string
-            else
-            {
+            Guess.CSharpType = nextEstimate == typeof(string) || _validTypesSeen == TypeCompatibilityGroup.Exclusive
+                ? typeof(string)
+                : //then just go with string
                 //if the next decider is in the same group as the previously used ones
-                Guess.CSharpType = _typeDeciders.Dictionary[nextEstimate].CompatibilityGroup == _validTypesSeen
+                _typeDeciders.Dictionary[nextEstimate].CompatibilityGroup == _validTypesSeen
                     ? nextEstimate
                     : typeof(string); //the next Type decider is in an incompatible category so just go directly to string
-            }
         }
     }
         

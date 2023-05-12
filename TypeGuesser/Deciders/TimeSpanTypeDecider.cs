@@ -36,14 +36,23 @@ public class TimeSpanTypeDecider : DecideTypesForStrings<TimeSpan>
         try
         {
             //if it parses as a date 
-            if (DateTime.TryParse(candidateString, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault, out var t))
+            if (DateTime.TryParse(candidateString, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault,
+                    out var t))
             {
-                return t is { Year: 1, Month: 1, Day: 1 };//without any ymd component then it's a date...  this means 00:00 is a valid TimeSpan too 
+                return
+                    t is
+                    {
+                        Year: 1, Month: 1, Day: 1
+                    }; //without any ymd component then it's a date...  this means 00:00 is a valid TimeSpan too 
             }
 
             return false;
         }
-        catch (Exception)
+        catch (ArgumentException)
+        {
+            return false;
+        }
+        catch (NotSupportedException)
         {
             return false;
         }

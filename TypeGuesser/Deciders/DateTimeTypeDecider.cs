@@ -60,32 +60,32 @@ public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
 
         //all dates on their own
         foreach (var y in YearFormats)
-        foreach (var m in MonthFormats)
-        foreach (var d in DayFormats)
-        foreach (var dateSeparator in DateSeparators)
-        {
-            dateFormatsMd.Add(string.Join(dateSeparator, m, d, y));
-            dateFormatsMd.Add(string.Join(dateSeparator, y, m, d));
+            foreach (var m in MonthFormats)
+                foreach (var d in DayFormats)
+                    foreach (var dateSeparator in DateSeparators)
+                    {
+                        dateFormatsMd.Add(string.Join(dateSeparator, m, d, y));
+                        dateFormatsMd.Add(string.Join(dateSeparator, y, m, d));
 
-            dateFormatsDm.Add(string.Join(dateSeparator, d, m, y));
-            dateFormatsMd.Add(string.Join(dateSeparator, y, m, d));
-        }
+                        dateFormatsDm.Add(string.Join(dateSeparator, d, m, y));
+                        dateFormatsMd.Add(string.Join(dateSeparator, y, m, d));
+                    }
 
         //then all the times
         foreach (var timeSeparator in TimeSeparators)
-        foreach (var suffix in Suffixes)
-        foreach (var h in HourFormats)
-        foreach (var m in MinuteFormats)
-        {
-            timeFormats.Add(string.Join(timeSeparator, h, m));
-            timeFormats.Add($"{string.Join(timeSeparator, h, m)} {suffix}");
+            foreach (var suffix in Suffixes)
+                foreach (var h in HourFormats)
+                    foreach (var m in MinuteFormats)
+                    {
+                        timeFormats.Add(string.Join(timeSeparator, h, m));
+                        timeFormats.Add($"{string.Join(timeSeparator, h, m)} {suffix}");
 
-            foreach (var s in SecondFormats)
-            {
-                timeFormats.Add(string.Join(timeSeparator, h, m, s));
-                timeFormats.Add($"{string.Join(timeSeparator, h, m, s)} {suffix}");
-            }
-        }
+                        foreach (var s in SecondFormats)
+                        {
+                            timeFormats.Add(string.Join(timeSeparator, h, m, s));
+                            timeFormats.Add($"{string.Join(timeSeparator, h, m, s)} {suffix}");
+                        }
+                    }
         DateFormatsDM = dateFormatsDm.ToArray();
         DateFormatsMD = dateFormatsMd.ToArray();
         TimeFormats = timeFormats.ToArray();
