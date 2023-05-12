@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-...
+## [1.1.0] - 2023-05-15
+
+- Target .Net 6.0 only
+- Internal syntax cleanup and simplification
 
 ## [1.0.3] - 2022-06-22
 
@@ -54,7 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial port of content from [FAnsiSql](https://github.com/HicServices/FAnsiSql)
 
-[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/1.0.3...develop
+[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/1.1.0...develop
+[1.1.0]: https://github.com/HicServices/TypeGuesser/compare/1.0.3...1.1.0
 [1.0.3]: https://github.com/HicServices/TypeGuesser/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/HicServices/TypeGuesser/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/HicServices/TypeGuesser/compare/0.0.5...1.0.1
