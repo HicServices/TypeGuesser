@@ -9,6 +9,5 @@
 
 | Package | Source Code | Version | License | Purpose | Additional Risk Assessment |
 | ------- | ------------| --------| ------- | ------- | -------------------------- |
+| Microsoft.SourceLink.GitHub | [GitHub](https://github.com/dotnet/sourcelink) | [MIT](https://opensource.org/licenses/MIT) | Enable source linkage from nupkg | Official MS project |
 | UniversalTypeConverter | [GitHub](https://github.com/t-bruning/UniversalTypeConverter) | [2.6.0](https://www.nuget.org/packages/UniversalTypeConverter/2.6.0) | [MS-PL](https://github.com/t-bruning/UniversalTypeConverter/blob/master/LICENSE.md) | Parsing of individual strings into specific target types |  |
-
-
