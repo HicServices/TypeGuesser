@@ -6,19 +6,13 @@ jobs:
   package:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/cache@v3
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-    - uses: actions/setup-dotnet@v1
+    - uses: actions/checkout@v3
+    - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '6.0.x'
     - name: Test
       run: |
-        dotnet test --nologo -r testresults --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+        dotnet test --nologo --results-directory testresults --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
         mv testresults/*/coverage.info lcov.info
     - name: Coveralls
       uses: coverallsapp/github-action@master
@@ -26,9 +20,9 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: lcov.info
     - name: Pack Nuget
-      run: dotnet pack -o dist -c Release --include-source -p:PackageVersion=$(fgrep AssemblyFileVersion SharedAssemblyInfo.cs |cut -d'"' -f2)
+      run: dotnet pack TypeGuesser/TypeGuesser.csproj -o dist -c Release --include-source -p:PackageVersion=$(fgrep AssemblyFileVersion SharedAssemblyInfo.cs |cut -d'"' -f2)
     - name: Store created nupkg files
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: dist/*.nupkg
         retention-days: 1
