@@ -2,14 +2,14 @@ version: 2
 updates:
 - package-ecosystem: "github-actions"
   directory: "/"
-  target-branch: develop
   schedule:
     interval: daily
+  reviewers:
+  - jas88
 - package-ecosystem: nuget
   directory: "/"
   schedule:
     interval: daily
   open-pull-requests-limit: 10
-  target-branch: develop
   reviewers:
   - jas88
