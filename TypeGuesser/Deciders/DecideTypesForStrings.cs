@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text.RegularExpressions;
 using TB.ComponentModel;
 
 namespace TypeGuesser.Deciders;
@@ -12,11 +11,17 @@ namespace TypeGuesser.Deciders;
 /// <typeparam name="T"></typeparam>
 public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
 {
+    private CultureInfo _culture;
+
     /// <inheritdoc/>
     public GuessSettings Settings { get; set; }
 
     /// <inheritdoc/>
-    public virtual CultureInfo Culture { get; set; }
+    public virtual CultureInfo Culture
+    {
+        get => _culture;
+        set => _culture = value;
+    }
 
     /// <inheritdoc/>
     public TypeCompatibilityGroup CompatibilityGroup { get; }
@@ -32,16 +37,16 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     /// <param name="typesSupported">All the Types your guesser supports e.g. multiple sizes of int (int32, int16 etc).  These should not overlap with other guessers in the app domain</param>
     protected DecideTypesForStrings(CultureInfo culture, TypeCompatibilityGroup compatibilityGroup,params Type[] typesSupported)
     {
-        Culture = culture;
+        _culture = culture;
 
         Settings = GuessSettingsFactory.Create();
 
         CompatibilityGroup = compatibilityGroup;
-            
+
         if(typesSupported.Length == 0)
             throw new ArgumentException(SR.DecideTypesForStrings_DecideTypesForStrings_DecideTypesForStrings_abstract_base_was_not_passed_any_typesSupported_by_implementing_derived_class);
-            
-        TypesSupported = new HashSet<Type>(typesSupported);
+
+        TypesSupported = [..typesSupported];
     }
 
     /// <inheritdoc/>
@@ -50,7 +55,7 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
         //we must preserve leading zeroes if it's not actually 0 -- if they have 010101 then we have to use string but if they have just 0 we can use decimal
         return !IDecideTypesForStrings.ZeroPrefixedNumber.IsMatch(candidateString) && IsAcceptableAsTypeImpl(candidateString, size);
     }
-        
+
     /// <summary>
     /// Returns true if <see cref="Settings"/> contains an <see cref="GuessSettings.ExplicitDateFormats"/> and one of them matches the <paramref name="candidateString"/>
     /// </summary>
@@ -70,14 +75,14 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     {
         if (string.IsNullOrWhiteSpace(value))
             return null;
-            
+
         try
         {
             return ParseImpl(value);
         }catch(Exception ex)
         {
             throw new FormatException(string.Format(SR.DecideTypesForStrings_Parse_Could_not_parse_string_value___0___with_Decider_Type__1_, value, GetType().Name),ex);
-        }            
+        }
     }
 
     /// <inheritdoc/>

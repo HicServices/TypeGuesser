@@ -9,19 +9,19 @@ using NUnit.Framework;
 namespace Tests;
 
 /// <summary>
-/// Tests to confirm that the dependencies in csproj files (NuGet packages) match those in the .nuspec files and that packages.md 
+/// Tests to confirm that the dependencies in csproj files (NuGet packages) match those in the .nuspec files and that packages.md
 /// lists the correct versions (in documentation)
 /// </summary>
-public class PackageListIsCorrectTests
+public sealed partial class PackageListIsCorrectTests
 {
     private static readonly EnumerationOptions EnumerationOptions = new() { RecurseSubdirectories = true,MatchCasing = MatchCasing.CaseInsensitive,IgnoreInaccessible = true};
 
     //<PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
-    private static readonly Regex RPackageRef = new(@"<PackageReference\s+Include=""(.*)""\s+Version=""([^""]*)""", RegexOptions.IgnoreCase|RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    private static readonly Regex RPackageRef = PackageRefRegex();
 
     // | Org.SomePackage |
     //
-    private static readonly Regex RMarkdownEntry = new(@"^\|\s*\[?([^ |\]]+)(\]\([^)]+\))?\s*\|", RegexOptions.IgnoreCase|RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    private static readonly Regex RMarkdownEntry = MarkdownEntryRegex();
 
 
     /// <summary>
@@ -36,24 +36,27 @@ public class PackageListIsCorrectTests
 
         // Extract the named packages from PACKAGES.md
         var packagesMarkdown = File.ReadAllLines(GetPackagesMarkdown(root))
-            .Select(line => RMarkdownEntry.Match(line))
-            .Where(m=>m.Success)
+            .Select(static line => RMarkdownEntry.Match(line))
+            .Where(static m=>m.Success)
             .Skip(2)    // Jump over the header
-            .Select(m => m.Groups[1].Value)
+            .Select(static m => m.Groups[1].Value)
             .ToHashSet(StringComparer.InvariantCultureIgnoreCase);
 
         // Extract the named packages from csproj files
-        var usedPackages = GetCsprojFiles(root).Select(File.ReadAllText).SelectMany(s => RPackageRef.Matches(s))
-            .Select(m => m.Groups[1].Value).ToHashSet(StringComparer.InvariantCultureIgnoreCase);
+        var usedPackages = GetCsprojFiles(root).Select(File.ReadAllText).SelectMany(static s => RPackageRef.Matches(s))
+            .Select(static m => m.Groups[1].Value).ToHashSet(StringComparer.InvariantCultureIgnoreCase);
 
         // Then subtract those listed in PACKAGES.md (should be empty)
         var undocumentedPackages = usedPackages.Except(packagesMarkdown).Select(BuildRecommendedMarkdownLine);
         undocumented.AppendJoin(Environment.NewLine, undocumentedPackages);
 
         var unusedPackages = packagesMarkdown.Except(usedPackages).ToArray();
-        Assert.IsEmpty(unusedPackages,
-            $"The following packages are listed in PACKAGES.md but are not used in any csproj file: {string.Join(", ", unusedPackages)}");
-        Assert.IsEmpty(undocumented.ToString());
+        Assert.Multiple(() =>
+        {
+            Assert.That(unusedPackages, Is.Empty,
+                    $"The following packages are listed in PACKAGES.md but are not used in any csproj file: {string.Join(", ", unusedPackages)}");
+            Assert.That(undocumented.ToString(), Is.Empty);
+        });
     }
 
     /// <summary>
@@ -79,7 +82,7 @@ public class PackageListIsCorrectTests
         var root = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
         while (!root.EnumerateFiles("*.sln", SearchOption.TopDirectoryOnly).Any() && root.Parent != null)
             root = root.Parent;
-        Assert.IsNotNull(root.Parent, "Could not find root of repository");
+        Assert.That(root.Parent, Is.Not.Null, "Could not find root of repository");
         return root;
     }
 
@@ -90,7 +93,8 @@ public class PackageListIsCorrectTests
     /// <returns></returns>
     private static IEnumerable<string> GetCsprojFiles(DirectoryInfo root)
     {
-        return root.EnumerateFiles("*.csproj", EnumerationOptions).Select(f => f.FullName).Where(f => !f.Contains("tests", StringComparison.InvariantCultureIgnoreCase));
+        return root.EnumerateFiles("*.csproj", EnumerationOptions).Select(static f => f.FullName)
+            .Where(static f => !f.Contains("tests", StringComparison.InvariantCultureIgnoreCase));
     }
 
     /// <summary>
@@ -100,9 +104,16 @@ public class PackageListIsCorrectTests
     /// <returns></returns>
     private static string GetPackagesMarkdown(DirectoryInfo root)
     {
-        var path = root.EnumerateFiles("packages.md", EnumerationOptions).Select(f => f.FullName).SingleOrDefault();
-        Assert.IsNotNull(path, "Could not find packages.md");
+        var path = root.EnumerateFiles("packages.md", EnumerationOptions).Select(static f => f.FullName)
+            .SingleOrDefault();
+        Assert.That(path, Is.Not.Null, "Could not find packages.md");
         return path;
     }
 
+    [GeneratedRegex("""
+                    <PackageReference\s+Include="(.*)"\s+Version="([^"]*)"
+                    """, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex PackageRefRegex();
+    [GeneratedRegex(@"^\|\s*\[?([^ |\]]+)(\]\([^)]+\))?\s*\|", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex MarkdownEntryRegex();
 }

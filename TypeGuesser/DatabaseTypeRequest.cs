@@ -21,7 +21,7 @@ public class DatabaseTypeRequest : IDataTypeSize
 
         typeof(TimeSpan),
         typeof(DateTime), //ironically Convert.ToDateTime likes int and floats as valid dates -- nuts
-            
+
         typeof(string)
     });
 
@@ -47,7 +47,7 @@ public class DatabaseTypeRequest : IDataTypeSize
         get => _maxWidthForStrings.HasValue ? Math.Max(_maxWidthForStrings.Value, Size.ToStringLength()): null;
         set => _maxWidthForStrings = value;
     }
-        
+
     /// <summary>
     /// Only applies when <see cref="CSharpType"/> is <see cref="string"/>.  True indicates that the column should be
     /// nvarchar instead of varchar.
@@ -85,6 +85,7 @@ public class DatabaseTypeRequest : IDataTypeSize
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
+
         return Equals((DatabaseTypeRequest) obj);
     }
 
@@ -133,13 +134,13 @@ public class DatabaseTypeRequest : IDataTypeSize
             second.Unicode = first.Unicode || second.Unicode;
             return second;
         }
-            
+
         if (PreferenceOrder.IndexOf(first.CSharpType) > PreferenceOrder.IndexOf(second.CSharpType))
         {
             first.Unicode = first.Unicode || second.Unicode;
             return first;
         }
-            
+
         if(!(first.CSharpType == second.CSharpType))
             throw new NotSupportedException(string.Format(SR.DatabaseTypeRequest_Max_Could_not_combine_Types___0___and___1___because_they_were_of_differing_Types_and_neither_Type_appeared_in_the_PreferenceOrder, first.CSharpType, second.CSharpType));
 

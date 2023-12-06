@@ -12,9 +12,9 @@ namespace Tests;
 /// 
 /// <para>Critically it covers fallback from one data type estimate to another based on new data e.g. if you see a "100" then a "1" then a "1.1"
 /// the final estimate should be decimal(4,1) to allow for both 100.0f and 1.1f.
-/// </para> 
+/// </para>
 /// </summary>
-public class GuesserTests
+public sealed class GuesserTests
 {
 
     [TestCase("5",typeof(int),"en-us",1,1,0,5)]
@@ -60,18 +60,20 @@ public class GuesserTests
         var cultureInfo = new CultureInfo(culture);
         var guesser = new Guesser {Culture = cultureInfo};
         guesser.AdjustToCompensateForValue(guessFor);
-        Assert.AreEqual(expectedGuess,guesser.Guess.CSharpType,"Guessed Type did not match");
-        Assert.AreEqual(expectedStringLength,guesser.Guess.Width,"String length guessed didn't match");
-        Assert.AreEqual(expectedBefore,guesser.Guess.Size.NumbersBeforeDecimalPlace,"BeforeDecimalPlace didn't match");
-        Assert.AreEqual(expectedAfter,guesser.Guess.Size.NumbersAfterDecimalPlace,"AfterDecimalPlace didn't match");
+        Assert.Multiple(() =>
+        {
+            Assert.That(guesser.Guess.CSharpType, Is.EqualTo(expectedGuess), "Guessed Type did not match");
+            Assert.That(guesser.Guess.Width, Is.EqualTo(expectedStringLength), "String length guessed didn't match");
+            Assert.That(guesser.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(expectedBefore), "BeforeDecimalPlace didn't match");
+            Assert.That(guesser.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(expectedAfter), "AfterDecimalPlace didn't match");
+        });
 
 
         var factory = new TypeDeciderFactory(cultureInfo);
 
-        Assert.AreEqual(expectedParseValue,
-            factory.IsSupported(guesser.Guess.CSharpType)
+        Assert.That(factory.IsSupported(guesser.Guess.CSharpType)
                 ? factory.Create(guesser.Guess.CSharpType).Parse(guessFor)
-                : guessFor);
+                : guessFor, Is.EqualTo(expectedParseValue));
     }
 
     [TestCase("en-us",new []{"5","10"},
@@ -86,10 +88,13 @@ public class GuesserTests
         var guesser = new Guesser {Culture = cultureInfo};
         guesser.AdjustToCompensateForValues(guessFor);
 
-        Assert.AreEqual(expectedGuess,guesser.Guess.CSharpType,"Guessed Type did not match");
-        Assert.AreEqual(expectedStringLength,guesser.Guess.Width,"String length guessed didn't match");
-        Assert.AreEqual(expectedBefore,guesser.Guess.Size.NumbersBeforeDecimalPlace,"BeforeDecimalPlace didn't match");
-        Assert.AreEqual(expectedAfter,guesser.Guess.Size.NumbersAfterDecimalPlace,"AfterDecimalPlace didn't match");
+        Assert.Multiple(() =>
+        {
+            Assert.That(guesser.Guess.CSharpType, Is.EqualTo(expectedGuess), "Guessed Type did not match");
+            Assert.That(guesser.Guess.Width, Is.EqualTo(expectedStringLength), "String length guessed didn't match");
+            Assert.That(guesser.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(expectedBefore), "BeforeDecimalPlace didn't match");
+            Assert.That(guesser.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(expectedAfter), "AfterDecimalPlace didn't match");
+        });
     }
 
     [Test]
@@ -98,22 +103,28 @@ public class GuesserTests
         var guesser = new Guesser();
         guesser.AdjustToCompensateForValue("-12.211");
         var guess = guesser.Guess;
-            
-        Assert.AreEqual(typeof(decimal),guess.CSharpType);
-        Assert.AreEqual(2, guess.Size.NumbersBeforeDecimalPlace);
-        Assert.AreEqual(3,guess.Size.NumbersAfterDecimalPlace);
-        Assert.AreEqual(7,guess.Width);
 
-                
+        Assert.Multiple(() =>
+        {
+            Assert.That(guess.CSharpType, Is.EqualTo(typeof(decimal)));
+            Assert.That(guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(2));
+            Assert.That(guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(3));
+            Assert.That(guess.Width, Is.EqualTo(7));
+        });
+
+
         guesser = new Guesser();
         guesser.AdjustToCompensateForValue("1,000");
         guesser.AdjustToCompensateForValue("0.001");
         guess = guesser.Guess;
-                
-        Assert.AreEqual(typeof(decimal),guess.CSharpType);
-        Assert.AreEqual(4,guess.Size.NumbersBeforeDecimalPlace);
-        Assert.AreEqual(3,guess.Size.NumbersAfterDecimalPlace);
-        Assert.AreEqual(8,guess.Width);//?
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(guess.CSharpType, Is.EqualTo(typeof(decimal)));
+            Assert.That(guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(4));
+            Assert.That(guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(3));
+            Assert.That(guess.Width, Is.EqualTo(8));//?
+        });
 
 
         var someStrings = new []{"13:11:59", "9AM"};
@@ -122,8 +133,11 @@ public class GuesserTests
 
         var parsed = someStrings.Select(guesser.Parse).ToArray();
 
-        Assert.AreEqual(new TimeSpan(13, 11, 59), parsed[0]);
-        Assert.AreEqual(new TimeSpan(9, 0, 0), parsed[1]);
+        Assert.Multiple(() =>
+        {
+            Assert.That(parsed[0], Is.EqualTo(new TimeSpan(13, 11, 59)));
+            Assert.That(parsed[1], Is.EqualTo(new TimeSpan(9, 0, 0)));
+        });
     }
 
     [Test]
@@ -131,16 +145,22 @@ public class GuesserTests
     {
         var t = new Guesser();
         t.AdjustToCompensateForValue("12");
-            
-        Assert.AreEqual(typeof(int),t.Guess.CSharpType);
-        Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
-        Assert.AreEqual(2, t.Guess.Size.NumbersBeforeDecimalPlace);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(int)));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(0));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(2));
+        });
 
         t.AdjustToCompensateForValue("0.1");
 
-        Assert.AreEqual(typeof(decimal), t.Guess.CSharpType);
-        Assert.AreEqual(1, t.Guess.Size.NumbersAfterDecimalPlace);
-        Assert.AreEqual(2, t.Guess.Size.NumbersBeforeDecimalPlace);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(decimal)));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(1));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(2));
+        });
     }
 
 
@@ -150,16 +170,22 @@ public class GuesserTests
         var t = new Guesser();
         t.AdjustToCompensateForValue("12");
 
-        Assert.AreEqual(typeof(int), t.Guess.CSharpType);
-        Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
-        Assert.AreEqual(2, t.Guess.Size.NumbersBeforeDecimalPlace);
-        Assert.AreEqual(2, t.Guess.Width);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(int)));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(0));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(2));
+            Assert.That(t.Guess.Width, Is.EqualTo(2));
+        });
 
         t.AdjustToCompensateForValue("2001-01-01");
 
-        Assert.AreEqual(typeof(string), t.Guess.CSharpType);
-        Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
-        Assert.AreEqual(10, t.Guess.Width);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(0));
+            Assert.That(t.Guess.Width, Is.EqualTo(10));
+        });
     }
 
     [Test]
@@ -171,29 +197,35 @@ public class GuesserTests
         t.AdjustToCompensateForValue(null);
         t.AdjustToCompensateForValue(DBNull.Value);
 
-        Assert.AreEqual(typeof(decimal),t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(decimal)));
     }
 
     [Test]
     public void TestGuesser_Int()
     {
         var t = new Guesser();
-            
+
         t.AdjustToCompensateForValue("0");
-        Assert.AreEqual(typeof(bool), t.Guess.CSharpType);
-        Assert.AreEqual(1, t.Guess.Width);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(bool)));
+            Assert.That(t.Guess.Width, Is.EqualTo(1));
+        });
 
         t.AdjustToCompensateForValue("-0");
-        Assert.AreEqual(typeof(int), t.Guess.CSharpType);
-        Assert.AreEqual(2, t.Guess.Width);
-            
-            
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(int)));
+            Assert.That(t.Guess.Width, Is.EqualTo(2));
+        });
+
+
         t.AdjustToCompensateForValue("15");
         t.AdjustToCompensateForValue("299");
         t.AdjustToCompensateForValue(null);
         t.AdjustToCompensateForValue(DBNull.Value);
 
-        Assert.AreEqual(typeof(int),t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(int)));
     }
 
     /// <summary>
@@ -203,27 +235,33 @@ public class GuesserTests
     public void TestGuesser_IntThenLong()
     {
         var t = new Guesser();
-            
+
         //we see an int
         t.AdjustToCompensateForValue("-100");
 
-        //we guess the column contains ints
-        Assert.AreEqual(typeof(int), t.Guess.CSharpType);
-        Assert.AreEqual(4, t.Guess.Width);
-        Assert.AreEqual(3, t.Guess.Size.NumbersBeforeDecimalPlace);
-        Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
+        Assert.Multiple(() =>
+        {
+            //we guess the column contains ints
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(int)));
+            Assert.That(t.Guess.Width, Is.EqualTo(4));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(3));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(0));
+        });
 
         //we see a long
         t.AdjustToCompensateForValue("9223372036854775807");
 
-        //we change our estimate to the compatible estimate of 'decimal'
-        Assert.AreEqual(typeof(decimal), t.Guess.CSharpType);
-        Assert.AreEqual(19, t.Guess.Width);
-        Assert.AreEqual(19, t.Guess.Size.NumbersBeforeDecimalPlace);
-        Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
-            
+        Assert.Multiple(() =>
+        {
+            //we change our estimate to the compatible estimate of 'decimal'
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(decimal)));
+            Assert.That(t.Guess.Width, Is.EqualTo(19));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(19));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(0));
+        });
+
         //final estimate is decimal
-        Assert.AreEqual(typeof(decimal),t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(decimal)));
     }
 
     [Test]
@@ -236,7 +274,7 @@ public class GuesserTests
         t.AdjustToCompensateForValue(null);
         t.AdjustToCompensateForValue(DBNull.Value);
 
-        Assert.AreEqual(typeof(decimal),t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(decimal)));
     }
     [Test]
     public void TestGuesser_IntAndDecimal_MustUseDecimalThenString()
@@ -247,14 +285,20 @@ public class GuesserTests
         t.AdjustToCompensateForValue("200");
         t.AdjustToCompensateForValue(null);
         t.AdjustToCompensateForValue(DBNull.Value);
-            
-        Assert.AreEqual(typeof(decimal),t.Guess.CSharpType);
-        Assert.AreEqual(3,t.Guess.Size.NumbersBeforeDecimalPlace);
-        Assert.AreEqual(1,t.Guess.Size.NumbersAfterDecimalPlace);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(decimal)));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(3));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(1));
+        });
 
         t.AdjustToCompensateForValue("D");
-        Assert.AreEqual(typeof(string),t.Guess.CSharpType);
-        Assert.AreEqual(5,t.Guess.Width);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
+            Assert.That(t.Guess.Width, Is.EqualTo(5));
+        });
     }
 
     /// <summary>
@@ -272,39 +316,42 @@ public class GuesserTests
     {
         var decider = new DateTimeTypeDecider(CultureInfo.InvariantCulture);
 
-        Assert.IsFalse(decider.IsAcceptableAsType(value, new DatabaseTypeRequest(typeof(DateTime))));
+        Assert.That(decider.IsAcceptableAsType(value, new DatabaseTypeRequest(typeof(DateTime))), Is.False);
 
-        decider.Settings.ExplicitDateFormats = new []{format };
-        Assert.IsTrue(decider.IsAcceptableAsType(value, new DatabaseTypeRequest(typeof(DateTime))));
+        decider.Settings.ExplicitDateFormats = [format];
+        Assert.Multiple(() =>
+        {
+            Assert.That(decider.IsAcceptableAsType(value, new DatabaseTypeRequest(typeof(DateTime))), Is.True);
 
-        Assert.AreEqual(new DateTime(yy,mm,dd),decider.Parse(value));
+            Assert.That(decider.Parse(value), Is.EqualTo(new DateTime(yy, mm, dd)));
+        });
 
         var g = new Guesser();
         g.AdjustToCompensateForValue(value);
-        Assert.IsTrue(g.Guess.CSharpType == typeof(int) || g.Guess.CSharpType == typeof(string) /*0 prefixed numbers are usually treated as strings*/);
+        Assert.That(g.Guess.CSharpType == typeof(int) || g.Guess.CSharpType == typeof(string) /*0 prefixed numbers are usually treated as strings*/, Is.True);
 
-            
+
         var g2 = new Guesser
         {
             Settings =
             {
-                ExplicitDateFormats = new[]{format}
+                ExplicitDateFormats = [format]
             }
         };
         g2.AdjustToCompensateForValue(value);
-        Assert.AreEqual(typeof(DateTime),g2.Guess.CSharpType);
+        Assert.That(g2.Guess.CSharpType, Is.EqualTo(typeof(DateTime)));
 
     }
-        
+
     [Test]
     public void TestGuesser_DateTimeFromInt()
     {
         var t = new Guesser();
         t.AdjustToCompensateForValue("01/01/2001");
-        Assert.AreEqual(typeof(DateTime), t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(DateTime)));
 
         t.AdjustToCompensateForValue("2013");
-        Assert.AreEqual(typeof(string), t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
     }
 
     //Tests system being happy to sign off in the orders bool=>int=>decimal but nothing else
@@ -315,11 +362,11 @@ public class GuesserTests
     {
         var t = new Guesser();
         t.AdjustToCompensateForValue(input1);
-            
-        Assert.AreEqual(expectedTypeAfterFirstInput,t.Guess.CSharpType);
-            
+
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(expectedTypeAfterFirstInput));
+
         t.AdjustToCompensateForValue(input2);
-        Assert.AreEqual(expectedTypeAfterSecondInput, t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(expectedTypeAfterSecondInput));
     }
 
     //Tests system being angry at having signed off on a bool=>int=>decimal then seeing a valid non string type (e.g. DateTime)
@@ -334,16 +381,16 @@ public class GuesserTests
         var t = new Guesser();
         t.AdjustToCompensateForValue(input1);
 
-        Assert.AreEqual(expectedTypeAfterFirstInput, t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(expectedTypeAfterFirstInput));
 
         t.AdjustToCompensateForValue(input2);
-        Assert.AreEqual(typeof(string), t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
 
         //now check it in reverse just to be sure
         t = new Guesser();
         t.AdjustToCompensateForValue(input2);
         t.AdjustToCompensateForValue(input1);
-        Assert.AreEqual(typeof(string),t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
     }
 
     [Test]
@@ -352,7 +399,7 @@ public class GuesserTests
         var t = new Guesser();
         t.AdjustToCompensateForValue("2013");
         t.AdjustToCompensateForValue("01/01/2001");
-        Assert.AreEqual(typeof(string), t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
     }
 
     [TestCase("fish",32)]
@@ -367,10 +414,10 @@ public class GuesserTests
         //...then we don't accept strings any more
 
         var t = new Guesser();
-        t.AdjustToCompensateForValue(o1); 
+        t.AdjustToCompensateForValue(o1);
 
-        var ex = Assert.Throws<MixedTypingException>(() => t.AdjustToCompensateForValue(o2)); 
-        StringAssert.Contains("mixed with untyped objects",ex?.Message);
+        var ex = Assert.Throws<MixedTypingException>(() => t.AdjustToCompensateForValue(o2));
+        Assert.That(ex?.Message, Does.Contain("mixed with untyped objects"));
     }
 
     [Test]
@@ -380,7 +427,7 @@ public class GuesserTests
         t.AdjustToCompensateForValue("01/01/2001");
         t.AdjustToCompensateForValue(null);
 
-        Assert.AreEqual(typeof(DateTime),t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(DateTime)));
     }
 
     [TestCase("1. 01 ", typeof(DateTime))]
@@ -389,7 +436,7 @@ public class GuesserTests
     {
         var t = new Guesser();
         t.AdjustToCompensateForValue(input);
-        Assert.AreEqual(expectedOutput, t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(expectedOutput));
     }
 
     [Test]
@@ -399,21 +446,21 @@ public class GuesserTests
         t.AdjustToCompensateForValue(GetCultureSpecificDate());
         t.AdjustToCompensateForValue(null);
 
-        Assert.AreEqual(typeof(DateTime),t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(DateTime)));
     }
 
     [Test]
     public void TestGuesser_DateTime_EnglishWithTime()
     {
         var t = new Guesser();
-            
+
         Console.WriteLine(CultureInfo.CurrentCulture.EnglishName);
         Console.WriteLine(CultureInfo.CurrentCulture.DateTimeFormat.MonthDayPattern);
 
         t.AdjustToCompensateForValue($"{GetCultureSpecificDate()} 11:10");
         t.AdjustToCompensateForValue(null);
 
-        Assert.AreEqual(typeof(DateTime),t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(DateTime)));
     }
 
     private static string GetCultureSpecificDate()
@@ -436,7 +483,7 @@ public class GuesserTests
         t.AdjustToCompensateForValue($"{GetCultureSpecificDate()} 11:10AM");
         t.AdjustToCompensateForValue(null);
 
-        Assert.AreEqual(typeof(DateTime),t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(DateTime)));
     }
 
     [TestCase("01",2)]
@@ -455,8 +502,11 @@ public class GuesserTests
     {
         var t = new Guesser();
         t.AdjustToCompensateForValue(input);
-        Assert.AreEqual(typeof(string), t.Guess.CSharpType);
-        Assert.AreEqual(expectedLength, t.Guess.Width);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
+            Assert.That(t.Guess.Width, Is.EqualTo(expectedLength));
+        });
     }
 
     [Test]
@@ -468,7 +518,7 @@ public class GuesserTests
         t.AdjustToCompensateForValue(null);
         t.AdjustToCompensateForValue(DBNull.Value);
 
-        Assert.AreEqual(typeof(string), t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
     }
     [Test]
     public void TestGuesser_Negatives()
@@ -477,9 +527,12 @@ public class GuesserTests
         t.AdjustToCompensateForValue("-1");
         t.AdjustToCompensateForValue("-99.99");
 
-        Assert.AreEqual(typeof(decimal),t.Guess.CSharpType);
-        Assert.AreEqual(4,t.Guess.Size.Precision);
-        Assert.AreEqual(2,t.Guess.Size.Scale);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(decimal)));
+            Assert.That(t.Guess.Size.Precision, Is.EqualTo(4));
+            Assert.That(t.Guess.Size.Scale, Is.EqualTo(2));
+        });
     }
 
 
@@ -488,11 +541,14 @@ public class GuesserTests
     {
         var t = new Guesser();
         t.AdjustToCompensateForValue(299.99);
-            
-        Assert.AreEqual(typeof(double), t.Guess.CSharpType);
 
-        Assert.AreEqual(2, t.Guess.Size.NumbersAfterDecimalPlace);
-        Assert.AreEqual(3, t.Guess.Size.NumbersBeforeDecimalPlace);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(double)));
+
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(2));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(3));
+        });
     }
 
     [TestCase(" 1.01", typeof(decimal))]
@@ -504,8 +560,11 @@ public class GuesserTests
         var t = new Guesser();
         t.AdjustToCompensateForValue(input);
 
-        Assert.AreEqual(expectedType, t.Guess.CSharpType);
-        Assert.AreEqual(input.Length,t.Guess.Width);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(expectedType));
+            Assert.That(t.Guess.Width, Is.EqualTo(input.Length));
+        });
     }
 
     [Test]
@@ -519,20 +578,23 @@ public class GuesserTests
             t.AdjustToCompensateForValue("True");
         else
             t.AdjustToCompensateForValue(true);
-            
+
         if (sendStringEquiv)
             t.AdjustToCompensateForValue("False");
         else
             t.AdjustToCompensateForValue(false);
-            
-        Assert.AreEqual(typeof(bool), t.Guess.CSharpType);
+
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(bool)));
 
         t.AdjustToCompensateForValue(null);
 
-        Assert.AreEqual(typeof(bool), t.Guess.CSharpType);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(bool)));
 
-        Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
-        Assert.AreEqual(0, t.Guess.Size.NumbersBeforeDecimalPlace);
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(0));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(0));
+        });
     }
 
     [Test]
@@ -542,7 +604,7 @@ public class GuesserTests
         t.AdjustToCompensateForValue((short)5);
         var ex = Assert.Throws<MixedTypingException>(()=>t.AdjustToCompensateForValue(1000));
 
-        StringAssert.Contains("We were adjusting to compensate for object '1000' which is of Type 'System.Int32', we were previously passed a 'System.Int16' type",ex?.Message);
+        Assert.That(ex?.Message, Does.Contain("We were adjusting to compensate for object '1000' which is of Type 'System.Int32', we were previously passed a 'System.Int16' type"));
     }
     [Test]
     public void TestGuesser_Int16s()
@@ -554,11 +616,14 @@ public class GuesserTests
         t.AdjustToCompensateForValue((short)30);
         t.AdjustToCompensateForValue((short)200);
 
-        Assert.AreEqual(typeof(short), t.Guess.CSharpType);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(short)));
 
-        Assert.AreEqual(3, t.Guess.Size.NumbersBeforeDecimalPlace);
-        Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
-            
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(3));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(0));
+        });
+
 
     }
     [Test]
@@ -567,11 +632,14 @@ public class GuesserTests
         var t = new Guesser();
         t.AdjustToCompensateForValue(new byte[5]);
 
-        Assert.AreEqual(typeof(byte[]), t.Guess.CSharpType);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(byte[])));
 
-        Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
-        Assert.AreEqual(0, t.Guess.Size.NumbersBeforeDecimalPlace);
-        Assert.IsTrue(t.Guess.Size.IsEmpty);
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(0));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(0));
+        });
+        Assert.That(t.Guess.Size.IsEmpty, Is.True);
     }
 
 
@@ -581,28 +649,37 @@ public class GuesserTests
         var t = new Guesser();
         t.AdjustToCompensateForValue("111111111.11111111111115");
 
-        Assert.AreEqual(typeof(decimal), t.Guess.CSharpType);
-        Assert.AreEqual(9, t.Guess.Size.NumbersBeforeDecimalPlace);
-        Assert.AreEqual(14, t.Guess.Size.NumbersAfterDecimalPlace);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(decimal)));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(9));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(14));
+        });
     }
-        
+
 
     [Test]
     public void TestGuesser_TrailingZeroesFallbackToString()
     {
         var t = new Guesser();
         t.AdjustToCompensateForValue("-111.000");
-            
-        Assert.AreEqual(typeof(int), t.Guess.CSharpType);
-        Assert.AreEqual(3, t.Guess.Size.NumbersBeforeDecimalPlace);
 
-        //even though they are trailing zeroes we still need this much space... there must be a reason why they are there right? (also makes it easier to go to string later if needed eh!)
-        Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace); 
-            
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(int)));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(3));
+
+            //even though they are trailing zeroes we still need this much space... there must be a reason why they are there right? (also makes it easier to go to string later if needed eh!)
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(0));
+        });
+
         t.AdjustToCompensateForValue("P");
 
-        Assert.AreEqual(typeof(string), t.Guess.CSharpType);
-        Assert.AreEqual(8, t.Guess.Width);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
+            Assert.That(t.Guess.Width, Is.EqualTo(8));
+        });
     }
 
     [Test]
@@ -610,16 +687,22 @@ public class GuesserTests
     {
         var t = new Guesser();
         t.AdjustToCompensateForValue("-1000");
-        Assert.AreEqual(typeof(int),t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(int)));
 
         t.AdjustToCompensateForValue("1.1");
-        Assert.AreEqual(typeof(decimal),t.Guess.CSharpType);
-        Assert.AreEqual(5,t.Guess.Size.Precision);
-        Assert.AreEqual(1,t.Guess.Size.Scale);
-            
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(decimal)));
+            Assert.That(t.Guess.Size.Precision, Is.EqualTo(5));
+            Assert.That(t.Guess.Size.Scale, Is.EqualTo(1));
+        });
+
         t.AdjustToCompensateForValue("A");
-        Assert.AreEqual(typeof(string),t.Guess.CSharpType);
-        Assert.AreEqual(6,t.Guess.Width);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
+            Assert.That(t.Guess.Width, Is.EqualTo(6));
+        });
     }
 
     [Test]
@@ -629,8 +712,11 @@ public class GuesserTests
         t.AdjustToCompensateForValue("15.5");
         t.AdjustToCompensateForValue("F");
 
-        Assert.AreEqual(typeof(string), t.Guess.CSharpType);
-        Assert.AreEqual(4, t.Guess.Width);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
+            Assert.That(t.Guess.Width, Is.EqualTo(4));
+        });
     }
     [Test]
     public void TestGuesser_Time()
@@ -638,8 +724,8 @@ public class GuesserTests
         var t = new Guesser();
         t.AdjustToCompensateForValue("12:30:00");
 
-        Assert.AreEqual(typeof(TimeSpan), t.Guess.CSharpType);
-            
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(TimeSpan)));
+
     }
 
     [Test]
@@ -648,8 +734,8 @@ public class GuesserTests
         var t = new Guesser();
         t.AdjustToCompensateForValue("12:01");
 
-        Assert.AreEqual(typeof(TimeSpan), t.Guess.CSharpType);
-            
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(TimeSpan)));
+
     }
 
     [Test]
@@ -658,8 +744,8 @@ public class GuesserTests
         var t = new Guesser();
         t.AdjustToCompensateForValue("1:01PM");
 
-        Assert.AreEqual(typeof(TimeSpan), t.Guess.CSharpType);
-            
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(TimeSpan)));
+
     }
     [Test]
     public void TestGuesser_24Hour()
@@ -667,8 +753,8 @@ public class GuesserTests
         var t = new Guesser();
         t.AdjustToCompensateForValue("23:01");
 
-        Assert.AreEqual(typeof(TimeSpan), t.Guess.CSharpType);
-            
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(TimeSpan)));
+
     }
     [Test]
     public void TestGuesser_Midnight()
@@ -676,8 +762,8 @@ public class GuesserTests
         var t = new Guesser();
         t.AdjustToCompensateForValue("00:00");
 
-        Assert.AreEqual(typeof(TimeSpan), t.Guess.CSharpType);
-            
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(TimeSpan)));
+
     }
     [Test]
     public void TestGuesser_TimeObject()
@@ -685,19 +771,22 @@ public class GuesserTests
         var t = new Guesser();
         t.AdjustToCompensateForValue(new TimeSpan(10,1,1));
 
-        Assert.AreEqual(typeof(TimeSpan), t.Guess.CSharpType);
-            
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(TimeSpan)));
+
     }
     [Test]
     public void TestGuesser_MixedDateAndTime_FallbackToString()
     {
         var t = new Guesser();
         t.AdjustToCompensateForValue("09:01");
-        Assert.AreEqual(typeof(TimeSpan), t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(TimeSpan)));
 
         t.AdjustToCompensateForValue("2001-12-29 23:01");
-        Assert.AreEqual(typeof(string), t.Guess.CSharpType);
-        Assert.AreEqual(16, t.Guess.Width);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
+            Assert.That(t.Guess.Width, Is.EqualTo(16));
+        });
     }
 
     [TestCase("1-1000")]
@@ -705,7 +794,7 @@ public class GuesserTests
     {
         var t = new Guesser();
         t.AdjustToCompensateForValue(weirdDateString);
-        Assert.AreEqual(typeof(DateTime), t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(DateTime)));
     }
 
     [Test]
@@ -716,9 +805,12 @@ public class GuesserTests
         t.AdjustToCompensateForValue(100.01f);
         t.AdjustToCompensateForValue(10000f);
 
-        Assert.AreEqual(typeof(float), t.Guess.CSharpType);
-        Assert.AreEqual(2,t.Guess.Size.NumbersAfterDecimalPlace);
-        Assert.AreEqual(5, t.Guess.Size.NumbersBeforeDecimalPlace);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(float)));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(2));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(5));
+        });
     }
 
     [Test]
@@ -731,9 +823,12 @@ public class GuesserTests
         t.AdjustToCompensateForValue(10000);
         t.AdjustToCompensateForValue(DBNull.Value);
 
-        Assert.AreEqual(typeof(int), t.Guess.CSharpType);
-        Assert.AreEqual(0, t.Guess.Size.NumbersAfterDecimalPlace);
-        Assert.AreEqual(5, t.Guess.Size.NumbersBeforeDecimalPlace);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(int)));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(0));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(5));
+        });
     }
 
 
@@ -748,9 +843,12 @@ public class GuesserTests
         t.AdjustToCompensateForValue(10000d);//<- d is required because Types must be homogenous
         t.AdjustToCompensateForValue(DBNull.Value);
 
-        Assert.AreEqual(typeof(double), t.Guess.CSharpType);
-        Assert.AreEqual(3, t.Guess.Size.NumbersAfterDecimalPlace);
-        Assert.AreEqual(5, t.Guess.Size.NumbersBeforeDecimalPlace);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(double)));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(3));
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(5));
+        });
     }
 
 
@@ -762,18 +860,21 @@ public class GuesserTests
     public void TestGuesser_FallbackOntoStringLength(string legitType, Type expectedLegitType, string str, int expectedLength)
     {
         var t = new Guesser();
-            
+
         //give it the legit hard typed value e.g. a date
         t.AdjustToCompensateForValue(legitType);
-        Assert.AreEqual(expectedLegitType, t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(expectedLegitType));
 
         //then give it a string
         t.AdjustToCompensateForValue(str);
-        Assert.AreEqual(typeof(string), t.Guess.CSharpType);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
 
-        //the length should be the max of the length of the legit string and the string str
-        Assert.AreEqual(expectedLength, t.Guess.Width);
-            
+            //the length should be the max of the length of the legit string and the string str
+            Assert.That(t.Guess.Width, Is.EqualTo(expectedLength));
+        });
+
     }
 
     [Test]
@@ -786,20 +887,23 @@ public class GuesserTests
     {
         var t = new Guesser();
         t.AdjustToCompensateForValue(randomCrud);
-        Assert.AreEqual(typeof(string), t.Guess.CSharpType);
+        Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(string)));
     }
-        
+
     [Test]
     public void TestGuesser_ScientificNotation()
     {
         const string val = "-4.10235746055587E-05"; //-0.0000410235746055587
         var t = new Guesser();
         t.AdjustToCompensateForValue(val);
-        Assert.AreEqual(typeof(decimal), t.Guess.CSharpType);
-            
-        //there is always 1 decimal place before point in order to allow for changing to string later on and retain a single leading 0.
-        Assert.AreEqual(0, t.Guess.Size.NumbersBeforeDecimalPlace);
-        Assert.AreEqual(19, t.Guess.Size.NumbersAfterDecimalPlace);
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Guess.CSharpType, Is.EqualTo(typeof(decimal)));
+
+            //there is always 1 decimal place before point in order to allow for changing to string later on and retain a single leading 0.
+            Assert.That(t.Guess.Size.NumbersBeforeDecimalPlace, Is.EqualTo(0));
+            Assert.That(t.Guess.Size.NumbersAfterDecimalPlace, Is.EqualTo(19));
+        });
     }
 
     [TestCase("didn’t")]
@@ -809,12 +913,15 @@ public class GuesserTests
     {
         var t = new Guesser();
         t.AdjustToCompensateForValue(word);
-            
-        //guesser should have picked up that it needs unicode
-        Assert.IsTrue(t.Guess.Unicode);
 
-        //in most DBMS
-        Assert.AreEqual(t.Guess.Width,word.Length);
+        Assert.Multiple(() =>
+        {
+            //guesser should have picked up that it needs unicode
+            Assert.That(t.Guess.Unicode, Is.True);
+
+            //in most DBMS
+            Assert.That(word, Has.Length.EqualTo(t.Guess.Width));
+        });
 
         //in the world of Oracle where you need varchar2(6) to store "It’s"
         t = new Guesser
@@ -823,6 +930,6 @@ public class GuesserTests
         };
         t.AdjustToCompensateForValue(word);
 
-        Assert.AreEqual(word.Length + 3, t.Guess.Width);
+        Assert.That(t.Guess.Width, Is.EqualTo(word.Length + 3));
     }
 }

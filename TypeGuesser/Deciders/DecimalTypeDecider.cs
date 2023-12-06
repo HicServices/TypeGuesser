@@ -33,13 +33,13 @@ public sealed class DecimalTypeDecider : DecideTypesForStrings<decimal>
     protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize sizeRecord)
     {
         candidateString = TrimTrailingZeros(candidateString);
-            
+
         if(IsExplicitDate(candidateString))
             return false;
 
         if (!decimal.TryParse(candidateString, NumberStyles.Any, Culture, out var t))
             return false;
-            
+
         var dec = (SqlDecimal) t;
         sizeRecord.Size.IncreaseTo(dec.Precision - dec.Scale,dec.Scale);
 
@@ -52,7 +52,7 @@ public sealed class DecimalTypeDecider : DecideTypesForStrings<decimal>
         if (!s.Contains(Culture.NumberFormat.NumberDecimalSeparator))
             return s;
 
-            
+
         var trim = 0;
         var foundOnlyZeros = true;
 

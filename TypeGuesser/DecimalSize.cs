@@ -23,7 +23,7 @@ public class DecimalSize
     /// </summary>
     public DecimalSize()
     {
-            
+
     }
 
     /// <summary>
@@ -102,7 +102,7 @@ public class DecimalSize
     }
 
     /// <summary>
-    /// Returns a new <see cref="DecimalSize"/> which is big enough to accommodate decimals of <paramref name="first"/> size and those of <paramref name="second"/>.  
+    /// Returns a new <see cref="DecimalSize"/> which is big enough to accommodate decimals of <paramref name="first"/> size and those of <paramref name="second"/>.
     /// For example if the first is decimal(3,0) and the second is decimal(5,4) then the returned result would be decimal(7,4).
     /// </summary>
     /// <param name="first"></param>
@@ -119,7 +119,7 @@ public class DecimalSize
         var newSize = new DecimalSize();
         newSize.IncreaseTo(first);
         newSize.IncreaseTo(second);
-            
+
         return newSize;
     }
 
@@ -141,6 +141,7 @@ public class DecimalSize
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
+
         return Equals((DecimalSize)obj);
     }
 

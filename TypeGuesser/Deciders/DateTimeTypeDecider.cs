@@ -8,38 +8,42 @@ namespace TypeGuesser.Deciders;
 /// <summary>
 /// Guesses whether strings are <see cref="DateTime"/> and handles parsing approved strings according to the <see cref="Culture"/>
 /// </summary>
-public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
+/// <remarks>
+/// Creates a new instance for detecting/parsing <see cref="DateTime"/> strings according to the <paramref name="cultureInfo"/>
+/// </remarks>
+/// <param name="cultureInfo"></param>
+public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForStrings<DateTime>(cultureInfo,TypeCompatibilityGroup.Exclusive, typeof(DateTime))
 {
-    private readonly TimeSpanTypeDecider _timeSpanTypeDecider;
-    private readonly DecimalTypeDecider _decimalChecker;
+    private readonly TimeSpanTypeDecider _timeSpanTypeDecider = new(cultureInfo);
+    private readonly DecimalTypeDecider _decimalChecker = new(cultureInfo);
 
     /// <summary>
     /// Array of all supported DateTime formats in which the Month appears before the Day e.g. e.g. "MMM-dd-yy" ("Sep-16-19")
     /// </summary>
-    public static string[] DateFormatsMD;
+    public static readonly string[] DateFormatsMD;
 
     /// <summary>
     /// Array of all supported DateTime formats in which the Day appears before the Month e.g. "dd-MMM-yy" ("16-Sep-19")
     /// </summary>
-    public static string[] DateFormatsDM;
+    public static readonly string[] DateFormatsDM;
 
     /// <summary>
     /// Array of all supported Time formats e.g. "h:mm:ss tt" ("9:34:39 AM")
     /// </summary>
-    public static string[] TimeFormats;
+    public static readonly string[] TimeFormats;
 
     private string[] _dateFormatToUse;
     private CultureInfo _culture;
-        
+
     /// <summary>
     /// Setting this to false will prevent <see cref="GuessDateFormat(IEnumerable{string})"/> changing the <see cref="Culture"/> e.g. when
     /// inserting date times
     /// </summary>
-    public static bool AllowCultureGuessing = true;
-        
+    public static bool AllowCultureGuessing { get; set; } = true;
+
     /// <summary>
     /// Explicitly sets the culture to use for processing date times.  This suppresses <see cref="GuessDateFormat(IEnumerable{string})"/>.
-    /// Set to null to restore the current environment culture (and re enable guessing).
+    /// Set to null to restore the current environment culture (and re-enable guessing).
     /// 
     /// </summary>
     public override CultureInfo Culture { get => _culture;
@@ -49,7 +53,7 @@ public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
 
             _dateFormatToUse = value.DateTimeFormat.ShortDatePattern.IndexOf('M') > value.DateTimeFormat.ShortDatePattern.IndexOf('d') ? DateFormatsDM : DateFormatsMD;
 
-            _culture = value; 
+            _culture = value;
         } }
 
     static DateTimeTypeDecider()
@@ -86,72 +90,62 @@ public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
                             timeFormats.Add($"{string.Join(timeSeparator, h, m, s)} {suffix}");
                         }
                     }
-        DateFormatsDM = dateFormatsDm.ToArray();
-        DateFormatsMD = dateFormatsMd.ToArray();
-        TimeFormats = timeFormats.ToArray();
+        DateFormatsDM = [.. dateFormatsDm];
+        DateFormatsMD = [.. dateFormatsMd];
+        TimeFormats = [.. timeFormats];
     }
 
-    private static readonly string[] YearFormats = {
+    private static readonly string[] YearFormats = [
         "yy",
         "yyy",
         "yyyy",
         "yyyyy"
-    };
+    ];
 
-    private static readonly string[] MonthFormats = {
+    private static readonly string[] MonthFormats = [
         "M",
         "MM",
         "MMM",
         "MMMM"
-    };
+    ];
 
-    private static readonly string[] DayFormats = {
+    private static readonly string[] DayFormats = [
         "dd",
         "ddd",
         "dddd"
-    };
+    ];
 
-    private static readonly string[] DateSeparators = {
+    private static readonly string[] DateSeparators = [
         "\\\\",
         "/",
         "-",
         "."
-    };
+    ];
 
-    private static readonly string[] HourFormats = {
+    private static readonly string[] HourFormats = [
         "h",
         "hh",
         "H",
         "HH"
-    };
+    ];
 
-    private static readonly string[] MinuteFormats = {
+    private static readonly string[] MinuteFormats = [
         "m",
         "mm"
-    };
+    ];
 
-    private static readonly string[] SecondFormats = {
+    private static readonly string[] SecondFormats = [
         "s",
         "ss"
-    };
+    ];
 
-    private static readonly string[] Suffixes = {
+    private static readonly string[] Suffixes = [
         "tt"
-    };
+    ];
 
-    private static readonly string[] TimeSeparators = {
+    private static readonly string[] TimeSeparators = [
         ":"
-    };
-
-    /// <summary>
-    /// Creates a new instance for detecting/parsing <see cref="DateTime"/> strings according to the <paramref name="cultureInfo"/>
-    /// </summary>
-    /// <param name="cultureInfo"></param>
-    public DateTimeTypeDecider(CultureInfo cultureInfo) : base(cultureInfo,TypeCompatibilityGroup.Exclusive, typeof(DateTime))
-    {
-        _timeSpanTypeDecider = new TimeSpanTypeDecider(cultureInfo);
-        _decimalChecker = new DecimalTypeDecider(cultureInfo);
-    }
+    ];
 
     /// <inheritdoc/>
     protected override IDecideTypesForStrings CloneImpl(CultureInfo overrideCulture)
@@ -185,13 +179,13 @@ public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
     {
         if(!AllowCultureGuessing)
             return;
-            
-        samples = samples.Where(s=>!string.IsNullOrWhiteSpace(s)).ToList();
+
+        samples = samples.Where(static s=>!string.IsNullOrWhiteSpace(s)).ToList();
 
         //if they are all valid anyway
         if(samples.All(s=>DateTime.TryParse(s,Culture,DateTimeStyles.None,out _)))
             return;
-                        
+
         _dateFormatToUse = DateFormatsDM;
         var countDm = samples.Count(s=>TryBruteParse(s,out _));
         _dateFormatToUse = DateFormatsMD;
@@ -229,7 +223,7 @@ public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
         }
     }
 
-    private readonly char[] _space = { ' ' };
+    private readonly char[] _space = [' '];
 
     private bool TryBruteParse(string s, out DateTime dt)
     {

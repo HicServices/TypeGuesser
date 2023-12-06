@@ -12,10 +12,10 @@ namespace TypeGuesser;
 public class TypeDeciderFactory
 {
     /// <summary>
-    /// Collection of all supported <see cref="System.Type"/> mapped to the implementation <see cref="IDecideTypesForStrings"/>.  A given 
+    /// Collection of all supported <see cref="System.Type"/> mapped to the implementation <see cref="IDecideTypesForStrings"/>.  A given
     /// decider can support multiple raw types e.g. <see cref="IntTypeDecider"/>.
     /// </summary>
-    public readonly Dictionary<Type, IDecideTypesForStrings> Dictionary = new();
+    public readonly Dictionary<Type, IDecideTypesForStrings> Dictionary = [];
 
     /// <summary>
     /// Default settings to use for all entries in <see cref="Dictionary"/> and for instances created by <see cref="Create"/>
@@ -46,7 +46,7 @@ public class TypeDeciderFactory
         foreach (var type in decider.TypesSupported)
             Dictionary.Add(type, decider);
     }
-        
+
     /// <summary>
     /// Creates a new <see cref="IDecideTypesForStrings"/> for the given <paramref name="forDataType"/>
     /// </summary>
@@ -57,6 +57,7 @@ public class TypeDeciderFactory
     {
         if (Dictionary.TryGetValue(forDataType, out var decider))
             return decider.Clone();
+
         throw new TypeNotSupportedException(forDataType);
     }
 

@@ -9,7 +9,7 @@ using TypeGuesser.Deciders;
 
 namespace Tests;
 
-public class PerformanceTests
+public sealed class PerformanceTests
 {
     [Test]
     public void Performance_Decimals()
@@ -49,35 +49,35 @@ public class PerformanceTests
         {
             g.AdjustToCompensateForValue(s);
         }
-            
+
         sw.Stop();
 
         Console.WriteLine($"Guesser.AdjustToCompensateForValue:{sw.ElapsedMilliseconds} ms");
 
-            
+
         sw.Restart();
 
         foreach (var s in inputs)
         {
             s.To<decimal>(culture);
         }
-            
+
         sw.Stop();
 
         Console.WriteLine($"To<decimal>:{sw.ElapsedMilliseconds} ms");
 
-            
+
         sw.Restart();
 
-            
+
         foreach (var s in inputs)
         {
             decimal.TryParse(s,NumberStyles.Any,culture,out _ );
         }
-            
+
         sw.Stop();
 
         Console.WriteLine($"Parse:{sw.ElapsedMilliseconds} ms");
-            
+
     }
 }

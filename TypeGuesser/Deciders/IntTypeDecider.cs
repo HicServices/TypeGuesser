@@ -6,20 +6,17 @@ namespace TypeGuesser.Deciders;
 /// <summary>
 /// Guesses whether strings are <see cref="int"/> and handles parsing approved strings according to the <see cref="DecideTypesForStrings{T}.Culture"/>
 /// </summary>
-public class IntTypeDecider : DecideTypesForStrings<int>
+/// <remarks>
+/// Creates a new instance for recognizing whole numbers in string values
+/// </remarks>
+/// <param name="culture"></param>
+public sealed class IntTypeDecider(CultureInfo culture) : DecideTypesForStrings<int>(culture,TypeCompatibilityGroup.Numerical, typeof(short) , typeof(int), typeof(byte))
 {
-    /// <summary>
-    /// Creates a new instance for recognizing whole numbers in string values
-    /// </summary>
-    /// <param name="culture"></param>
-    public IntTypeDecider(CultureInfo culture) : base(culture,TypeCompatibilityGroup.Numerical, typeof(short) , typeof(int), typeof(byte))
-    {
-    }
 
     /// <inheritdoc/>
-    protected override IDecideTypesForStrings CloneImpl(CultureInfo culture)
+    protected override IDecideTypesForStrings CloneImpl(CultureInfo newCulture)
     {
-        return new IntTypeDecider(culture);
+        return new IntTypeDecider(newCulture);
     }
 
     /// <inheritdoc/>

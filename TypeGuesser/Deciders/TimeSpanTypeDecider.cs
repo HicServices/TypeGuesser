@@ -6,47 +6,28 @@ namespace TypeGuesser.Deciders;
 /// <summary>
 /// Guesses whether strings are <see cref="TimeSpan"/> and handles parsing approved strings according to the <see cref="DecideTypesForStrings{T}.Culture"/>
 /// </summary>
-public class TimeSpanTypeDecider : DecideTypesForStrings<TimeSpan>
+/// <remarks>
+/// Creates a new instance for recognizing time values (without date) in strings
+/// </remarks>
+/// <param name="culture"></param>
+public sealed class TimeSpanTypeDecider(CultureInfo culture) : DecideTypesForStrings<TimeSpan>(culture,TypeCompatibilityGroup.Exclusive, typeof(TimeSpan))
 {
-    /// <summary>
-    /// Creates a new instance for recognizing time values (without date) in strings
-    /// </summary>
-    /// <param name="culture"></param>
-    public TimeSpanTypeDecider(CultureInfo culture): base(culture,TypeCompatibilityGroup.Exclusive, typeof(TimeSpan))
-    {
-    }
 
     /// <inheritdoc/>
-    protected override IDecideTypesForStrings CloneImpl(CultureInfo culture)
-    {
-        return new TimeSpanTypeDecider(culture);
-    }
+    protected override IDecideTypesForStrings CloneImpl(CultureInfo newCulture) => new TimeSpanTypeDecider(newCulture);
 
     /// <inheritdoc/>
-    protected override object ParseImpl(string value)
-    {
-        var dt = DateTime.Parse(value);
-
-        return dt.TimeOfDay;
-    }
+    protected override object ParseImpl(string value) => DateTime.Parse(value).TimeOfDay;
 
     /// <inheritdoc/>
     protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize sizeRecord)
     {
         try
         {
-            //if it parses as a date 
-            if (DateTime.TryParse(candidateString, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault,
-                    out var t))
-            {
-                return
-                    t is
-                    {
-                        Year: 1, Month: 1, Day: 1
-                    }; //without any ymd component then it's a date...  this means 00:00 is a valid TimeSpan too 
-            }
-
-            return false;
+            //if it parses as a date and has the default date portion of 1/1/1
+            return DateTime.TryParse(candidateString, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault,
+                       out var t) &&
+                   t is (1, 1, 1); //without any ymd component then it's a date...  this means 00:00 is a valid TimeSpan too
         }
         catch (ArgumentException)
         {
