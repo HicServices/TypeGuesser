@@ -16,7 +16,7 @@ namespace TypeGuesser;
 /// <para><see cref="Guesser"/> will always use the most restrictive data type possible first and then fall back on weaker types as new values are seen that do not fit
 /// the guessed Type, ultimately falling back to varchar(x).</para>
 /// </summary>
-public class Guesser 
+public class Guesser
 {
     /// <summary>
     /// Controls behaviour of deciders during <see cref="AdjustToCompensateForValue"/>
@@ -47,10 +47,10 @@ public class Guesser
     /// </summary>
     public CultureInfo Culture {
         set => _typeDeciders  = new TypeDeciderFactory(value);
-    } 
+    }
 
     private TypeDeciderFactory _typeDeciders;
-        
+
 
     /// <summary>
     /// Becomes true when <see cref="AdjustToCompensateForValue"/> is called with a hard Typed object (e.g. int). This prevents a <see cref="Guesser"/>
@@ -66,11 +66,11 @@ public class Guesser
     private TypeCompatibilityGroup _validTypesSeen = TypeCompatibilityGroup.None;
 
     /// <summary>
-    /// Creates a new DataType 
+    /// Creates a new DataType
     /// </summary>
     public Guesser():this(new DatabaseTypeRequest(DatabaseTypeRequest.PreferenceOrder[0]))
     {
-            
+
     }
 
 
@@ -82,10 +82,10 @@ public class Guesser
     {
         Guess = request;
         _typeDeciders = new TypeDeciderFactory(CultureInfo.CurrentCulture);
-            
+
         ThrowIfNotSupported(request.CSharpType);
     }
-        
+
     /// <summary>
     /// Runs <see cref="AdjustToCompensateForValue"/> on all cells in <see cref="DataRow"/> under the <paramref name="column"/>
     /// </summary>
@@ -205,7 +205,7 @@ public class Guesser
     private void ChangeEstimateToNext()
     {
         var current = DatabaseTypeRequest.PreferenceOrder.IndexOf(Guess.CSharpType);
-            
+
         //if we have never seen any good data just try the next one
         if(_validTypesSeen == TypeCompatibilityGroup.None )
             Guess.CSharpType = DatabaseTypeRequest.PreferenceOrder[current + 1];
@@ -213,7 +213,7 @@ public class Guesser
         {
             //we have seen some good data before, but we have seen something that doesn't fit with the CurrentEstimate so
             //we need to degrade the Estimate to a new Type that is compatible with all the Types previously seen
-                
+
             var nextEstimate = DatabaseTypeRequest.PreferenceOrder[current + 1];
 
             //if the next estimate is a string or we have previously accepted an exclusive decider (e.g. DateTime)
@@ -226,12 +226,12 @@ public class Guesser
                     : typeof(string); //the next Type decider is in an incompatible category so just go directly to string
         }
     }
-        
+
 
     /// <summary>
     /// Returns true if the <see cref="Guess"/>  is considered to be an improvement on the DataColumn provided. Use only when you actually want to
     /// consider changing the value.  For example if you have read a CSV file into a DataTable and all current columns string/object then you can call this method
-    /// to determine whether the <see cref="Guesser"/> found a more appropriate Type or not.  
+    /// to determine whether the <see cref="Guesser"/> found a more appropriate Type or not.
     /// 
     /// <para>Note that if you want to change the Type you need to clone the DataTable, see: https://stackoverflow.com/questions/9028029/how-to-change-datatype-of-a-datacolumn-in-a-datatable</para>
     /// </summary>
@@ -243,7 +243,7 @@ public class Guesser
         if (col.DataType != typeof(object) && col.DataType != typeof(string)) return false;
         var indexOfCurrentPreference = DatabaseTypeRequest.PreferenceOrder.IndexOf(Guess.CSharpType);
         var indexOfCurrentColumn = DatabaseTypeRequest.PreferenceOrder.IndexOf(typeof(string));
-                
+
         //e.g. if current preference based on data is DateTime/integer and col is a string then we SHOULD downgrade
         return indexOfCurrentPreference < indexOfCurrentColumn;
     }

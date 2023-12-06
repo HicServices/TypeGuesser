@@ -37,10 +37,10 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
         Settings = GuessSettingsFactory.Create();
 
         CompatibilityGroup = compatibilityGroup;
-            
+
         if(typesSupported.Length == 0)
             throw new ArgumentException(SR.DecideTypesForStrings_DecideTypesForStrings_DecideTypesForStrings_abstract_base_was_not_passed_any_typesSupported_by_implementing_derived_class);
-            
+
         TypesSupported = new HashSet<Type>(typesSupported);
     }
 
@@ -50,7 +50,7 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
         //we must preserve leading zeroes if it's not actually 0 -- if they have 010101 then we have to use string but if they have just 0 we can use decimal
         return !IDecideTypesForStrings.ZeroPrefixedNumber.IsMatch(candidateString) && IsAcceptableAsTypeImpl(candidateString, size);
     }
-        
+
     /// <summary>
     /// Returns true if <see cref="Settings"/> contains an <see cref="GuessSettings.ExplicitDateFormats"/> and one of them matches the <paramref name="candidateString"/>
     /// </summary>
@@ -70,14 +70,14 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     {
         if (string.IsNullOrWhiteSpace(value))
             return null;
-            
+
         try
         {
             return ParseImpl(value);
         }catch(Exception ex)
         {
             throw new FormatException(string.Format(SR.DecideTypesForStrings_Parse_Could_not_parse_string_value___0___with_Decider_Type__1_, value, GetType().Name),ex);
-        }            
+        }
     }
 
     /// <inheritdoc/>

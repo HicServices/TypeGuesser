@@ -11,7 +11,7 @@ public class GuessSettings
     /// </summary>
     public bool CharCanBeBoolean { get; set; } = true;
 
-        
+
     /// <summary>
     /// Optional, when set dates must be in one of these formats and any string in this format will be picked as a date.
     /// </summary>
@@ -39,6 +39,6 @@ public class GuessSettings
 
     internal GuessSettings()
     {
-            
+
     }
 }

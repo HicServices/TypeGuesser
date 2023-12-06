@@ -9,6 +9,6 @@ internal class TypeNotSupportedException :Exception
 {
     public TypeNotSupportedException(Type t):base(t.FullName)
     {
-            
+
     }
 }

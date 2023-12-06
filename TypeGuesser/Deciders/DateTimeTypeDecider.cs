@@ -16,30 +16,30 @@ public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
     /// <summary>
     /// Array of all supported DateTime formats in which the Month appears before the Day e.g. e.g. "MMM-dd-yy" ("Sep-16-19")
     /// </summary>
-    public static string[] DateFormatsMD;
+    public static readonly string[] DateFormatsMD;
 
     /// <summary>
     /// Array of all supported DateTime formats in which the Day appears before the Month e.g. "dd-MMM-yy" ("16-Sep-19")
     /// </summary>
-    public static string[] DateFormatsDM;
+    public static readonly string[] DateFormatsDM;
 
     /// <summary>
     /// Array of all supported Time formats e.g. "h:mm:ss tt" ("9:34:39 AM")
     /// </summary>
-    public static string[] TimeFormats;
+    public static readonly string[] TimeFormats;
 
     private string[] _dateFormatToUse;
     private CultureInfo _culture;
-        
+
     /// <summary>
     /// Setting this to false will prevent <see cref="GuessDateFormat(IEnumerable{string})"/> changing the <see cref="Culture"/> e.g. when
     /// inserting date times
     /// </summary>
-    public static bool AllowCultureGuessing = true;
-        
+    public static bool AllowCultureGuessing { get; set; } = true;
+
     /// <summary>
     /// Explicitly sets the culture to use for processing date times.  This suppresses <see cref="GuessDateFormat(IEnumerable{string})"/>.
-    /// Set to null to restore the current environment culture (and re enable guessing).
+    /// Set to null to restore the current environment culture (and re-enable guessing).
     /// 
     /// </summary>
     public override CultureInfo Culture { get => _culture;
@@ -49,7 +49,7 @@ public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
 
             _dateFormatToUse = value.DateTimeFormat.ShortDatePattern.IndexOf('M') > value.DateTimeFormat.ShortDatePattern.IndexOf('d') ? DateFormatsDM : DateFormatsMD;
 
-            _culture = value; 
+            _culture = value;
         } }
 
     static DateTimeTypeDecider()
@@ -185,13 +185,13 @@ public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
     {
         if(!AllowCultureGuessing)
             return;
-            
+
         samples = samples.Where(s=>!string.IsNullOrWhiteSpace(s)).ToList();
 
         //if they are all valid anyway
         if(samples.All(s=>DateTime.TryParse(s,Culture,DateTimeStyles.None,out _)))
             return;
-                        
+
         _dateFormatToUse = DateFormatsDM;
         var countDm = samples.Count(s=>TryBruteParse(s,out _));
         _dateFormatToUse = DateFormatsMD;

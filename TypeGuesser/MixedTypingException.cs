@@ -15,7 +15,7 @@ public class MixedTypingException:Exception
     /// <param name="ex"></param>
     public MixedTypingException(string message, Exception ex):base(message,ex)
     {
-            
+
     }
 
     /// <summary>
@@ -24,7 +24,7 @@ public class MixedTypingException:Exception
     /// <param name="message"></param>
     public MixedTypingException(string message) : base(message)
     {
-            
+
     }
 
 }

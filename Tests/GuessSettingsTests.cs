@@ -15,17 +15,23 @@ internal class GuessSettingsTests
     public void Guess_TF_Settings(string candidate)
     {
         //default is true
-        Assert.IsTrue(GuessSettingsFactory.Defaults.CharCanBeBoolean);
+        Assert.That(GuessSettingsFactory.Defaults.CharCanBeBoolean, Is.True);
 
         var decider =  new BoolTypeDecider(CultureInfo.CurrentCulture);
-            
-        //T = True
-        Assert.IsTrue(decider.IsAcceptableAsType(candidate,null));
-        Assert.IsTrue(decider.IsAcceptableAsType("1",null));
+
+        Assert.Multiple(() =>
+        {
+            //T = True
+            Assert.That(decider.IsAcceptableAsType(candidate, null), Is.True);
+            Assert.That(decider.IsAcceptableAsType("1", null), Is.True);
+        });
 
         decider.Settings.CharCanBeBoolean = false;
-        Assert.IsFalse(decider.IsAcceptableAsType(candidate,null));
-        Assert.IsTrue(decider.IsAcceptableAsType("1",null)); //setting does not affect 1/0
+        Assert.Multiple(() =>
+        {
+            Assert.That(decider.IsAcceptableAsType(candidate, null), Is.False);
+            Assert.That(decider.IsAcceptableAsType("1", null), Is.True); //setting does not affect 1/0
+        });
     }
 
     [Test]
@@ -34,24 +40,30 @@ internal class GuessSettingsTests
         const string candidate = "T";
 
         //default is true
-        Assert.IsTrue(GuessSettingsFactory.Defaults.CharCanBeBoolean);
+        Assert.That(GuessSettingsFactory.Defaults.CharCanBeBoolean, Is.True);
 
         var factory =  new TypeDeciderFactory(CultureInfo.CurrentCulture);
         var deciderOld = factory.Create(typeof(bool));
-            
-        //T = True
-        Assert.IsTrue(deciderOld.IsAcceptableAsType(candidate,null));
-        Assert.IsTrue(deciderOld.IsAcceptableAsType("1",null));
+
+        Assert.Multiple(() =>
+        {
+            //T = True
+            Assert.That(deciderOld.IsAcceptableAsType(candidate, null), Is.True);
+            Assert.That(deciderOld.IsAcceptableAsType("1", null), Is.True);
+        });
 
         factory.Settings.CharCanBeBoolean = false;
         var deciderNew = factory.Create(typeof(bool));
 
-        Assert.IsFalse(ReferenceEquals(deciderOld,deciderNew), "Factory Create created a reference to the same old instance! not a fresh one");
-        Assert.IsTrue(deciderOld.Settings.CharCanBeBoolean);
-        Assert.IsFalse(deciderNew.Settings.CharCanBeBoolean);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ReferenceEquals(deciderOld, deciderNew), Is.False, "Factory Create created a reference to the same old instance! not a fresh one");
+            Assert.That(deciderOld.Settings.CharCanBeBoolean, Is.True);
+            Assert.That(deciderNew.Settings.CharCanBeBoolean, Is.False);
 
-        Assert.IsFalse(deciderNew.IsAcceptableAsType(candidate,null));
-        Assert.IsTrue(deciderNew.IsAcceptableAsType("1",null)); //setting does not affect 1/0
+            Assert.That(deciderNew.IsAcceptableAsType(candidate, null), Is.False);
+            Assert.That(deciderNew.IsAcceptableAsType("1", null), Is.True); //setting does not affect 1/0
+        });
     }
     [Test]
     public void Guess_TF_Guesser()
@@ -59,7 +71,7 @@ internal class GuessSettingsTests
         const string candidate = "T";
 
         //default is true
-        Assert.IsTrue(GuessSettingsFactory.Defaults.CharCanBeBoolean);
+        Assert.That(GuessSettingsFactory.Defaults.CharCanBeBoolean, Is.True);
 
         //start with a guesser
         var guesser =  new Guesser();
@@ -68,27 +80,30 @@ internal class GuessSettingsTests
         guesser.AdjustToCompensateForValue(candidate);
 
         //so bool should be the guess for "Y"
-        Assert.AreEqual(typeof(bool),guesser.Guess.CSharpType);
+        Assert.That(guesser.Guess.CSharpType, Is.EqualTo(typeof(bool)));
 
         //change the guesser settings so "Y" is no longer acceptable as bool
         guesser.Settings.CharCanBeBoolean = false;
-        Assert.AreEqual(typeof(bool),guesser.Guess.CSharpType); //guess is only re evaluated on calls to Adjust
+        Assert.That(guesser.Guess.CSharpType, Is.EqualTo(typeof(bool))); //guess is only re evaluated on calls to Adjust
 
         //Guess again!
         guesser.AdjustToCompensateForValue(candidate);
-        Assert.AreEqual(typeof(string),guesser.Guess.CSharpType,"Guess should be string after the next evaluation");
+        Assert.That(guesser.Guess.CSharpType, Is.EqualTo(typeof(string)), "Guess should be string after the next evaluation");
 
     }
-        
+
     [Test]
     public void Test_GuessSettingsFactory_Defaults()
     {
         //default is true
-        Assert.IsTrue(GuessSettingsFactory.Defaults.CharCanBeBoolean);
+        Assert.That(GuessSettingsFactory.Defaults.CharCanBeBoolean, Is.True);
         var instance = GuessSettingsFactory.Create();
-        Assert.IsTrue(instance.CharCanBeBoolean);
+        Assert.Multiple(() =>
+        {
+            Assert.That(instance.CharCanBeBoolean, Is.True);
 
-        Assert.IsFalse(instance == GuessSettingsFactory.Defaults);
+            Assert.That(instance, Is.Not.SameAs(GuessSettingsFactory.Defaults));
+        });
 
         //changing static defaults
         GuessSettingsFactory.Defaults.CharCanBeBoolean = false;
@@ -96,10 +111,10 @@ internal class GuessSettingsTests
         try
         {
             //should change the result of Create to the new default
-            Assert.IsFalse(GuessSettingsFactory.Create().CharCanBeBoolean);
+            Assert.That(GuessSettingsFactory.Create().CharCanBeBoolean, Is.False);
 
             var decider = new DecimalTypeDecider(CultureInfo.CurrentCulture);
-            Assert.IsFalse(decider.Settings.CharCanBeBoolean);
+            Assert.That(decider.Settings.CharCanBeBoolean, Is.False);
         }
         finally
         {
