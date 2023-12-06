@@ -5,7 +5,7 @@ using TypeGuesser.Deciders;
 
 namespace Tests;
 
-internal class GuessSettingsTests
+internal sealed class GuessSettingsTests
 {
     [TestCase("Y")]
     [TestCase("N")]

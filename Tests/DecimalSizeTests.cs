@@ -3,7 +3,7 @@ using TypeGuesser;
 
 namespace Tests;
 
-internal class DecimalSizeTests
+internal sealed class DecimalSizeTests
 {
     [Test]
     public void Test_DecimalSize_Empty()
@@ -36,7 +36,7 @@ internal class DecimalSizeTests
 #pragma warning disable NUnit2009 // The same value has been provided as both the actual and the expected argument - testing for consistency
             Assert.That(new DecimalSize(3, 4), Is.EqualTo(new DecimalSize(3, 4)));
         });
-        Assert.Multiple(() =>
+        Assert.Multiple(static () =>
         {
 #pragma warning restore NUnit2009 // The same value has been provided as both the actual and the expected argument
 

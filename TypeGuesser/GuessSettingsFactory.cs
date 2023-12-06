@@ -3,7 +3,7 @@
 /// <summary>
 /// Factory for creating instances of <see cref="GuessSettings"/>.  Contains a static variable for the defaults
 /// </summary>
-public class GuessSettingsFactory
+public static class GuessSettingsFactory
 {
     /// <summary>
     /// The system wide default values for flags in <see cref="GuessSettings"/>

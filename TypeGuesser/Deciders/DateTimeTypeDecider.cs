@@ -186,7 +186,7 @@ public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
         if(!AllowCultureGuessing)
             return;
 
-        samples = samples.Where(s=>!string.IsNullOrWhiteSpace(s)).ToList();
+        samples = samples.Where(static s=>!string.IsNullOrWhiteSpace(s)).ToList();
 
         //if they are all valid anyway
         if(samples.All(s=>DateTime.TryParse(s,Culture,DateTimeStyles.None,out _)))

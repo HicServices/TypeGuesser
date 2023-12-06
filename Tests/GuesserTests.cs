@@ -14,7 +14,7 @@ namespace Tests;
 /// the final estimate should be decimal(4,1) to allow for both 100.0f and 1.1f.
 /// </para>
 /// </summary>
-public class GuesserTests
+public sealed class GuesserTests
 {
 
     [TestCase("5",typeof(int),"en-us",1,1,0,5)]

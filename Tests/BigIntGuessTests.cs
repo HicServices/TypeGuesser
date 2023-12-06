@@ -5,7 +5,7 @@ using TypeGuesser.Deciders;
 
 namespace Tests;
 
-internal class BigIntGuessTests
+internal sealed class BigIntGuessTests
 {
     [Test]
     public void BigInt_TypeDeciderFactory()

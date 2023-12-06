@@ -9,7 +9,7 @@ using TypeGuesser.Deciders;
 
 namespace Tests;
 
-public class PerformanceTests
+public sealed class PerformanceTests
 {
     [Test]
     public void Performance_Decimals()
