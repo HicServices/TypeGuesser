@@ -57,6 +57,7 @@ public class TypeDeciderFactory
     {
         if (Dictionary.TryGetValue(forDataType, out var decider))
             return decider.Clone();
+
         throw new TypeNotSupportedException(forDataType);
     }
 
