@@ -11,11 +11,17 @@ namespace TypeGuesser.Deciders;
 /// <typeparam name="T"></typeparam>
 public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
 {
+    private CultureInfo _culture;
+
     /// <inheritdoc/>
     public GuessSettings Settings { get; set; }
 
     /// <inheritdoc/>
-    public virtual CultureInfo Culture { get; set; }
+    public virtual CultureInfo Culture
+    {
+        get => _culture;
+        set => _culture = value;
+    }
 
     /// <inheritdoc/>
     public TypeCompatibilityGroup CompatibilityGroup { get; }
@@ -31,7 +37,7 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     /// <param name="typesSupported">All the Types your guesser supports e.g. multiple sizes of int (int32, int16 etc).  These should not overlap with other guessers in the app domain</param>
     protected DecideTypesForStrings(CultureInfo culture, TypeCompatibilityGroup compatibilityGroup,params Type[] typesSupported)
     {
-        Culture = culture;
+        _culture = culture;
 
         Settings = GuessSettingsFactory.Create();
 
@@ -40,7 +46,7 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
         if(typesSupported.Length == 0)
             throw new ArgumentException(SR.DecideTypesForStrings_DecideTypesForStrings_DecideTypesForStrings_abstract_base_was_not_passed_any_typesSupported_by_implementing_derived_class);
 
-        TypesSupported = new HashSet<Type>(typesSupported);
+        TypesSupported = [..typesSupported];
     }
 
     /// <inheritdoc/>

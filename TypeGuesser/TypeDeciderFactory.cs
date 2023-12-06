@@ -15,7 +15,7 @@ public class TypeDeciderFactory
     /// Collection of all supported <see cref="System.Type"/> mapped to the implementation <see cref="IDecideTypesForStrings"/>.  A given
     /// decider can support multiple raw types e.g. <see cref="IntTypeDecider"/>.
     /// </summary>
-    public readonly Dictionary<Type, IDecideTypesForStrings> Dictionary = new();
+    public readonly Dictionary<Type, IDecideTypesForStrings> Dictionary = [];
 
     /// <summary>
     /// Default settings to use for all entries in <see cref="Dictionary"/> and for instances created by <see cref="Create"/>

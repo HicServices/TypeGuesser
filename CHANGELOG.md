@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Target .Net 8.0
+- Enable AOT and Trim support
+
 ## [1.1.0] - 2023-05-15
 
 - Target .Net 6.0 only

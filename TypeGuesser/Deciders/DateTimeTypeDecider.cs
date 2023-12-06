@@ -8,10 +8,14 @@ namespace TypeGuesser.Deciders;
 /// <summary>
 /// Guesses whether strings are <see cref="DateTime"/> and handles parsing approved strings according to the <see cref="Culture"/>
 /// </summary>
-public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
+/// <remarks>
+/// Creates a new instance for detecting/parsing <see cref="DateTime"/> strings according to the <paramref name="cultureInfo"/>
+/// </remarks>
+/// <param name="cultureInfo"></param>
+public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForStrings<DateTime>(cultureInfo,TypeCompatibilityGroup.Exclusive, typeof(DateTime))
 {
-    private readonly TimeSpanTypeDecider _timeSpanTypeDecider;
-    private readonly DecimalTypeDecider _decimalChecker;
+    private readonly TimeSpanTypeDecider _timeSpanTypeDecider = new(cultureInfo);
+    private readonly DecimalTypeDecider _decimalChecker = new(cultureInfo);
 
     /// <summary>
     /// Array of all supported DateTime formats in which the Month appears before the Day e.g. e.g. "MMM-dd-yy" ("Sep-16-19")
@@ -86,72 +90,62 @@ public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
                             timeFormats.Add($"{string.Join(timeSeparator, h, m, s)} {suffix}");
                         }
                     }
-        DateFormatsDM = dateFormatsDm.ToArray();
-        DateFormatsMD = dateFormatsMd.ToArray();
-        TimeFormats = timeFormats.ToArray();
+        DateFormatsDM = [.. dateFormatsDm];
+        DateFormatsMD = [.. dateFormatsMd];
+        TimeFormats = [.. timeFormats];
     }
 
-    private static readonly string[] YearFormats = {
+    private static readonly string[] YearFormats = [
         "yy",
         "yyy",
         "yyyy",
         "yyyyy"
-    };
+    ];
 
-    private static readonly string[] MonthFormats = {
+    private static readonly string[] MonthFormats = [
         "M",
         "MM",
         "MMM",
         "MMMM"
-    };
+    ];
 
-    private static readonly string[] DayFormats = {
+    private static readonly string[] DayFormats = [
         "dd",
         "ddd",
         "dddd"
-    };
+    ];
 
-    private static readonly string[] DateSeparators = {
+    private static readonly string[] DateSeparators = [
         "\\\\",
         "/",
         "-",
         "."
-    };
+    ];
 
-    private static readonly string[] HourFormats = {
+    private static readonly string[] HourFormats = [
         "h",
         "hh",
         "H",
         "HH"
-    };
+    ];
 
-    private static readonly string[] MinuteFormats = {
+    private static readonly string[] MinuteFormats = [
         "m",
         "mm"
-    };
+    ];
 
-    private static readonly string[] SecondFormats = {
+    private static readonly string[] SecondFormats = [
         "s",
         "ss"
-    };
+    ];
 
-    private static readonly string[] Suffixes = {
+    private static readonly string[] Suffixes = [
         "tt"
-    };
+    ];
 
-    private static readonly string[] TimeSeparators = {
+    private static readonly string[] TimeSeparators = [
         ":"
-    };
-
-    /// <summary>
-    /// Creates a new instance for detecting/parsing <see cref="DateTime"/> strings according to the <paramref name="cultureInfo"/>
-    /// </summary>
-    /// <param name="cultureInfo"></param>
-    public DateTimeTypeDecider(CultureInfo cultureInfo) : base(cultureInfo,TypeCompatibilityGroup.Exclusive, typeof(DateTime))
-    {
-        _timeSpanTypeDecider = new TimeSpanTypeDecider(cultureInfo);
-        _decimalChecker = new DecimalTypeDecider(cultureInfo);
-    }
+    ];
 
     /// <inheritdoc/>
     protected override IDecideTypesForStrings CloneImpl(CultureInfo overrideCulture)
@@ -229,7 +223,7 @@ public class DateTimeTypeDecider : DecideTypesForStrings<DateTime>
         }
     }
 
-    private readonly char[] _space = { ' ' };
+    private readonly char[] _space = [' '];
 
     private bool TryBruteParse(string s, out DateTime dt)
     {

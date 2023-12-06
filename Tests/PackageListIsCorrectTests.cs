@@ -12,16 +12,16 @@ namespace Tests;
 /// Tests to confirm that the dependencies in csproj files (NuGet packages) match those in the .nuspec files and that packages.md
 /// lists the correct versions (in documentation)
 /// </summary>
-public sealed class PackageListIsCorrectTests
+public sealed partial class PackageListIsCorrectTests
 {
     private static readonly EnumerationOptions EnumerationOptions = new() { RecurseSubdirectories = true,MatchCasing = MatchCasing.CaseInsensitive,IgnoreInaccessible = true};
 
     //<PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
-    private static readonly Regex RPackageRef = new(@"<PackageReference\s+Include=""(.*)""\s+Version=""([^""]*)""", RegexOptions.IgnoreCase|RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    private static readonly Regex RPackageRef = PackageRefRegex();
 
     // | Org.SomePackage |
     //
-    private static readonly Regex RMarkdownEntry = new(@"^\|\s*\[?([^ |\]]+)(\]\([^)]+\))?\s*\|", RegexOptions.IgnoreCase|RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    private static readonly Regex RMarkdownEntry = MarkdownEntryRegex();
 
 
     /// <summary>
@@ -110,4 +110,10 @@ public sealed class PackageListIsCorrectTests
         return path;
     }
 
+    [GeneratedRegex("""
+                    <PackageReference\s+Include="(.*)"\s+Version="([^"]*)"
+                    """, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex PackageRefRegex();
+    [GeneratedRegex(@"^\|\s*\[?([^ |\]]+)(\]\([^)]+\))?\s*\|", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex MarkdownEntryRegex();
 }

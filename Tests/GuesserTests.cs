@@ -318,7 +318,7 @@ public sealed class GuesserTests
 
         Assert.That(decider.IsAcceptableAsType(value, new DatabaseTypeRequest(typeof(DateTime))), Is.False);
 
-        decider.Settings.ExplicitDateFormats = new []{format };
+        decider.Settings.ExplicitDateFormats = [format];
         Assert.Multiple(() =>
         {
             Assert.That(decider.IsAcceptableAsType(value, new DatabaseTypeRequest(typeof(DateTime))), Is.True);
@@ -335,7 +335,7 @@ public sealed class GuesserTests
         {
             Settings =
             {
-                ExplicitDateFormats = new[]{format}
+                ExplicitDateFormats = [format]
             }
         };
         g2.AdjustToCompensateForValue(value);

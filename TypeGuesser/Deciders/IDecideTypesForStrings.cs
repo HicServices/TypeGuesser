@@ -13,7 +13,7 @@ namespace TypeGuesser.Deciders;
 /// 
 /// <para>Implementations should be as mutually exclusive with as possible.  Look also at <see cref="DatabaseTypeRequest.PreferenceOrder"/> and <see cref="Guesser"/></para>
 /// </summary>
-public interface IDecideTypesForStrings
+public partial interface IDecideTypesForStrings
 {
     /// <summary>
     /// Matches any number which looks like a proper decimal but has leading zeroes e.g. 012837 including.  Also matches if there is a
@@ -26,10 +26,11 @@ public interface IDecideTypesForStrings
     /// <para>Also allows for leading / trailing white space</para>
     /// 
     /// </summary>
-    protected static readonly Regex ZeroPrefixedNumber = new(@"^\s*-?0+[1-9]+\.?[0-9]*\s*$");
+    protected static readonly Regex ZeroPrefixedNumber = ZeroPrefixedNumberRegex();
 
     /// <summary>
-    /// Determines how the decider interacts with other deciders e.g. IntTypeDecider can fallback to DecimalTypeDecider because you can store ints in decimal columns.
+    /// Determines how the decider interacts with other deciders e.g. IntTypeDecider can fall
+    /// back to DecimalTypeDecider because you can store ints in decimal columns.
     /// </summary>
     TypeCompatibilityGroup CompatibilityGroup { get; }
 
@@ -69,4 +70,7 @@ public interface IDecideTypesForStrings
     /// </summary>
     /// <returns></returns>
     IDecideTypesForStrings Clone();
+
+    [GeneratedRegex(@"^\s*-?0+[1-9]+\.?[0-9]*\s*$",RegexOptions.CultureInvariant)]
+    private static partial Regex ZeroPrefixedNumberRegex();
 }
