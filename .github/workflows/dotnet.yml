@@ -22,7 +22,7 @@ jobs:
     - name: Pack Nuget
       run: dotnet pack TypeGuesser/TypeGuesser.csproj -o dist -c Release --include-source -p:PackageVersion=$(fgrep AssemblyFileVersion SharedAssemblyInfo.cs |cut -d'"' -f2)
     - name: Store created nupkg files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: dist/*.nupkg
         retention-days: 1
