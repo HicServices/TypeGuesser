@@ -37,5 +37,7 @@ jobs:
         overwrite: true
     - name: Push Nuget
       if: contains(github.ref,'refs/tags/')
-      run: dotnet nuget push dist/*[0-9].nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_KEY }} --skip-duplicate
+      run: |
+        cd dist
+        dotnet nuget push *[0-9].nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_KEY }} --skip-duplicate
       
