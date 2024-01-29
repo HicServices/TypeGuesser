@@ -20,7 +20,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: lcov.info
     - name: Pack Nuget
-      run: dotnet pack TypeGuesser/TypeGuesser.csproj -o dist -c Release --include-source -p:PackageVersion=$(fgrep AssemblyFileVersion SharedAssemblyInfo.cs |cut -d'"' -f2)
+      run: dotnet pack TypeGuesser/TypeGuesser.csproj -o dist -c Release --include-source -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=$(fgrep AssemblyFileVersion SharedAssemblyInfo.cs |cut -d'"' -f2)
     - name: Store created nupkg files
       uses: actions/upload-artifact@v4
       with:
@@ -37,5 +37,5 @@ jobs:
         overwrite: true
     - name: Push Nuget
       if: contains(github.ref,'refs/tags/')
-      run: dotnet nuget push dist/*[0-9]*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_KEY }} --skip-duplicate
+      run: dotnet nuget push dist/*[0-9].nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_KEY }} --skip-duplicate
       
