@@ -20,7 +20,7 @@ public sealed class IntTypeDecider(CultureInfo culture) : DecideTypesForStrings<
     }
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize sizeRecord)
+    protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize? sizeRecord)
     {
         if(IsExplicitDate(candidateString))
             return false;
@@ -28,7 +28,7 @@ public sealed class IntTypeDecider(CultureInfo culture) : DecideTypesForStrings<
         if (!candidateString.IsConvertibleTo(out int i, Culture))
             return false;
 
-        sizeRecord.Size.IncreaseTo(i.ToString().Trim('-').Length,0);
+        sizeRecord?.Size.IncreaseTo(i.ToString().Trim('-').Length,0);
         return true;
     }
 }

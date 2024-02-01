@@ -30,7 +30,7 @@ public sealed class DecimalTypeDecider : DecideTypesForStrings<decimal>
     }
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize sizeRecord)
+    protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize? sizeRecord)
     {
         candidateString = TrimTrailingZeros(candidateString);
 
@@ -41,7 +41,7 @@ public sealed class DecimalTypeDecider : DecideTypesForStrings<decimal>
             return false;
 
         var dec = (SqlDecimal) t;
-        sizeRecord.Size.IncreaseTo(dec.Precision - dec.Scale,dec.Scale);
+        sizeRecord?.Size.IncreaseTo(dec.Precision - dec.Scale,dec.Scale);
 
         return true;
     }

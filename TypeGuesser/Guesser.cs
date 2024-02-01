@@ -119,7 +119,7 @@ public class Guesser
     /// </summary>
     /// <exception cref="MixedTypingException">Thrown if you mix strings with hard Typed objects when supplying <paramref name="o"/></exception>
     /// <param name="o"></param>
-    public void AdjustToCompensateForValue(object o)
+    public void AdjustToCompensateForValue(object? o)
     {
         while (true)
         {
@@ -136,7 +136,7 @@ public class Guesser
             var oToString = o.ToString();
 
             //we might need to fallback on a string later on, in this case we should always record the maximum length of input seen before even if it is acceptable as int, double, dates etc
-            Guess.Width = Math.Max(Guess.Width ?? -1, GetStringLength(oToString));
+            Guess.Width = Math.Max(Guess.Width ?? -1, GetStringLength(oToString??string.Empty));
 
             //if it's a string
             if (o is string oAsString)
@@ -179,7 +179,7 @@ public class Guesser
             }
 
             //if we have a decider for this lets get it to tell us the decimal places (if any)
-            if (_typeDeciders.Dictionary.TryGetValue(o.GetType(),out var decider))
+            if (oToString!=null && _typeDeciders.Dictionary.TryGetValue(o.GetType(),out var decider))
                 decider.IsAcceptableAsType(oToString, Guess);
             break;
         }
@@ -265,7 +265,7 @@ public class Guesser
     /// <param name="val"></param>
     /// <exception cref="NotSupportedException">If the current <see cref="Guess"/> does not have a parser defined</exception>
     /// <returns></returns>
-    public object Parse(string val)
+    public object? Parse(string val)
     {
         if (Guess.CSharpType == typeof(string))
             return val;

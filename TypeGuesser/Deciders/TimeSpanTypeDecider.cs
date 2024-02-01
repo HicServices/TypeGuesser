@@ -20,7 +20,7 @@ public sealed class TimeSpanTypeDecider(CultureInfo culture) : DecideTypesForStr
     protected override object ParseImpl(string value) => DateTime.Parse(value).TimeOfDay;
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize sizeRecord)
+    protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize? sizeRecord)
     {
         try
         {
