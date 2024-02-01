@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.3] - 2024-02-01
+
+- Bug fix for DateTimeTypeDecider and explicit date format options
+
 ## [1.2.2] - 2024-02-01
 
 - Bugfix in culture handling in DateTimeTypeDecider
