@@ -76,12 +76,14 @@ public sealed class GuesserTests
                 : guessFor, Is.EqualTo(expectedParseValue));
     }
 
+#pragma warning disable CA1861
     [TestCase("en-us",new []{"5","10"},
         typeof(int),2,2,0)]
     [TestCase("en-us", new []{"5","10.1"},
         typeof(decimal),4,2,1)]
     [TestCase("en-us", new []{"5.1","5.000000000"},
         typeof(decimal),11,1,1)]
+#pragma warning restore CA1861
     public void Test_ManyString_IsType(string culture, string[] guessFor, Type expectedGuess,int expectedStringLength, int expectedBefore,int expectedAfter)
     {
         var cultureInfo = new CultureInfo(culture);

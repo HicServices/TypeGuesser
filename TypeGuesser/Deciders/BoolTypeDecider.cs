@@ -21,7 +21,7 @@ public sealed partial class BoolTypeDecider(CultureInfo culture) : DecideTypesFo
     }
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize size)
+    protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize? size)
     {
         // "Y" / "N" is boolean unless the settings say it can't
         if (!Settings.CharCanBeBoolean && SingleCharacter.IsMatch(candidateString))

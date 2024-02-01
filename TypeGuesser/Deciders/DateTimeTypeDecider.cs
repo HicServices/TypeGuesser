@@ -32,8 +32,11 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
     /// </summary>
     public static readonly string[] TimeFormats;
 
-    private string[] _dateFormatToUse;
-    private CultureInfo _culture;
+    private string[] _dateFormatToUse =
+        cultureInfo.DateTimeFormat.ShortDatePattern.IndexOf('M') > cultureInfo.DateTimeFormat.ShortDatePattern.IndexOf('d')
+            ? DateFormatsDM
+            : DateFormatsMD;
+    private CultureInfo _culture=cultureInfo;
 
     /// <summary>
     /// Setting this to false will prevent <see cref="GuessDateFormat(IEnumerable{string})"/> changing the <see cref="Culture"/> e.g. when
@@ -49,10 +52,7 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
     public override CultureInfo Culture { get => _culture;
         set
         {
-            value ??= CultureInfo.CurrentCulture;
-
             _dateFormatToUse = value.DateTimeFormat.ShortDatePattern.IndexOf('M') > value.DateTimeFormat.ShortDatePattern.IndexOf('d') ? DateFormatsDM : DateFormatsMD;
-
             _culture = value;
         } }
 
@@ -196,13 +196,13 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
     }
 
     /// <inheritdoc />
-    public override bool IsAcceptableAsType(string candidateString, IDataTypeSize size)
+    public override bool IsAcceptableAsType(string candidateString, IDataTypeSize? size)
     {
         return IsExplicitDate(candidateString) || base.IsAcceptableAsType(candidateString, size);
     }
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize sizeRecord)
+    protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize? sizeRecord)
     {
         //if it's a float then it isn't a date is it! thanks C# for thinking 1.1 is the first of January
         if (_decimalChecker.IsAcceptableAsType(candidateString, sizeRecord))

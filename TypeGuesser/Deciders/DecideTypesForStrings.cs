@@ -50,7 +50,7 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     }
 
     /// <inheritdoc/>
-    public virtual bool IsAcceptableAsType(string candidateString,IDataTypeSize size)
+    public virtual bool IsAcceptableAsType(string candidateString,IDataTypeSize? size)
     {
         //we must preserve leading zeroes if it's not actually 0 -- if they have 010101 then we have to use string but if they have just 0 we can use decimal
         return !IDecideTypesForStrings.ZeroPrefixedNumber.IsMatch(candidateString) && IsAcceptableAsTypeImpl(candidateString, size);
@@ -71,7 +71,7 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     }
 
     /// <inheritdoc/>
-    public object Parse(string value)
+    public object? Parse(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             return null;
@@ -105,7 +105,7 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    protected virtual object ParseImpl(string value)
+    protected virtual object? ParseImpl(string value)
     {
         return value.To<T>(Culture);
     }
@@ -116,7 +116,7 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     /// <param name="candidateString"></param>
     /// <param name="size"></param>
     /// <returns></returns>
-    protected virtual bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize size)
+    protected virtual bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize? size)
     {
         return candidateString.IsConvertibleTo<T>(Culture);
     }

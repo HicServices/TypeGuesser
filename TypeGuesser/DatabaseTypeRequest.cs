@@ -61,7 +61,7 @@ public class DatabaseTypeRequest : IDataTypeSize
     /// <param name="maxWidthForStrings"></param>
     /// <param name="decimalPlacesBeforeAndAfter"></param>
     public DatabaseTypeRequest(Type cSharpType, int? maxWidthForStrings = null,
-        DecimalSize decimalPlacesBeforeAndAfter = null)
+        DecimalSize? decimalPlacesBeforeAndAfter = null)
     {
         CSharpType = cSharpType;
         Width = maxWidthForStrings;
@@ -80,7 +80,7 @@ public class DatabaseTypeRequest : IDataTypeSize
     }
 
     /// <inheritdoc/>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;

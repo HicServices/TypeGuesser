@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{EAE289E1-E8AF-4627-91A6-12E6D5F9F027}"
 	ProjectSection(SolutionItems) = preProject
 		CHANGELOG.md = CHANGELOG.md
+		Directory.Build.props = Directory.Build.props
 		Packages.md = Packages.md
 		README.md = README.md
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
