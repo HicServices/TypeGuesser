@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.4] - 2024-03-07
+
+- Add parameterless constructor for DatabaseTypeRequest to support DicomTypeTranslator's YAML conversion
+
 ## [1.2.3] - 2024-02-01
 
 - Bug fix for DateTimeTypeDecider and explicit date format options
@@ -75,7 +79,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial port of content from [FAnsiSql](https://github.com/HicServices/FAnsiSql)
 
-[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/1.2.1...main
+[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/1.2.4...main
+[1.2.4]: https://github.com/HicServices/TypeGuesser/compare/1.2.3...1.2.4
+[1.2.3]: https://github.com/HicServices/TypeGuesser/compare/1.2.2...1.2.3
+[1.2.2]: https://github.com/HicServices/TypeGuesser/compare/1.2.1...1.2.2
 [1.2.1]: https://github.com/HicServices/TypeGuesser/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/HicServices/TypeGuesser/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/HicServices/TypeGuesser/compare/1.0.3...1.1.0
