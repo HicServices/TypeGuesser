@@ -44,7 +44,7 @@ public class DatabaseTypeRequest : IDataTypeSize
     /// </summary>
     public int? Width
     {
-        get => _maxWidthForStrings.HasValue ? Math.Max(_maxWidthForStrings.Value, Size.ToStringLength()): null;
+        get => _maxWidthForStrings.HasValue ? Math.Max(_maxWidthForStrings.Value, Size.ToStringLength()) : null;
         set => _maxWidthForStrings = value;
     }
 
@@ -52,7 +52,7 @@ public class DatabaseTypeRequest : IDataTypeSize
     /// Only applies when <see cref="CSharpType"/> is <see cref="string"/>.  True indicates that the column should be
     /// nvarchar instead of varchar.
     /// </summary>
-    public bool Unicode { get;set;}
+    public bool Unicode { get; set; }
 
     /// <summary>
     /// Creates a new instance with the given initial type description
@@ -65,7 +65,14 @@ public class DatabaseTypeRequest : IDataTypeSize
     {
         CSharpType = cSharpType;
         Width = maxWidthForStrings;
-        Size = decimalPlacesBeforeAndAfter?? new DecimalSize();
+        Size = decimalPlacesBeforeAndAfter ?? new DecimalSize();
+    }
+
+    /// <summary>
+    /// Creates a new instance requesting a string type
+    /// </summary>
+    public DatabaseTypeRequest() : this(typeof(string))
+    {
     }
 
     #region Equality
@@ -86,7 +93,7 @@ public class DatabaseTypeRequest : IDataTypeSize
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
 
-        return Equals((DatabaseTypeRequest) obj);
+        return Equals((DatabaseTypeRequest)obj);
     }
 
     /// <inheritdoc/>
@@ -141,7 +148,7 @@ public class DatabaseTypeRequest : IDataTypeSize
             return first;
         }
 
-        if(!(first.CSharpType == second.CSharpType))
+        if (!(first.CSharpType == second.CSharpType))
             throw new NotSupportedException(string.Format(SR.DatabaseTypeRequest_Max_Could_not_combine_Types___0___and___1___because_they_were_of_differing_Types_and_neither_Type_appeared_in_the_PreferenceOrder, first.CSharpType, second.CSharpType));
 
         //Types are the same, so max the sub elements (width, DecimalSize etc)
@@ -159,7 +166,7 @@ public class DatabaseTypeRequest : IDataTypeSize
                 newMaxWidthIfStrings,
                 DecimalSize.Combine(first.Size, second.Size)
             )
-            {Unicode = first.Unicode || second.Unicode};
+        { Unicode = first.Unicode || second.Unicode };
 
     }
 }

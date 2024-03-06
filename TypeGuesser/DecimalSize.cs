@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TypeGuesser;
 
@@ -108,7 +109,9 @@ public class DecimalSize
     /// <param name="first"></param>
     /// <param name="second"></param>
     /// <returns></returns>
-    public static DecimalSize Combine(DecimalSize first, DecimalSize second)
+    [return: NotNullIfNotNull(nameof(first))]
+    [return: NotNullIfNotNull(nameof(second))]
+    public static DecimalSize? Combine(DecimalSize? first, DecimalSize? second)
     {
         if (first == null)
             return second;

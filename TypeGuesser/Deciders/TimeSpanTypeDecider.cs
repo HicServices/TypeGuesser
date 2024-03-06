@@ -10,9 +10,8 @@ namespace TypeGuesser.Deciders;
 /// Creates a new instance for recognizing time values (without date) in strings
 /// </remarks>
 /// <param name="culture"></param>
-public sealed class TimeSpanTypeDecider(CultureInfo culture) : DecideTypesForStrings<TimeSpan>(culture,TypeCompatibilityGroup.Exclusive, typeof(TimeSpan))
+public sealed class TimeSpanTypeDecider(CultureInfo culture) : DecideTypesForStrings<TimeSpan>(culture, TypeCompatibilityGroup.Exclusive, typeof(TimeSpan))
 {
-
     /// <inheritdoc/>
     protected override IDecideTypesForStrings CloneImpl(CultureInfo newCulture) => new TimeSpanTypeDecider(newCulture);
 
@@ -20,7 +19,7 @@ public sealed class TimeSpanTypeDecider(CultureInfo culture) : DecideTypesForStr
     protected override object ParseImpl(string value) => DateTime.Parse(value).TimeOfDay;
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize? sizeRecord)
+    protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize? sizeRecord)
     {
         try
         {
