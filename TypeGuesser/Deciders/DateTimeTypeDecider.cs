@@ -12,7 +12,7 @@ namespace TypeGuesser.Deciders;
 /// Creates a new instance for detecting/parsing <see cref="DateTime"/> strings according to the <paramref name="cultureInfo"/>
 /// </remarks>
 /// <param name="cultureInfo"></param>
-public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForStrings<DateTime>(cultureInfo,TypeCompatibilityGroup.Exclusive, typeof(DateTime))
+public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForStrings<DateTime>(cultureInfo, TypeCompatibilityGroup.Exclusive, typeof(DateTime))
 {
     private readonly TimeSpanTypeDecider _timeSpanTypeDecider = new(cultureInfo);
     private readonly DecimalTypeDecider _decimalChecker = new(cultureInfo);
@@ -36,7 +36,7 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
         cultureInfo.DateTimeFormat.ShortDatePattern.IndexOf('M') > cultureInfo.DateTimeFormat.ShortDatePattern.IndexOf('d')
             ? DateFormatsDM
             : DateFormatsMD;
-    private CultureInfo _culture=cultureInfo;
+    private CultureInfo _culture = cultureInfo;
 
     /// <summary>
     /// Setting this to false will prevent <see cref="GuessDateFormat(IEnumerable{string})"/> changing the <see cref="Culture"/> e.g. when
@@ -49,12 +49,15 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
     /// Set to null to restore the current environment culture (and re-enable guessing).
     /// 
     /// </summary>
-    public override CultureInfo Culture { get => _culture;
+    public override CultureInfo Culture
+    {
+        get => _culture;
         set
         {
             _dateFormatToUse = value.DateTimeFormat.ShortDatePattern.IndexOf('M') > value.DateTimeFormat.ShortDatePattern.IndexOf('d') ? DateFormatsDM : DateFormatsMD;
             _culture = value;
-        } }
+        }
+    }
 
     static DateTimeTypeDecider()
     {
@@ -157,8 +160,8 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
     protected override object ParseImpl(string value)
     {
         // if user has specified a specific format that we are to use, use it
-        if(Settings.ExplicitDateFormats != null)
-            return DateTime.ParseExact(value,Settings.ExplicitDateFormats,_culture,DateTimeStyles.None);
+        if (Settings.ExplicitDateFormats != null)
+            return DateTime.ParseExact(value, Settings.ExplicitDateFormats, _culture, DateTimeStyles.None);
 
         // otherwise parse a value using any of the valid culture formats
         if (!TryBruteParse(value, out var dt))
@@ -177,21 +180,21 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
     /// </summary>
     public void GuessDateFormat(IEnumerable<string> samples)
     {
-        if(!AllowCultureGuessing)
+        if (!AllowCultureGuessing)
             return;
 
-        samples = samples.Where(static s=>!string.IsNullOrWhiteSpace(s)).ToList();
+        samples = samples.Where(static s => !string.IsNullOrWhiteSpace(s)).ToList();
 
         //if they are all valid anyway
-        if(samples.All(s=>DateTime.TryParse(s,Culture,DateTimeStyles.None,out _)))
+        if (samples.All(s => DateTime.TryParse(s, Culture, DateTimeStyles.None, out _)))
             return;
 
         _dateFormatToUse = DateFormatsDM;
-        var countDm = samples.Count(s=>TryBruteParse(s,out _));
+        var countDm = samples.Count(s => TryBruteParse(s, out _));
         _dateFormatToUse = DateFormatsMD;
-        var countMd = samples.Count(s=>TryBruteParse(s,out _));
+        var countMd = samples.Count(s => TryBruteParse(s, out _));
 
-        if(countDm >= countMd)
+        if (countDm >= countMd)
             _dateFormatToUse = DateFormatsDM;
     }
 
@@ -225,16 +228,16 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
 
     private readonly char[] _space = [' '];
 
-    private bool TryBruteParse(string s, out DateTime dt)
+    private bool TryBruteParse(string? s, out DateTime dt)
     {
         //if it's legit according to the current culture
-        if(DateTime.TryParse(s,Culture,DateTimeStyles.None,out dt))
+        if (DateTime.TryParse(s, Culture, DateTimeStyles.None, out dt))
             return true;
 
         var split = s?.Split(_space, StringSplitOptions.RemoveEmptyEntries);
 
         //if there are no tokens
-        if (split ==null || split.Length == 0)
+        if (split == null || split.Length == 0)
         {
             dt = DateTime.MinValue;
             return false;

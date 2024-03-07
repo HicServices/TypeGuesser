@@ -12,7 +12,6 @@ namespace TypeGuesser.Deciders;
 /// <param name="culture"></param>
 public sealed class NeverGuessTheseTypeDecider(CultureInfo culture) : DecideTypesForStrings<object>(culture,TypeCompatibilityGroup.Exclusive, typeof(byte[]), typeof(Guid))
 {
-
     /// <inheritdoc/>
     protected override IDecideTypesForStrings CloneImpl(CultureInfo newCulture) => new NeverGuessTheseTypeDecider(newCulture);
 

@@ -12,7 +12,6 @@ namespace TypeGuesser.Deciders;
 /// <param name="culture"></param>
 public sealed class IntTypeDecider(CultureInfo culture) : DecideTypesForStrings<int>(culture,TypeCompatibilityGroup.Numerical, typeof(short) , typeof(int), typeof(byte))
 {
-
     /// <inheritdoc/>
     protected override IDecideTypesForStrings CloneImpl(CultureInfo newCulture)
     {
