@@ -50,7 +50,7 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     }
 
     /// <inheritdoc/>
-    public virtual bool IsAcceptableAsType(string candidateString,IDataTypeSize? size)
+    public virtual bool IsAcceptableAsType(ReadOnlySpan<char> candidateString, IDataTypeSize? size)
     {
         //we must preserve leading zeroes if it's not actually 0 -- if they have 010101 then we have to use string but if they have just 0 we can use decimal
         return !IDecideTypesForStrings.ZeroPrefixedNumber.IsMatch(candidateString) && IsAcceptableAsTypeImpl(candidateString, size);
@@ -61,10 +61,10 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     /// </summary>
     /// <param name="candidateString"></param>
     /// <returns></returns>
-    protected bool IsExplicitDate(string candidateString)
+    protected bool IsExplicitDate(ReadOnlySpan<char> candidateString)
     {
         //if user has an explicit type format in mind and the candidate string is not null (which should hopefully be handled sensibly elsewhere)
-        if(Settings.ExplicitDateFormats != null && !string.IsNullOrWhiteSpace(candidateString))
+        if(Settings.ExplicitDateFormats != null && !candidateString.IsEmpty && !candidateString.IsWhiteSpace())
             return DateTime.TryParseExact(candidateString,Settings.ExplicitDateFormats,Culture,DateTimeStyles.None,out _);
 
         return false;
@@ -116,8 +116,8 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     /// <param name="candidateString"></param>
     /// <param name="size"></param>
     /// <returns></returns>
-    protected virtual bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize? size)
+    protected virtual bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? size)
     {
-        return candidateString.IsConvertibleTo<T>(Culture);
+        return candidateString.ToString().IsConvertibleTo<T>(Culture);
     }
 }

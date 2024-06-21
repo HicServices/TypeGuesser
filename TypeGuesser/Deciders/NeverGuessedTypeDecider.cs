@@ -19,7 +19,7 @@ public sealed class NeverGuessTheseTypeDecider(CultureInfo culture) : DecideType
     protected override object ParseImpl(string value) => throw new NotSupportedException();
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize? sizeRecord) =>
+    protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? sizeRecord) =>
         //strings should never be interpreted as byte arrays
         false;
 }

@@ -1,4 +1,5 @@
-﻿using System.Data.SqlTypes;
+﻿using System;
+using System.Data.SqlTypes;
 using System.Globalization;
 using System.Linq;
 
@@ -30,7 +31,7 @@ public sealed class DecimalTypeDecider : DecideTypesForStrings<decimal>
     }
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(string candidateString,IDataTypeSize? sizeRecord)
+    protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? sizeRecord)
     {
         candidateString = TrimTrailingZeros(candidateString);
 
@@ -46,10 +47,10 @@ public sealed class DecimalTypeDecider : DecideTypesForStrings<decimal>
         return true;
     }
 
-    private string TrimTrailingZeros(string s)
+    private ReadOnlySpan<char> TrimTrailingZeros(ReadOnlySpan<char> s)
     {
         //don't trim 0 unless there's a decimal point e.g. don't trim from 1,000
-        if (!s.Contains(Culture.NumberFormat.NumberDecimalSeparator))
+        if (!s.Contains(_decimalIndicator))
             return s;
 
 

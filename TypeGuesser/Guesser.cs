@@ -25,7 +25,7 @@ public class Guesser
 
     /// <summary>
     /// Normally when measuring the lengths of strings something like "It’s" would be 4 but for Oracle it needs extra width.  If this is
-    /// non zero then when <see cref="AdjustToCompensateForValue(object)"/> is a string then any non standard characters will have this number
+    /// non zero then when <see cref="AdjustToCompensateForValue(in object)"/> is a string then any non standard characters will have this number
     /// added to the length predicted.
     /// </summary>
     public int ExtraLengthPerNonAsciiCharacter { get; init; }
@@ -110,17 +110,18 @@ public class Guesser
     }
 
     /// <summary>
-    /// <para>Adjusts the current <see cref="Guess"/> based on the <paramref name="o"/>.  All calls to this method for a given <see cref="Guesser"/>
+    /// <para>Adjusts the current <see cref="Guess"/> based on the <paramref name="originalO"/>.  All calls to this method for a given <see cref="Guesser"/>
     /// instance must be of the same Type e.g. string.  If you pass a hard Typed value in (e.g. int) then the <see cref="Guess"/> will change
     /// to the Type of the object but it will still calculate length/digits.
     /// </para>
     /// 
     /// <para>Passing null / <see cref="DBNull.Value"/> is always allowed and never changes the <see cref="Guess"/></para>
     /// </summary>
-    /// <exception cref="MixedTypingException">Thrown if you mix strings with hard Typed objects when supplying <paramref name="o"/></exception>
-    /// <param name="o"></param>
-    public void AdjustToCompensateForValue(object? o)
+    /// <exception cref="MixedTypingException">Thrown if you mix strings with hard Typed objects when supplying <paramref name="originalO"/></exception>
+    /// <param name="originalO"></param>
+    public void AdjustToCompensateForValue(in object? originalO)
     {
+        var o = originalO;
         while (true)
         {
             if (o == null) return;

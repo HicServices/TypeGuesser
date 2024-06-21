@@ -199,13 +199,13 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
     }
 
     /// <inheritdoc />
-    public override bool IsAcceptableAsType(string candidateString, IDataTypeSize? size)
+    public override bool IsAcceptableAsType(ReadOnlySpan<char> candidateString, IDataTypeSize? size)
     {
         return IsExplicitDate(candidateString) || base.IsAcceptableAsType(candidateString, size);
     }
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize? sizeRecord)
+    protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? sizeRecord)
     {
         //if it's a float then it isn't a date is it! thanks C# for thinking 1.1 is the first of January
         if (_decimalChecker.IsAcceptableAsType(candidateString, sizeRecord))
@@ -226,39 +226,33 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
         }
     }
 
-    private readonly char[] _space = [' '];
-
-    private bool TryBruteParse(string? s, out DateTime dt)
+    private bool TryBruteParse(ReadOnlySpan<char> s, out DateTime dt)
     {
         //if it's legit according to the current culture
         if (DateTime.TryParse(s, Culture, DateTimeStyles.None, out dt))
             return true;
 
-        var split = s?.Split(_space, StringSplitOptions.RemoveEmptyEntries);
-
         //if there are no tokens
-        if (split == null || split.Length == 0)
+        if (s.IsEmpty)
         {
-            dt = DateTime.MinValue;
+            dt=DateTime.MinValue;
             return false;
         }
 
+        var sPoint = s.IndexOf(' ');
+
         //if there is one token it is assumed either to be a date or a string
-        if (split.Length == 1)
-            if (TryGetTime(split[0], out dt))
-                return true;
-            else if (TryGetDate(split[0], out dt))
-                return true;
-            else
-                return false;
+        if (sPoint == -1)
+        {
+            return TryGetTime(s, out dt) || TryGetDate(s, out dt);
+        }
 
         //if there are 2+ tokens then first token should be a date then the rest (concatenated) should be a time
         //e.g. "28/2/1993 5:36:27 AM" gets evaluated as "28/2/1993" and then "5:36:27 AM"
 
-        if (TryGetDate(split[0], out dt) && TryGetTime(string.Join(" ", split.Skip(1)), out var time))
+        if (TryGetDate(s[..sPoint], out dt) && TryGetTime(s[(sPoint+1)..], out var time))
         {
             dt = new DateTime(dt.Year, dt.Month, dt.Day, time.Hour, time.Minute, time.Second, time.Millisecond);
-
             return true;
         }
 
@@ -266,12 +260,12 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
         return false;
     }
 
-    private bool TryGetDate(string v, out DateTime date)
+    private bool TryGetDate(ReadOnlySpan<char> v, out DateTime date)
     {
         return DateTime.TryParseExact(v, _dateFormatToUse, Culture, DateTimeStyles.AllowInnerWhite, out date);
     }
 
-    private bool TryGetTime(string v, out DateTime time)
+    private bool TryGetTime(ReadOnlySpan<char> v, out DateTime time)
     {
         return DateTime.TryParseExact(v, TimeFormats, Culture, DateTimeStyles.AllowInnerWhite, out time);
     }

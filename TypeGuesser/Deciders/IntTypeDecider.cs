@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using TB.ComponentModel;
 
 namespace TypeGuesser.Deciders;
@@ -19,12 +20,12 @@ public sealed class IntTypeDecider(CultureInfo culture) : DecideTypesForStrings<
     }
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize? sizeRecord)
+    protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? sizeRecord)
     {
         if(IsExplicitDate(candidateString))
             return false;
 
-        if (!candidateString.IsConvertibleTo(out int i, Culture))
+        if (!candidateString.ToString().IsConvertibleTo(out int i, Culture))
             return false;
 
         sizeRecord?.Size.IncreaseTo(i.ToString().Trim('-').Length,0);
