@@ -157,7 +157,7 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
     }
 
     /// <inheritdoc/>
-    protected override object ParseImpl(string value)
+    protected override object ParseImpl(ReadOnlySpan<char> value)
     {
         // if user has specified a specific format that we are to use, use it
         if (Settings.ExplicitDateFormats != null)
@@ -165,7 +165,7 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
 
         // otherwise parse a value using any of the valid culture formats
         if (!TryBruteParse(value, out var dt))
-            throw new FormatException(string.Format(SR.DateTimeTypeDecider_ParseImpl_Could_not_parse___0___to_a_valid_DateTime, value));
+            throw new FormatException(string.Format(SR.DateTimeTypeDecider_ParseImpl_Could_not_parse___0___to_a_valid_DateTime, value.ToString()));
 
         return dt;
     }

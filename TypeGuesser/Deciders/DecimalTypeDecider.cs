@@ -2,6 +2,7 @@
 using System.Data.SqlTypes;
 using System.Globalization;
 using System.Linq;
+using TB.ComponentModel;
 
 namespace TypeGuesser.Deciders;
 
@@ -29,6 +30,9 @@ public sealed class DecimalTypeDecider : DecideTypesForStrings<decimal>
     {
         return new DecimalTypeDecider(culture);
     }
+
+    /// <inheritdoc />
+    protected override object? ParseImpl(ReadOnlySpan<char> value) => decimal.TryParse(value, Culture.NumberFormat, out var d) ? d : null;
 
     /// <inheritdoc/>
     protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? sizeRecord)

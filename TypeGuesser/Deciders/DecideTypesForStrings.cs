@@ -105,10 +105,7 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    protected virtual object? ParseImpl(string value)
-    {
-        return value.To<T>(Culture);
-    }
+    protected abstract object? ParseImpl(ReadOnlySpan<char> value);
 
     /// <summary>
     /// Returns true if the given <paramref name="candidateString"/> is compatible with the T Type of this decider.  This is the preferred method of overriding IsAcceptable.
@@ -116,8 +113,5 @@ public abstract class DecideTypesForStrings<T> :IDecideTypesForStrings
     /// <param name="candidateString"></param>
     /// <param name="size"></param>
     /// <returns></returns>
-    protected virtual bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? size)
-    {
-        return candidateString.ToString().IsConvertibleTo<T>(Culture);
-    }
+    protected abstract bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? size);
 }

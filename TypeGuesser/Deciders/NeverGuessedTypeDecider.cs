@@ -16,7 +16,7 @@ public sealed class NeverGuessTheseTypeDecider(CultureInfo culture) : DecideType
     protected override IDecideTypesForStrings CloneImpl(CultureInfo newCulture) => new NeverGuessTheseTypeDecider(newCulture);
 
     /// <inheritdoc/>
-    protected override object ParseImpl(string value) => throw new NotSupportedException();
+    protected override object ParseImpl(ReadOnlySpan<char> _) => throw new NotSupportedException();
 
     /// <inheritdoc/>
     protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? sizeRecord) =>

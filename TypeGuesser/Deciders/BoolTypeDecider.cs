@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using TB.ComponentModel;
 
 namespace TypeGuesser.Deciders;
 
@@ -18,7 +20,13 @@ public sealed partial class BoolTypeDecider(CultureInfo culture) : DecideTypesFo
     /// <inheritdoc/>
     protected override IDecideTypesForStrings CloneImpl(CultureInfo newCulture)
     {
-        return  new BoolTypeDecider(newCulture);
+        return new BoolTypeDecider(newCulture);
+    }
+
+    /// <inheritdoc />
+    protected override object? ParseImpl(ReadOnlySpan<char> value)
+    {
+        return value.Length > 1 && "1tTyYjJ".IndexOf(value[0]) != -1;
     }
 
     /// <inheritdoc/>
@@ -28,7 +36,20 @@ public sealed partial class BoolTypeDecider(CultureInfo culture) : DecideTypesFo
         if (!Settings.CharCanBeBoolean && SingleCharacter.IsMatch(candidateString))
             return false;
 
-        return base.IsAcceptableAsTypeImpl(candidateString, size);
+        return candidateString.Length switch
+        {
+            1 => "1tTyYjJ0fFnN".IndexOf(candidateString[0]) != -1,
+            2 => candidateString.Equals("ja", StringComparison.OrdinalIgnoreCase) ||
+                 candidateString.Equals("no", StringComparison.OrdinalIgnoreCase) ||
+                 candidateString.Equals("-1", StringComparison.OrdinalIgnoreCase),
+            3 => candidateString.Equals("yes", StringComparison.OrdinalIgnoreCase) ||
+                 candidateString.Equals(".t.", StringComparison.OrdinalIgnoreCase) ||
+                 candidateString.Equals(".f.", StringComparison.OrdinalIgnoreCase),
+            4 => candidateString.Equals("true", StringComparison.OrdinalIgnoreCase) ||
+                 candidateString.Equals("nein", StringComparison.OrdinalIgnoreCase),
+            5 => candidateString.Equals("false", StringComparison.OrdinalIgnoreCase),
+            _ => false
+        };
     }
 
     [GeneratedRegex(@"^\s*[A-Za-z]\s*$",RegexOptions.CultureInvariant)]

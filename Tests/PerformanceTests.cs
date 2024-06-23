@@ -56,17 +56,6 @@ public sealed class PerformanceTests
         Console.WriteLine($"Guesser.AdjustToCompensateForValue:{sw.ElapsedMilliseconds} ms");
 
 
-        sw.Restart();
-
-        foreach (var s in inputs)
-        {
-            s.To<decimal>(culture);
-        }
-
-        sw.Stop();
-
-        Console.WriteLine($"To<decimal>:{sw.ElapsedMilliseconds} ms");
-
 
         sw.Restart();
 
