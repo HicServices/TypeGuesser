@@ -31,7 +31,7 @@ public sealed class DecimalTypeDecider : DecideTypesForStrings<decimal>
     }
 
     /// <inheritdoc />
-    protected override object? ParseImpl(ReadOnlySpan<char> value) => decimal.TryParse(value, Culture.NumberFormat, out var d) ? d : null;
+    protected override object? ParseImpl(ReadOnlySpan<char> value) => decimal.TryParse(value, NumberStyles.Any, Culture.NumberFormat, out var d) ? d : null;
 
     /// <inheritdoc/>
     protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? sizeRecord)
