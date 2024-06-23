@@ -188,6 +188,22 @@ public class Guesser
 
     private int GetStringLength(ReadOnlySpan<char> oToString)
     {
+        // Fast path: if we don't need extra space for unicode, we only care if we hit the first Unicode char:
+        if (ExtraLengthPerNonAsciiCharacter == 0)
+        {
+            // Already seen Unicode? No need to check!
+            if (Guess.Unicode) return oToString.Length;
+
+            foreach (var c in oToString)
+            {
+                if (char.IsAscii(c)) continue;
+
+                Guess.Unicode = true;
+                return oToString.Length;
+            }
+            return oToString.Length;
+        }
+
         var nonAscii = 0;
         foreach (var c in oToString)
         {
