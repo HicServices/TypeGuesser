@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Text.RegularExpressions;
 
 namespace TypeGuesser.Deciders;
 
@@ -11,10 +10,8 @@ namespace TypeGuesser.Deciders;
 /// Creates a new instance with the given <paramref name="culture"/>
 /// </remarks>
 /// <param name="culture"></param>
-public sealed partial class BoolTypeDecider(CultureInfo culture) : DecideTypesForStrings<bool>(culture,TypeCompatibilityGroup.Numerical,typeof(bool))
+public sealed class BoolTypeDecider(CultureInfo culture):DecideTypesForStrings<bool>(culture,TypeCompatibilityGroup.Numerical,typeof(bool))
 {
-    private static readonly Regex SingleCharacter = SingleCharacterRegex();
-
     /// <inheritdoc/>
     protected override IDecideTypesForStrings CloneImpl(CultureInfo newCulture)
     {
@@ -22,34 +19,59 @@ public sealed partial class BoolTypeDecider(CultureInfo culture) : DecideTypesFo
     }
 
     /// <inheritdoc />
-    protected override object? ParseImpl(ReadOnlySpan<char> value)
+    protected override object? ParseImpl(ReadOnlySpan<char> candidateString)
     {
-        return value.Length > 1 && "1tTyYjJ".IndexOf(value[0]) != -1;
+        candidateString = StripWhitespace(candidateString);
+
+        return candidateString.Length switch
+        {
+            1 => "1tTyYjJ0fFnN".IndexOf(candidateString[0]) != -1 ? "0fFnN".IndexOf(candidateString[0]) == -1 : null,
+            2 => candidateString.Equals("ja",StringComparison.OrdinalIgnoreCase) ? true :
+            (
+                candidateString.Equals("no",StringComparison.OrdinalIgnoreCase) ||
+                candidateString.Equals("-1",StringComparison.OrdinalIgnoreCase)
+            ) ? false : null,
+            3 => candidateString.Equals("yes",StringComparison.OrdinalIgnoreCase) ||
+                candidateString.Equals(".t.",StringComparison.OrdinalIgnoreCase) ? true :
+                candidateString.Equals(".f.",StringComparison.OrdinalIgnoreCase) ? false : null,
+            4 => candidateString.Equals("true",StringComparison.OrdinalIgnoreCase) ? true :
+                candidateString.Equals("nein",StringComparison.OrdinalIgnoreCase) ? false : null,
+            5 => candidateString.Equals("false",StringComparison.OrdinalIgnoreCase) ? false : null,
+            _ => null
+        };
+    }
+
+    private static ReadOnlySpan<char> StripWhitespace(ReadOnlySpan<char> candidateString)
+    {
+        while (candidateString.Length > 0 && char.IsWhiteSpace(candidateString[0]))
+            candidateString = candidateString[1..];
+        while (candidateString.Length > 0 && char.IsWhiteSpace(candidateString[^1]))
+            candidateString = candidateString[..^1];
+        return candidateString;
     }
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? size)
+    protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString,IDataTypeSize? size)
     {
+        candidateString = StripWhitespace(candidateString);
+
         // "Y" / "N" is boolean unless the settings say it can't
-        if (!Settings.CharCanBeBoolean && SingleCharacter.IsMatch(candidateString))
+        if (!Settings.CharCanBeBoolean && candidateString.Length == 1)
             return false;
 
         return candidateString.Length switch
         {
             1 => "1tTyYjJ0fFnN".IndexOf(candidateString[0]) != -1,
-            2 => candidateString.Equals("ja", StringComparison.OrdinalIgnoreCase) ||
-                 candidateString.Equals("no", StringComparison.OrdinalIgnoreCase) ||
-                 candidateString.Equals("-1", StringComparison.OrdinalIgnoreCase),
-            3 => candidateString.Equals("yes", StringComparison.OrdinalIgnoreCase) ||
-                 candidateString.Equals(".t.", StringComparison.OrdinalIgnoreCase) ||
-                 candidateString.Equals(".f.", StringComparison.OrdinalIgnoreCase),
-            4 => candidateString.Equals("true", StringComparison.OrdinalIgnoreCase) ||
-                 candidateString.Equals("nein", StringComparison.OrdinalIgnoreCase),
-            5 => candidateString.Equals("false", StringComparison.OrdinalIgnoreCase),
+            2 => candidateString.Equals("ja",StringComparison.OrdinalIgnoreCase) ||
+                 candidateString.Equals("no",StringComparison.OrdinalIgnoreCase) ||
+                 candidateString.Equals("-1",StringComparison.OrdinalIgnoreCase),
+            3 => candidateString.Equals("yes",StringComparison.OrdinalIgnoreCase) ||
+                 candidateString.Equals(".t.",StringComparison.OrdinalIgnoreCase) ||
+                 candidateString.Equals(".f.",StringComparison.OrdinalIgnoreCase),
+            4 => candidateString.Equals("true",StringComparison.OrdinalIgnoreCase) ||
+                 candidateString.Equals("nein",StringComparison.OrdinalIgnoreCase),
+            5 => candidateString.Equals("false",StringComparison.OrdinalIgnoreCase),
             _ => false
         };
     }
-
-    [GeneratedRegex(@"^\s*[A-Za-z]\s*$",RegexOptions.CultureInvariant)]
-    private static partial Regex SingleCharacterRegex();
 }
