@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using NUnit.Framework;
-using TB.ComponentModel;
 using TypeGuesser;
 using TypeGuesser.Deciders;
 

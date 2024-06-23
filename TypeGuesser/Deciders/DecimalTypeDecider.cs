@@ -2,7 +2,6 @@
 using System.Data.SqlTypes;
 using System.Globalization;
 using System.Linq;
-using TB.ComponentModel;
 
 namespace TypeGuesser.Deciders;
 
