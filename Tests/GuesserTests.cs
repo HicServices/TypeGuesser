@@ -54,8 +54,8 @@ public sealed class GuesserTests
     [TestCase("5.000.000", typeof(string), "en-us", 9, 0, 0, "5.000.000")] //germans swap commas and dots so this is an illegal number
     [TestCase("5,000,000", typeof(string), "de-de", 9, 0, 0, "5,000,000")] //germans swap commas and dots so this is an illegal number
     [TestCase("5,000", typeof(int), "de-de", 5, 1,0,5)] //germans swap commas and dots
-
-    public void Test_OneString_IsType(string guessFor, Type expectedGuess, string culture,int expectedStringLength, int expectedBefore,int expectedAfter,object expectedParseValue)
+    public void Test_OneString_IsType(string guessFor, Type expectedGuess, string culture, int expectedStringLength,
+        int expectedBefore, int expectedAfter, object expectedParseValue)
     {
         var cultureInfo = new CultureInfo(culture);
         var guesser = new Guesser {Culture = cultureInfo};

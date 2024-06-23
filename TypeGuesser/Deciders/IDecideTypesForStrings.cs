@@ -63,7 +63,7 @@ public partial interface IDecideTypesForStrings
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    object? Parse(string value);
+    object? Parse(ReadOnlySpan<char> value);
 
     /// <summary>
     /// Returns a new instance of this class with the same <see cref="Culture"/> and <see cref="Settings"/> etc
