@@ -25,8 +25,7 @@ public sealed class PerformanceTests
 
         var decider = new DecimalTypeDecider(new CultureInfo("en-GB"));
 
-        // ReSharper disable once NullableWarningSuppressionIsUsed - this is just for benchmarking
-        var req = new DatabaseTypeRequest(null!);
+        var req = new DatabaseTypeRequest(typeof(bool)) { Unicode = true };
 
         var sw = new Stopwatch();
 

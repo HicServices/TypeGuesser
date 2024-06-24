@@ -122,12 +122,10 @@ public class Guesser
     /// <param name="o"></param>
     public void AdjustToCompensateForValue(object? o)
     {
+        if (o == null || o == DBNull.Value) return;
+
         while (true)
         {
-            if (o == null) return;
-
-            if (o == DBNull.Value) return;
-
             //if we have previously seen a hard typed value then we can't just change datatypes to something else!
             if (IsPrimedWithBonafideType && Guess.CSharpType != o.GetType())
                 throw new MixedTypingException(string.Format(
