@@ -21,6 +21,8 @@ public sealed class BoolTypeDecider(CultureInfo culture):DecideTypesForStrings<b
     /// <inheritdoc />
     protected override object? ParseImpl(ReadOnlySpan<char> candidateString)
     {
+        if (bool.TryParse(candidateString, out var sysResult)) return sysResult;
+
         candidateString = StripWhitespace(candidateString);
 
         return candidateString.Length switch
@@ -53,13 +55,13 @@ public sealed class BoolTypeDecider(CultureInfo culture):DecideTypesForStrings<b
     /// <inheritdoc/>
     protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString,IDataTypeSize? size)
     {
-        candidateString = StripWhitespace(candidateString);
+        var strippedString = StripWhitespace(candidateString);
 
         // "Y" / "N" is boolean unless the settings say it can't
-        if (!Settings.CharCanBeBoolean && candidateString.Length == 1)
+        if (!Settings.CharCanBeBoolean && strippedString.Length == 1 && char.IsAsciiLetter(strippedString[0]))
             return false;
 
-        return candidateString.Length switch
+        return bool.TryParse(candidateString, out _) || candidateString.Length switch
         {
             1 => "1tTyYjJ0fFnN".IndexOf(candidateString[0]) != -1,
             2 => candidateString.Equals("ja",StringComparison.OrdinalIgnoreCase) ||
