@@ -45,7 +45,8 @@ public class Guesser
     /// <summary>
     /// The culture to use for type deciders, determines what symbol decimal place is etc
     /// </summary>
-    public CultureInfo Culture {
+    public CultureInfo Culture
+    {
         set => _typeDeciders  = new TypeDeciderFactory(value);
     }
 
@@ -68,7 +69,7 @@ public class Guesser
     /// <summary>
     /// Creates a new DataType
     /// </summary>
-    public Guesser():this(new DatabaseTypeRequest(DatabaseTypeRequest.PreferenceOrder[0]))
+    public Guesser() : this(new DatabaseTypeRequest(DatabaseTypeRequest.PreferenceOrder[0]))
     {
 
     }
@@ -121,22 +122,20 @@ public class Guesser
     /// <param name="o"></param>
     public void AdjustToCompensateForValue(object? o)
     {
+        if (o == null || o == DBNull.Value) return;
+
         while (true)
         {
-            if (o == null) return;
-
-            if (o == DBNull.Value) return;
-
             //if we have previously seen a hard typed value then we can't just change datatypes to something else!
             if (IsPrimedWithBonafideType && Guess.CSharpType != o.GetType())
                 throw new MixedTypingException(string.Format(
-                    SR.Guesser_AdjustToCompensateForValue_GuesserPassedMixedTypeValues, o, o.GetType(),
+                    SR.Guesser_AdjustToCompensateForValue_GuesserPassedMixedTypeValues,o,o.GetType(),
                     Guess.CSharpType));
 
             var oToString = o.ToString();
 
             //we might need to fallback on a string later on, in this case we should always record the maximum length of input seen before even if it is acceptable as int, double, dates etc
-            Guess.Width = Math.Max(Guess.Width ?? -1, GetStringLength(oToString??string.Empty));
+            Guess.Width = Math.Max(Guess.Width ?? -1,GetStringLength(oToString??string.Empty));
 
             //if it's a string
             if (o is string oAsString)
@@ -147,14 +146,14 @@ public class Guesser
                 //if we have already fallen back to string then just stick with it (there's no going back up the ladder)
                 if (Guess.CSharpType == typeof(string)) return;
 
-                var result = _typeDeciders.Dictionary[Guess.CSharpType].IsAcceptableAsType(oAsString, Guess);
+                var result = _typeDeciders.Dictionary[Guess.CSharpType].IsAcceptableAsType(oAsString,Guess);
 
                 //if the current estimate compatible
                 if (result)
                 {
                     _validTypesSeen = _typeDeciders.Dictionary[Guess.CSharpType].CompatibilityGroup;
 
-                    if (Guess.CSharpType == typeof(DateTime)) Guess.Width = Math.Max(Guess.Width ?? -1, MinimumLengthRequiredForDateStringRepresentation);
+                    if (Guess.CSharpType == typeof(DateTime)) Guess.Width = Math.Max(Guess.Width ?? -1,MinimumLengthRequiredForDateStringRepresentation);
 
 
                     return;
@@ -169,7 +168,7 @@ public class Guesser
             }
 
             //if we ever made a decision about a string inputs then we won't accept hard typed objects now
-            if (_validTypesSeen != TypeCompatibilityGroup.None || Guess.CSharpType == typeof(string)) throw new MixedTypingException(string.Format(SR.Guesser_AdjustToCompensateForValue_GuesserPassedMixedTypeValues, o, o.GetType(), Guess.CSharpType));
+            if (_validTypesSeen != TypeCompatibilityGroup.None || Guess.CSharpType == typeof(string)) throw new MixedTypingException(string.Format(SR.Guesser_AdjustToCompensateForValue_GuesserPassedMixedTypeValues,o,o.GetType(),Guess.CSharpType));
 
             //if we have yet to see a proper type
             if (!IsPrimedWithBonafideType)
@@ -180,27 +179,40 @@ public class Guesser
 
             //if we have a decider for this lets get it to tell us the decimal places (if any)
             if (oToString!=null && _typeDeciders.Dictionary.TryGetValue(o.GetType(),out var decider))
-                decider.IsAcceptableAsType(oToString, Guess);
+                decider.IsAcceptableAsType(oToString,Guess);
             break;
         }
     }
 
-    private int GetStringLength(string oToString)
+    private int GetStringLength(ReadOnlySpan<char> oToString)
     {
-        var nonAscii = oToString.Count(IsNotAscii);
+        // Fast path: if we don't need extra space for unicode, we only care if we hit the first Unicode char:
+        if (ExtraLengthPerNonAsciiCharacter == 0)
+        {
+            // Already seen Unicode? No need to check!
+            if (Guess.Unicode) return oToString.Length;
 
-        if(nonAscii > 0)
+            foreach (var c in oToString)
+            {
+                if (char.IsAscii(c)) continue;
+
+                Guess.Unicode = true;
+                return oToString.Length;
+            }
+            return oToString.Length;
+        }
+
+        var nonAscii = 0;
+        foreach (var c in oToString)
+        {
+            if (!char.IsAscii(c))
+                nonAscii++;
+        }
+
+        if (nonAscii > 0)
             Guess.Unicode = true;
 
-        if(ExtraLengthPerNonAsciiCharacter == 0)
-            return oToString.Length;
-
         return oToString.Length + nonAscii * ExtraLengthPerNonAsciiCharacter;
-    }
-
-    private static bool IsNotAscii(char arg)
-    {
-        return arg >= 127;
     }
 
     private void ChangeEstimateToNext()
@@ -208,7 +220,7 @@ public class Guesser
         var current = DatabaseTypeRequest.PreferenceOrder.IndexOf(Guess.CSharpType);
 
         //if we have never seen any good data just try the next one
-        if(_validTypesSeen == TypeCompatibilityGroup.None )
+        if (_validTypesSeen == TypeCompatibilityGroup.None)
             Guess.CSharpType = DatabaseTypeRequest.PreferenceOrder[current + 1];
         else
         {
@@ -221,7 +233,7 @@ public class Guesser
             Guess.CSharpType = nextEstimate == typeof(string) || _validTypesSeen == TypeCompatibilityGroup.Exclusive
                 ? typeof(string)
                 : //then just go with string
-                //if the next decider is in the same group as the previously used ones
+                  //if the next decider is in the same group as the previously used ones
                 _typeDeciders.Dictionary[nextEstimate].CompatibilityGroup == _validTypesSeen
                     ? nextEstimate
                     : typeof(string); //the next Type decider is in an incompatible category so just go directly to string
@@ -256,7 +268,7 @@ public class Guesser
             return;
 
         if (!_typeDeciders.IsSupported(Guess.CSharpType))
-            throw new NotSupportedException(string.Format(SR.Guesser_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_, Guess.CSharpType));
+            throw new NotSupportedException(string.Format(SR.Guesser_ThrowIfNotSupported_No_Type_Decider_exists_for_Type__0_,Guess.CSharpType));
     }
 
     /// <summary>

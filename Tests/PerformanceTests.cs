@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using NUnit.Framework;
-using TB.ComponentModel;
 using TypeGuesser;
 using TypeGuesser.Deciders;
 
@@ -26,8 +25,7 @@ public sealed class PerformanceTests
 
         var decider = new DecimalTypeDecider(new CultureInfo("en-GB"));
 
-        // ReSharper disable once NullableWarningSuppressionIsUsed - this is just for benchmarking
-        var req = new DatabaseTypeRequest(null!);
+        var req = new DatabaseTypeRequest(typeof(bool)) { Unicode = true };
 
         var sw = new Stopwatch();
 
@@ -55,17 +53,6 @@ public sealed class PerformanceTests
 
         Console.WriteLine($"Guesser.AdjustToCompensateForValue:{sw.ElapsedMilliseconds} ms");
 
-
-        sw.Restart();
-
-        foreach (var s in inputs)
-        {
-            s.To<decimal>(culture);
-        }
-
-        sw.Stop();
-
-        Console.WriteLine($"To<decimal>:{sw.ElapsedMilliseconds} ms");
 
 
         sw.Restart();

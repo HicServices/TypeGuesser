@@ -16,10 +16,10 @@ public sealed class TimeSpanTypeDecider(CultureInfo culture) : DecideTypesForStr
     protected override IDecideTypesForStrings CloneImpl(CultureInfo newCulture) => new TimeSpanTypeDecider(newCulture);
 
     /// <inheritdoc/>
-    protected override object ParseImpl(string value) => DateTime.Parse(value).TimeOfDay;
+    protected override object ParseImpl(ReadOnlySpan<char> value) => DateTime.Parse(value).TimeOfDay;
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize? sizeRecord)
+    protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? sizeRecord)
     {
         try
         {

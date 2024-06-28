@@ -1,5 +1,5 @@
-﻿using System.Globalization;
-using TB.ComponentModel;
+﻿using System;
+using System.Globalization;
 
 namespace TypeGuesser.Deciders;
 
@@ -18,14 +18,16 @@ public sealed class IntTypeDecider(CultureInfo culture) : DecideTypesForStrings<
         return new IntTypeDecider(newCulture);
     }
 
+    /// <inheritdoc />
+    protected override object? ParseImpl(ReadOnlySpan<char> value) => int.TryParse(value, NumberStyles.Any, Culture.NumberFormat, out var i) ? i : null;
+
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(string candidateString, IDataTypeSize? sizeRecord)
+    protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? sizeRecord)
     {
         if(IsExplicitDate(candidateString))
             return false;
 
-        if (!candidateString.IsConvertibleTo(out int i, Culture))
-            return false;
+        if (!int.TryParse(candidateString, NumberStyles.Any, Culture.NumberFormat, out var i)) return false;
 
         sizeRecord?.Size.IncreaseTo(i.ToString().Trim('-').Length,0);
         return true;

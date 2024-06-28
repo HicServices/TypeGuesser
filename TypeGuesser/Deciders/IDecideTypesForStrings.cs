@@ -54,16 +54,16 @@ public partial interface IDecideTypesForStrings
     /// </summary>
     /// <param name="candidateString">a string containing a value of unknown type (e.g. "fish" or "1")</param>
     /// <param name="size">The current size estimate of floating point numbers (or null if not appropriate).  This will be modified by the method
-    /// if appropriate to the data passed</param>
+    ///     if appropriate to the data passed</param>
     /// <returns>True if the <paramref name="candidateString"/> is a valid value for the <see cref="TypesSupported"/> by the decider</returns>
-    bool IsAcceptableAsType(string candidateString,IDataTypeSize? size);
+    bool IsAcceptableAsType(ReadOnlySpan<char> candidateString, IDataTypeSize? size);
 
     /// <summary>
     /// Converts the provided <paramref name="value"/> to an object of the Type modelled by this <see cref="IDecideTypesForStrings"/>.
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    object? Parse(string value);
+    object? Parse(ReadOnlySpan<char> value);
 
     /// <summary>
     /// Returns a new instance of this class with the same <see cref="Culture"/> and <see cref="Settings"/> etc
