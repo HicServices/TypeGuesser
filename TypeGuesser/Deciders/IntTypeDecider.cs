@@ -28,7 +28,6 @@ public sealed class IntTypeDecider(CultureInfo culture) : DecideTypesForStrings<
             return false;
 
         if (!int.TryParse(candidateString, NumberStyles.Any, Culture.NumberFormat, out var i)) return false;
-        //if (!candidateString.IsConvertibleTo(out int i, Culture)) return false;
 
         sizeRecord?.Size.IncreaseTo(i.ToString().Trim('-').Length,0);
         return true;
