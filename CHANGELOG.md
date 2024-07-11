@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.5] - 2024-07-11
+
+- Internal performance improvements, using ReadOnlySpan&lt;char&gt; instead of string internally
+- Remove dependency on UniversalTypeConverter package
+
 ## [1.2.4] - 2024-03-07
 
 - Add parameterless constructor for DatabaseTypeRequest to support DicomTypeTranslator's YAML conversion
@@ -79,7 +84,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial port of content from [FAnsiSql](https://github.com/HicServices/FAnsiSql)
 
-[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/v1.2.4...main
+[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/v1.2.5...main
+[1.2.5]: https://github.com/HicServices/TypeGuesser/compare/v1.2.4...v1.2.5
 [1.2.4]: https://github.com/HicServices/TypeGuesser/compare/v1.2.3...v1.2.4
 [1.2.3]: https://github.com/HicServices/TypeGuesser/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/HicServices/TypeGuesser/compare/v1.2.1...v1.2.2
