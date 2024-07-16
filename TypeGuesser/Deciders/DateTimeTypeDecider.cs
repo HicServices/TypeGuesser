@@ -12,7 +12,7 @@ namespace TypeGuesser.Deciders;
 /// Creates a new instance for detecting/parsing <see cref="DateTime"/> strings according to the <paramref name="cultureInfo"/>
 /// </remarks>
 /// <param name="cultureInfo"></param>
-public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForStrings<DateTime>(cultureInfo, TypeCompatibilityGroup.Exclusive, typeof(DateTime))
+public class DateTimeTypeDecider(CultureInfo cultureInfo):DecideTypesForStrings<DateTime>(cultureInfo,TypeCompatibilityGroup.Exclusive,typeof(DateTime))
 {
     private readonly TimeSpanTypeDecider _timeSpanTypeDecider = new(cultureInfo);
     private readonly DecimalTypeDecider _decimalChecker = new(cultureInfo);
@@ -71,11 +71,11 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
                 foreach (var d in DayFormats)
                     foreach (var dateSeparator in DateSeparators)
                     {
-                        dateFormatsMd.Add(string.Join(dateSeparator, m, d, y));
-                        dateFormatsMd.Add(string.Join(dateSeparator, y, m, d));
+                        dateFormatsMd.Add(string.Join(dateSeparator,m,d,y));
+                        dateFormatsMd.Add(string.Join(dateSeparator,y,m,d));
 
-                        dateFormatsDm.Add(string.Join(dateSeparator, d, m, y));
-                        dateFormatsMd.Add(string.Join(dateSeparator, y, m, d));
+                        dateFormatsDm.Add(string.Join(dateSeparator,d,m,y));
+                        dateFormatsMd.Add(string.Join(dateSeparator,y,m,d));
                     }
 
         //then all the times
@@ -84,13 +84,13 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
                 foreach (var h in HourFormats)
                     foreach (var m in MinuteFormats)
                     {
-                        timeFormats.Add(string.Join(timeSeparator, h, m));
-                        timeFormats.Add($"{string.Join(timeSeparator, h, m)} {suffix}");
+                        timeFormats.Add(string.Join(timeSeparator,h,m));
+                        timeFormats.Add($"{string.Join(timeSeparator,h,m)} {suffix}");
 
                         foreach (var s in SecondFormats)
                         {
-                            timeFormats.Add(string.Join(timeSeparator, h, m, s));
-                            timeFormats.Add($"{string.Join(timeSeparator, h, m, s)} {suffix}");
+                            timeFormats.Add(string.Join(timeSeparator,h,m,s));
+                            timeFormats.Add($"{string.Join(timeSeparator,h,m,s)} {suffix}");
                         }
                     }
         DateFormatsDM = [.. dateFormatsDm];
@@ -161,11 +161,11 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
     {
         // if user has specified a specific format that we are to use, use it
         if (Settings.ExplicitDateFormats != null)
-            return DateTime.ParseExact(value, Settings.ExplicitDateFormats, _culture, DateTimeStyles.None);
+            return DateTime.ParseExact(value,Settings.ExplicitDateFormats,_culture,DateTimeStyles.None);
 
         // otherwise parse a value using any of the valid culture formats
-        if (!TryBruteParse(value, out var dt))
-            throw new FormatException(string.Format(SR.DateTimeTypeDecider_ParseImpl_Could_not_parse___0___to_a_valid_DateTime, value.ToString()));
+        if (!TryBruteParse(value,out var dt))
+            throw new FormatException(string.Format(SR.DateTimeTypeDecider_ParseImpl_Could_not_parse___0___to_a_valid_DateTime,value.ToString()));
 
         return dt;
     }
@@ -180,45 +180,56 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
     /// </summary>
     public void GuessDateFormat(IEnumerable<string> samples)
     {
+        var total = 0;
+        var simple = 0;
+        var m = 0;
+        var d = 0;
+
         if (!AllowCultureGuessing)
             return;
 
-        samples = samples.Where(static s => !string.IsNullOrWhiteSpace(s)).ToList();
+        foreach (var sSample in samples.Where(static sSample => !string.IsNullOrWhiteSpace(sSample)))
+        {
+            var sample = sSample.AsSpan();
+            total++;
+            if (DateTime.TryParse(sample,Culture,DateTimeStyles.None, out _))
+                simple++;
+            else
+            {
+                _dateFormatToUse = DateFormatsDM;
+                if (TryBruteParse(sample, out _))
+                    d++;
+                _dateFormatToUse = DateFormatsMD;
+                if (TryBruteParse(sample, out _))
+                    m++;
+            }
+        }
 
-        //if they are all valid anyway
-        if (samples.All(s => DateTime.TryParse(s, Culture, DateTimeStyles.None, out _)))
-            return;
-
-        _dateFormatToUse = DateFormatsDM;
-        var countDm = samples.Count(s => TryBruteParse(s, out _));
-        _dateFormatToUse = DateFormatsMD;
-        var countMd = samples.Count(s => TryBruteParse(s, out _));
-
-        if (countDm >= countMd)
+        if (simple < total && d > m)
             _dateFormatToUse = DateFormatsDM;
     }
 
     /// <inheritdoc />
-    public override bool IsAcceptableAsType(ReadOnlySpan<char> candidateString, IDataTypeSize? size)
+    public override bool IsAcceptableAsType(ReadOnlySpan<char> candidateString,IDataTypeSize? size)
     {
-        return IsExplicitDate(candidateString) || base.IsAcceptableAsType(candidateString, size);
+        return IsExplicitDate(candidateString) || base.IsAcceptableAsType(candidateString,size);
     }
 
     /// <inheritdoc/>
-    protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? sizeRecord)
+    protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString,IDataTypeSize? sizeRecord)
     {
         //if it's a float then it isn't a date is it! thanks C# for thinking 1.1 is the first of January
-        if (_decimalChecker.IsAcceptableAsType(candidateString, sizeRecord))
+        if (_decimalChecker.IsAcceptableAsType(candidateString,sizeRecord))
             return false;
 
         //likewise if it is just the Time portion of the date then we have a column with mixed dates and times which SQL will not deal with well in the end database (e.g. it will set the
         //date portion of times to today's date which will be very confusing
-        if (_timeSpanTypeDecider.IsAcceptableAsType(candidateString, sizeRecord))
+        if (_timeSpanTypeDecider.IsAcceptableAsType(candidateString,sizeRecord))
             return false;
 
         try
         {
-            return TryBruteParse(candidateString, out _);
+            return TryBruteParse(candidateString,out _);
         }
         catch (Exception)
         {
@@ -226,10 +237,10 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
         }
     }
 
-    private bool TryBruteParse(ReadOnlySpan<char> s, out DateTime dt)
+    private bool TryBruteParse(ReadOnlySpan<char> s,out DateTime dt)
     {
         //if it's legit according to the current culture
-        if (DateTime.TryParse(s, Culture, DateTimeStyles.None, out dt))
+        if (DateTime.TryParse(s,Culture,DateTimeStyles.None,out dt))
             return true;
 
         //if there are no tokens
@@ -244,15 +255,15 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
         //if there is one token it is assumed either to be a date or a string
         if (sPoint == -1)
         {
-            return TryGetTime(s, out dt) || TryGetDate(s, out dt);
+            return TryGetTime(s,out dt) || TryGetDate(s,out dt);
         }
 
         //if there are 2+ tokens then first token should be a date then the rest (concatenated) should be a time
         //e.g. "28/2/1993 5:36:27 AM" gets evaluated as "28/2/1993" and then "5:36:27 AM"
 
-        if (TryGetDate(s[..sPoint], out dt) && TryGetTime(s[(sPoint+1)..], out var time))
+        if (TryGetDate(s[..sPoint],out dt) && TryGetTime(s[(sPoint+1)..],out var time))
         {
-            dt = new DateTime(dt.Year, dt.Month, dt.Day, time.Hour, time.Minute, time.Second, time.Millisecond);
+            dt = new DateTime(dt.Year,dt.Month,dt.Day,time.Hour,time.Minute,time.Second,time.Millisecond);
             return true;
         }
 
@@ -260,13 +271,13 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
         return false;
     }
 
-    private bool TryGetDate(ReadOnlySpan<char> v, out DateTime date)
+    private bool TryGetDate(ReadOnlySpan<char> v,out DateTime date)
     {
-        return DateTime.TryParseExact(v, _dateFormatToUse, Culture, DateTimeStyles.AllowInnerWhite, out date);
+        return DateTime.TryParseExact(v,_dateFormatToUse,Culture,DateTimeStyles.AllowInnerWhite,out date);
     }
 
-    private bool TryGetTime(ReadOnlySpan<char> v, out DateTime time)
+    private bool TryGetTime(ReadOnlySpan<char> v,out DateTime time)
     {
-        return DateTime.TryParseExact(v, TimeFormats, Culture, DateTimeStyles.AllowInnerWhite, out time);
+        return DateTime.TryParseExact(v,TimeFormats,Culture,DateTimeStyles.AllowInnerWhite,out time);
     }
 }
