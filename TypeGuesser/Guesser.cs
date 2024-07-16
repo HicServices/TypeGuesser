@@ -132,10 +132,10 @@ public class Guesser
                     SR.Guesser_AdjustToCompensateForValue_GuesserPassedMixedTypeValues,o,o.GetType(),
                     Guess.CSharpType));
 
-            var oToString = o.ToString();
+            var oToString = o.ToString() ?? string.Empty;
 
             //we might need to fallback on a string later on, in this case we should always record the maximum length of input seen before even if it is acceptable as int, double, dates etc
-            Guess.Width = Math.Max(Guess.Width ?? -1,GetStringLength(oToString??string.Empty));
+            Guess.Width = Math.Max(Guess.Width ?? -1, GetStringLength(oToString.AsSpan()));
 
             //if it's a string
             if (o is string oAsString)
