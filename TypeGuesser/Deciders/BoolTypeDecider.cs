@@ -25,7 +25,7 @@ public sealed class BoolTypeDecider(CultureInfo culture):DecideTypesForStrings<b
 
         candidateString = StripWhitespace(candidateString);
 
-        return candidateString.Length switch
+        bool? b = candidateString.Length switch
         {
             1 => "1tTyYjJ0fFnN".IndexOf(candidateString[0]) != -1 ? "0fFnN".IndexOf(candidateString[0]) == -1 : null,
             2 => candidateString.Equals("ja",StringComparison.OrdinalIgnoreCase) ? true :
@@ -41,6 +41,7 @@ public sealed class BoolTypeDecider(CultureInfo culture):DecideTypesForStrings<b
             5 => candidateString.Equals("false",StringComparison.OrdinalIgnoreCase) ? false : null,
             _ => null
         };
+        return b ?? throw new Exception("Invalid bool");
     }
 
     private static ReadOnlySpan<char> StripWhitespace(ReadOnlySpan<char> candidateString)

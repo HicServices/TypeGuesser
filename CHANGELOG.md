@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.6] - 2024-07-16
+
+- Throw exceptions on invalid conversion attempts
+
 ## [1.2.5] - 2024-07-11
 
 - Internal performance improvements, using ReadOnlySpan&lt;char&gt; instead of string internally
@@ -84,7 +88,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial port of content from [FAnsiSql](https://github.com/HicServices/FAnsiSql)
 
-[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/v1.2.5...main
+[Unreleased]: https://github.com/HicServices/TypeGuesser/compare/v1.2.6...main
+[1.2.6]: https://github.com/HicServices/TypeGuesser/compare/v1.2.5...v1.2.6
 [1.2.5]: https://github.com/HicServices/TypeGuesser/compare/v1.2.4...v1.2.5
 [1.2.4]: https://github.com/HicServices/TypeGuesser/compare/v1.2.3...v1.2.4
 [1.2.3]: https://github.com/HicServices/TypeGuesser/compare/v1.2.2...v1.2.3

@@ -19,7 +19,7 @@ public sealed class IntTypeDecider(CultureInfo culture) : DecideTypesForStrings<
     }
 
     /// <inheritdoc />
-    protected override object? ParseImpl(ReadOnlySpan<char> value) => int.TryParse(value, NumberStyles.Any, Culture.NumberFormat, out var i) ? i : null;
+    protected override object ParseImpl(ReadOnlySpan<char> value) => int.Parse(value, NumberStyles.Any, Culture.NumberFormat);
 
     /// <inheritdoc/>
     protected override bool IsAcceptableAsTypeImpl(ReadOnlySpan<char> candidateString, IDataTypeSize? sizeRecord)
