@@ -12,7 +12,7 @@ namespace TypeGuesser.Deciders;
 /// Creates a new instance for detecting/parsing <see cref="DateTime"/> strings according to the <paramref name="cultureInfo"/>
 /// </remarks>
 /// <param name="cultureInfo"></param>
-public class DateTimeTypeDecider(CultureInfo cultureInfo):DecideTypesForStrings<DateTime>(cultureInfo, TypeCompatibilityGroup.Exclusive, typeof(DateTime))
+public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForStrings<DateTime>(cultureInfo, TypeCompatibilityGroup.Exclusive, typeof(DateTime))
 {
     private readonly TimeSpanTypeDecider _timeSpanTypeDecider = new(cultureInfo);
     private readonly DecimalTypeDecider _decimalChecker = new(cultureInfo);
