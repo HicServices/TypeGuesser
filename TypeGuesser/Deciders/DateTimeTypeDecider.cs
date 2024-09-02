@@ -180,21 +180,32 @@ public class DateTimeTypeDecider(CultureInfo cultureInfo) : DecideTypesForString
     /// </summary>
     public void GuessDateFormat(IEnumerable<string> samples)
     {
+        var total = 0;
+        var simple = 0;
+        var m = 0;
+        var d = 0;
+
         if (!AllowCultureGuessing)
             return;
 
-        samples = samples.Where(static s => !string.IsNullOrWhiteSpace(s)).ToList();
+        foreach (var sSample in samples.Where(static sSample => !string.IsNullOrWhiteSpace(sSample)))
+        {
+            var sample = sSample.AsSpan();
+            total++;
+            if (DateTime.TryParse(sample, Culture, DateTimeStyles.None, out _))
+                simple++;
+            else
+            {
+                _dateFormatToUse = DateFormatsDM;
+                if (TryBruteParse(sample, out _))
+                    d++;
+                _dateFormatToUse = DateFormatsMD;
+                if (TryBruteParse(sample, out _))
+                    m++;
+            }
+        }
 
-        //if they are all valid anyway
-        if (samples.All(s => DateTime.TryParse(s, Culture, DateTimeStyles.None, out _)))
-            return;
-
-        _dateFormatToUse = DateFormatsDM;
-        var countDm = samples.Count(s => TryBruteParse(s, out _));
-        _dateFormatToUse = DateFormatsMD;
-        var countMd = samples.Count(s => TryBruteParse(s, out _));
-
-        if (countDm >= countMd)
+        if (simple < total && d > m)
             _dateFormatToUse = DateFormatsDM;
     }
 

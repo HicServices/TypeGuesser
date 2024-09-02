@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Single pass non-copying date format guessing
+
 ## [1.2.6] - 2024-07-16
 
 - Throw exceptions on invalid conversion attempts
